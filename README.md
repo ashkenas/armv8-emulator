@@ -1,2 +1,2 @@
-# ARMlive - a really dope ARM visualizer
+# ARM-LIVE - a really dope ARM visualizer
 Coming soon...

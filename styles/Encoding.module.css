@@ -1,0 +1,39 @@
+span.encoding {
+    font-family: 'Courier New', Courier, monospace;
+    position: relative;
+}
+
+span.encoding:hover::after {
+    font-family: Arial, Helvetica, sans-serif;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 0.25rem;
+    border-radius: .25rem;
+    color: white;
+    bottom: 100%;
+    left: 0;
+}
+
+span.register {
+    color: rgb(243, 172, 105);
+}
+
+span.register:hover::after {
+    content: 'Register';
+}
+
+span.opcode {
+    color: rgb(200, 111, 223);
+}
+
+span.opcode:hover::after {
+    content: 'Opcode';
+}
+
+span.immediate {
+    color: rgb(105, 243, 128);
+}
+
+span.immediate:hover::after {
+    content: 'Immediate';
+}

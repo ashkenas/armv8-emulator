@@ -1,5 +1,6 @@
-import Code from '../components/code.js'
-import Encoding from '../components/encoding.js'
+import Code from '../components/code'
+import Encoding from '../components/encoding'
+import Registers from '../components/registers'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
@@ -12,15 +13,21 @@ export default function Home() {
             </Head>
 
             <div className={styles.column}>
-                <div className={styles.card}>
+                <div className={`${styles.card} ${styles.expand}`}>
                     <h2>Code</h2>
                     <Code />
+                </div>
+
+                <div className={styles.card}>
+                    <h2>Encoding</h2>
+                    <Encoding parts={[['none', 1, 1, ''], ['opcode', 0b001000, 6, 'Op-code'], ['none', 0b100, 3, ''], ['immediate', 4, 12, 'Immediate'], ['register', 31, 5, 'Rd'], ['register', 1, 5, 'Rn']]} />
                 </div>
             </div>
 
             <div className={styles.column}>
                 <div className={styles.card}>
                     <h2>Registers</h2>
+                    <Registers />
                 </div>
 
                 <div className={styles.card}>
@@ -30,11 +37,6 @@ export default function Home() {
                 <div className={`${styles.card} ${styles.expand}`}>
                     <h2>Memory</h2>
                     {/* Memory component here */}
-                </div>
-
-                <div className={styles.card}>
-                    <h2>Encoding</h2>
-                    <Encoding parts={[['none', 1, 1], ['opcode', 0b001000, 6], ['none', 0b100, 3], ['immediate', 4, 12], ['register', 31, 5], ['register', 1, 5]]} />
                 </div>
             </div>
 

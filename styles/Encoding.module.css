@@ -4,6 +4,7 @@ span.encoding {
 }
 
 span.encoding:hover::after {
+    content: attr(data-label);
     font-family: Arial, Helvetica, sans-serif;
     position: absolute;
     background-color: rgba(0, 0, 0, 0.8);
@@ -18,22 +19,10 @@ span.register {
     color: rgb(243, 172, 105);
 }
 
-span.register:hover::after {
-    content: 'Register';
-}
-
 span.opcode {
     color: rgb(200, 111, 223);
 }
 
-span.opcode:hover::after {
-    content: 'Opcode';
-}
-
 span.immediate {
     color: rgb(105, 243, 128);
-}
-
-span.immediate:hover::after {
-    content: 'Immediate';
 }

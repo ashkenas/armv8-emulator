@@ -1,8 +1,9 @@
-import Code from '../components/code'
-import Encoding from '../components/encoding'
-import Registers from '../components/registers'
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Code from "../components/code";
+import Encoding from "../components/encoding";
+import Registers from "../components/registers";
+import Datapath from "../components/datapath";
+import Head from "next/head";
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
     return (
@@ -20,7 +21,16 @@ export default function Home() {
 
                 <div className={styles.card}>
                     <h2>Encoding</h2>
-                    <Encoding parts={[['none', 1, 1, ''], ['opcode', 0b001000, 6, 'Op-code'], ['none', 0b100, 3, ''], ['immediate', 4, 12, 'Immediate'], ['register', 31, 5, 'Rd'], ['register', 1, 5, 'Rn']]} />
+                    <Encoding
+                        parts={[
+                            ["none", 1, 1, ""],
+                            ["opcode", 0b001000, 6, "Op-code"],
+                            ["none", 0b100, 3, ""],
+                            ["immediate", 4, 12, "Immediate"],
+                            ["register", 31, 5, "Rd"],
+                            ["register", 1, 5, "Rn"],
+                        ]}
+                    />
                 </div>
             </div>
 
@@ -40,9 +50,12 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className={styles.column} style={{flexGrow: 2}}>
-                {/* Data path component here */}
+            <div className={styles.column} style={{ flexGrow: 2 }}>
+                <div className={styles.card}>
+                    <h2>Datapath</h2>
+                    <Datapath />
+                </div>
             </div>
         </div>
-    )
+    );
 }

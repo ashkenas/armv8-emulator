@@ -8,12 +8,15 @@ class Registers extends React.Component {
 
         this.col1 = [];
         for (let i = 0; i < 16; i++) {
-            this.col1.push(<Register key={i} registerName={'X' + i} />);
+            this.col1.push(<Register key={`register${i}`} registerName={'X' + i} />);
         }
 
-        this.col2 = [<Register key={31} registerName="XZR" />];
-        for (let i = 30; i > 15; i--) {
-            this.col2.unshift(<Register key={i} registerName={'X' + i} />);
+        this.col2 = [<Register key={'register28'} registerName="SP" />,
+                     <Register key={'register29'} registerName="FP" />,
+                     <Register key={'register30'} registerName="LR" />,
+                     <Register key={'register31'} registerName="XZR" />];
+        for (let i = 27; i > 15; i--) {
+            this.col2.unshift(<Register key={`register${i}`} registerName={'X' + i} />);
         }
 
         this.registers = [...this.col1, ...this.col2]

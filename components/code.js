@@ -12,7 +12,7 @@ class Code extends React.Component {
     }
 
     componentDidMount() {
-        hljs.highlightBlock(this.codeRef.current);
+        hljs.highlightElement(this.codeRef.current);
     }
 
     render() {

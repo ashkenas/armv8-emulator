@@ -4,20 +4,31 @@ export default class Instruction {
     }
 
     tick(cpu) {
-        this.cycle++;
-        switch(this.cycle) {
+        let flags = {};
+
+        switch(this.cycle++) {
+            case 0:
+                flags = this.if ? this.if(cpu) : {};
+                break;
             case 1:
-                return this.if ? this.if(cpu) : {};
+                flags = this.id ? this.id(cpu) : {};
+                break;
             case 2:
-                return this.id ? this.id(cpu) : {};
+                flags = this.ex ? this.ex(cpu) : {};
+                break;
             case 3:
-                return this.ex ? this.ex(cpu) : {};
+                flags = this.mem ? this.mem(cpu) : {};
+                break;
             case 4:
-                return this.mem ? this.mem(cpu) : {};
-            case 5:
-                return this.wb ? this.web(cpu) : {};
+                flags = this.wb ? this.web(cpu) : {};
+                break;
             default:
-                throw 'Instruction execution complete, no more cycles to tick.';
+                throw 'Instruction execution complete, no more cycles to tick.';0
+        }
+
+        return {
+            instructionComplete: this.cycle >= 4,
+            flags: flags
         }
     }
 };

@@ -5,14 +5,14 @@ import InstructionRegistry from "./instructionRegistry";
 class ADDIInstruction extends Instruction {
     static mnemonic = 'add';
     static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Immediate];
-    static restrictions = [null, null, 12];
+    static restrictions = [null, null, 11];
 
-    constructor(rd, rn, imm12) {
+    constructor(rd, rn, imm11) {
         super();
         this.rd = rd;
         this.rn = rn;
-        this.imm12 = imm12;
-        this.encoding = (0b1001000100 << 22) + (this.imm12 << 10) + (this.rn << 5) + rd;
+        this.imm11 = imm11;
+        this.encoding = (0b1001000100 << 22) + (this.imm11 << 10) + (this.rn << 5) + rd;
     }
 
     if(cpu) {
@@ -20,7 +20,7 @@ class ADDIInstruction extends Instruction {
             encoding: this.encoding,
             readReg1: this.rn,
             writeReg: this.rd,
-            aluImm: this.imm12
+            aluImm: this.imm11
         };
     }
 
@@ -36,19 +36,17 @@ class ADDIInstruction extends Instruction {
             memWrite: 0,
             memToReg: 0,
             aluOp: 0b10,
+            aluAction: 0b0010,
             readData1: this.opn
         };
     }
 
     ex(cpu) {
-        this.result = this.imm12 + this.opn;
+        this.result = this.imm11 + this.opn;
+        
         return {
             aluResult: this.result
         };
-    }
-
-    mem(cpu) {
-        return { };
     }
 
     wb(cpu) {

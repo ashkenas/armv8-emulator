@@ -39,6 +39,11 @@ class Registers extends React.Component {
         return this.registers[register].getValue(value);
     }
 
+    resetRegisters() {
+        for(const register of this.registers)
+            register.setValue(0n);
+    }
+
     render() {
         return (
             <div className={styles.row}>

@@ -1,4 +1,12 @@
-export default class Instruction {
+export class ArgumentType {
+    /* Maximum binary digits present in an ArgumentType value */
+    static typeLength = 1;
+
+    static Register = 0b1;
+    static Immediate = 0b0;
+};
+
+export class Instruction {
     static _controlSignalNames = [
         'reg2Loc',
         'aluSrc',
@@ -13,15 +21,35 @@ export default class Instruction {
         'regWrite',
     ];
 
-    constructor() {
+    constructor(opcode) {
         this.cycle = 0;
+        this.opcode = opcode;
+    }
+
+    encodeInstruction() {
+        this.encoding = Number(BigInt(this.opcode) << 21n);
+
+        if (this.rm)
+            this.encoding += this.rm << 15;
+        
+        if (this.rn)
+            this.encoding += this.rn << 5;
+        
+        if (this.rd)
+            this.encoding += this.rd;
+        
+        if (this.rt)
+            this.encoding += this.rt;
+        
+        if (this.imm11)
+            this.encoding += this.imm11 << 10;
     }
 
     setControlSignals(...signals) {
         this.controlSignals = {};
         for(let i = 0; i < signals.length; i++) {
             if (signals[i] !== null)
-                this.controlSignals[_controlSignalNames[i]] = signals[i];
+                this.controlSignals[Instruction._controlSignalNames[i]] = signals[i];
         }
     }
 

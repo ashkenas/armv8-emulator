@@ -1,38 +1,40 @@
 import { Instruction, ArgumentType } from "./instruction";
 
-class ADDIInstruction extends Instruction {
+class ADDInstruction extends Instruction {
     static mnemonic = 'add';
-    static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Immediate];
-    static restrictions = [null, null, 11];
-
-    constructor(rd, rn, imm11) {
-        super(0b10010001000);
+    static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Register];
+    static restrictions = [null, null, null];
+    
+    constructor(rd, rn, rm) {
+        super(0b10001011001);
         this.rd = rd;
         this.rn = rn;
-        this.imm11 = imm11;
+        this.rm = rm;
         this.encodeInstruction();
-        this.setControlSignals(1, 1, 0b10, 0, 0, 0, 0, 0, 0, 0, 1);
+        this.setControlSignals(1, 0, 0b10, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
     if(cpu) {
         return {
             readReg1: this.rn,
-            writeReg: this.rd,
-            aluImm: this.imm11
+            readReg2: this.rm,
+            writeReg: this.rd
         };
     }
 
     id(cpu) {
         this.opn = cpu.registers.getRegister(this.rn);
+        this.opm = cpu.registers.getRegister(this.rm);
 
         return {
             aluAction: 0b0010,
-            readData1: this.opn
+            readData1: this.opn,
+            readData2: this.opm
         };
     }
 
     ex(cpu) {
-        this.result = this.imm11 + this.opn;
+        this.result = this.opn + this.opm;
         
         return {
             aluResult: this.result
@@ -48,4 +50,4 @@ class ADDIInstruction extends Instruction {
     }
 }
 
-export default ADDIInstruction;
+export default ADDInstruction;

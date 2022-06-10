@@ -1,7 +1,10 @@
-import ArgumentType from './argumentType';
+import { ArgumentType } from './instruction';
+import ADDInstruction from './add';
 import ADDIInstruction from './addi';
+import SUBInstruction from './sub';
+import SUBIInstruction from './subi';
 
-export default class InstructionRegistry {
+class InstructionRegistry {
     static registry = {};
 
     /** Used by instruction types to self-register */
@@ -38,3 +41,15 @@ export default class InstructionRegistry {
             return undefined;
     }
 };
+
+const instructionConstructors = [
+    ADDInstruction,
+    ADDIInstruction,
+    SUBInstruction,
+    SUBIInstruction
+];
+
+for (const instructionConstructor of instructionConstructors)
+    InstructionRegistry.register(instructionConstructor.mnemonic, instructionConstructor.syntax, instructionConstructor);
+
+export default InstructionRegistry;

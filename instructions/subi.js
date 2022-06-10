@@ -1,12 +1,12 @@
 import { Instruction, ArgumentType } from "./instruction";
 
-class ADDIInstruction extends Instruction {
-    static mnemonic = 'add';
+class SUBIInstruction extends Instruction {
+    static mnemonic = 'sub';
     static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Immediate];
     static restrictions = [null, null, 11];
 
     constructor(rd, rn, imm11) {
-        super(0b10010001000);
+        super(0b11010001000);
         this.rd = rd;
         this.rn = rn;
         this.imm11 = imm11;
@@ -26,13 +26,13 @@ class ADDIInstruction extends Instruction {
         this.opn = cpu.registers.getRegister(this.rn);
 
         return {
-            aluAction: 0b0010,
+            aluAction: 0b0011,
             readData1: this.opn
         };
     }
 
     ex(cpu) {
-        this.result = this.imm11 + this.opn;
+        this.result = this.opn - this.imm11;
         
         return {
             aluResult: this.result
@@ -48,4 +48,4 @@ class ADDIInstruction extends Instruction {
     }
 }
 
-export default ADDIInstruction;
+export default SUBIInstruction;

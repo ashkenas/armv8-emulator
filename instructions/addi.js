@@ -12,6 +12,7 @@ class ADDIInstruction extends Instruction {
         this.rd = rd;
         this.rn = rn;
         this.imm11 = imm11;
+        this.setControlSignals(1, 1, 0b10, 0, 0, 0, 0, 0, 0, 0, 1);
         this.encoding = (0b1001000100 << 22) + (this.imm11 << 10) + (this.rn << 5) + rd;
     }
 
@@ -28,14 +29,6 @@ class ADDIInstruction extends Instruction {
         this.opn = cpu.registers.getRegister(this.rn);
 
         return {
-            reg2Loc: 0,
-            regWrite: 1,
-            aluSrc: 1,
-            branch: 0,
-            memRead: 0,
-            memWrite: 0,
-            memToReg: 0,
-            aluOp: 0b10,
             aluAction: 0b0010,
             readData1: this.opn
         };

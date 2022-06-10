@@ -1,6 +1,28 @@
 export default class Instruction {
+    static _controlSignalNames = [
+        'reg2Loc',
+        'aluSrc',
+        'aluOp',
+        'cbr',
+        'ubr',
+        'pbr',
+        'memWrite',
+        'memRead',
+        'memToReg',
+        'linkReg',
+        'regWrite',
+    ];
+
     constructor() {
         this.cycle = 0;
+    }
+
+    setControlSignals(...signals) {
+        this.controlSignals = {};
+        for(let i = 0; i < signals.length; i++) {
+            if (signals[i] !== null)
+                this.controlSignals[_controlSignalNames[i]] = signals[i];
+        }
     }
 
     tick(cpu) {
@@ -12,6 +34,7 @@ export default class Instruction {
                 break;
             case 1:
                 flags = this.id ? this.id(cpu) : {};
+                Object.assign(flags, this.controlSignals);
                 break;
             case 2:
                 flags = this.ex ? this.ex(cpu) : {};
@@ -23,7 +46,7 @@ export default class Instruction {
                 flags = this.wb ? this.web(cpu) : {};
                 break;
             default:
-                throw 'Instruction execution complete, no more cycles to tick.';0
+                throw 'Instruction execution complete, no more cycles to tick.';
         }
 
         return {

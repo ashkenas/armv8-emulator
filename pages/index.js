@@ -1,6 +1,7 @@
 import Code from "../components/code";
 import Encoding from "../components/encoding";
 import Registers from "../components/registers";
+import Memory from "../components/memory";
 import Datapath from "../components/datapath";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";

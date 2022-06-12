@@ -1,6 +1,7 @@
 export default class CPU {
-    constructor(registers) {
+    constructor(registers, memory) {
         this.registers = registers;
+        this.memory = memory;
     }
 
     load(program) {

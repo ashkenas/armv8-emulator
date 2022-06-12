@@ -20,6 +20,7 @@ class Registers extends React.Component {
         }
 
         this.registers = [...this.col1, ...this.col2]
+        this.flags = <Register registerName="FLAGS" />
     }
 
     setRegister(register, value) {

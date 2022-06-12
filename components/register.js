@@ -16,6 +16,24 @@ class Register extends React.Component {
         return this.state.value;
     }
 
+    setBit(bit, value) {
+        if (value > 1 || value < 0)
+            throw `Bit value must be '0' or '1'!`;
+        
+        if (typeof value !== 'bigint')
+            value = BigInt(value);
+
+        if (typeof bit !== 'bigint')
+            bit = BigInt(bit);
+        
+        const mask = (2n ** 65n) - 1n - (2n ** bit);
+        this.setValue((this.getValue() & mask) | (value << bit))
+    }
+
+    getBit(bit) {
+        return (this.state.value >> bit) & 1;
+    }
+
     render() {
         const hex = [];
         

@@ -23,12 +23,10 @@ export default function Home() {
                     <h2>Encoding</h2>
                     <Encoding
                         parts={[
-                            ["none", 1, 1, ""],
-                            ["opcode", 0b001000, 6, "Op-code"],
-                            ["none", 0b100, 3, ""],
-                            ["immediate", 4, 12, "Immediate"],
+                            ["opcode", 0b10010001000, 11, "Op-code"],
+                            ["immediate", 4, 11, "Immediate"],
                             ["register", 31, 5, "Rd"],
-                            ["register", 1, 5, "Rn"],
+                            ["register", 1, 5, "Rn"]
                         ]}
                     />
                 </div>
@@ -46,7 +44,7 @@ export default function Home() {
 
                 <div className={`${styles.card} ${styles.expand}`}>
                     <h2>Memory</h2>
-                    {/* Memory component here */}
+                    <Memory />
                 </div>
             </div>
 

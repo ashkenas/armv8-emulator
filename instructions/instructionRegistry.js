@@ -1,4 +1,8 @@
 import { ArgumentType } from './instruction';
+import ANDInstruction from './and';
+import ANDSInstruction from './ands';
+import ORRInstruction from './orr';
+import ORRIInstruction from './orri';
 import ADDInstruction from './add';
 import ADDSInstruction from './adds';
 import ADDIInstruction from './addi';
@@ -7,6 +11,8 @@ import SUBInstruction from './sub';
 import SUBSInstruction from './subs';
 import SUBIInstruction from './subi';
 import SUBISInstruction from './subis';
+import LDURInstruction from './ldur';
+import STURInstruction from './stur';
 
 class InstructionRegistry {
     static registry = {};
@@ -47,6 +53,10 @@ class InstructionRegistry {
 };
 
 const instructionConstructors = [
+    ANDInstruction,
+    ANDSInstruction,
+    ORRInstruction,
+    ORRIInstruction,
     ADDInstruction,
     ADDSInstruction,
     ADDIInstruction,
@@ -54,7 +64,9 @@ const instructionConstructors = [
     SUBInstruction,
     SUBSInstruction,
     SUBIInstruction,
-    SUBISInstruction
+    SUBISInstruction,
+    LDURInstruction,
+    STURInstruction
 ];
 
 for (const instructionConstructor of instructionConstructors)

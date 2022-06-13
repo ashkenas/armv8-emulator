@@ -5,7 +5,7 @@ class Register extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { value: 0n };
+        this.state = { value: props.value ?? 0n };
     }
 
     setValue(value) {

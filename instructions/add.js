@@ -27,16 +27,16 @@ class ADDInstruction extends Instruction {
         this.opm = cpu.registers.getRegister(this.rm);
 
         return {
-            aluAction: 0b0010,
             readData1: this.opn,
             readData2: this.opm
         };
     }
-
+    
     ex(cpu) {
         this.result = this.opn + this.opm;
         
         return {
+            aluAction: 0b0010,
             aluResult: this.result
         };
     }

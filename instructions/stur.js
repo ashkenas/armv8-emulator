@@ -27,7 +27,6 @@ class STURInstruction extends Instruction {
         this.data = cpu.registers.getRegister(this.rt);
 
         return {
-            aluAction: 0b0010,
             readData1: this.opn,
             readData2: this.data
         };
@@ -37,6 +36,7 @@ class STURInstruction extends Instruction {
         this.result = this.opn + this.imm11;
         
         return {
+            aluAction: 0b0010,
             aluResult: this.result
         };
     }

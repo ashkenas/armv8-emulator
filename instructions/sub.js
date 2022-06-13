@@ -27,7 +27,6 @@ class SUBInstruction extends Instruction {
         this.opm = cpu.registers.getRegister(this.rm);
 
         return {
-            aluAction: 0b0011,
             readData1: this.opn,
             readData2: this.opm
         };
@@ -37,6 +36,7 @@ class SUBInstruction extends Instruction {
         this.result = this.opn - this.opm;
         
         return {
+            aluAction: 0b0011,
             aluResult: this.result
         };
     }

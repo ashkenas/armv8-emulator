@@ -67,14 +67,19 @@ export class Instruction {
             case 1:
                 flags = this.id ? this.id(cpu) : {};
 
+                if (flags.readData2)
+                    this.readData2 = flags.readData2;
+
                 Object.assign(flags, this.controlSignals);
 
                 break;
             case 2:
                 flags = this.ex ? this.ex(cpu) : {};
 
+                flags.aluInputB = this.controlSignals.aluSrc ? this.imm11 : this.readData2;
+
                 if (flags.aluAction)
-                    flags.z = !this.aluResult;
+                    flags.z = +!this.aluResult;
 
                 if (this.controlSignals.pbr)
                     flags.newPC = this.aluResult

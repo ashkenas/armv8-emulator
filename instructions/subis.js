@@ -26,7 +26,6 @@ class SUBISInstruction extends Instruction {
         this.opn = cpu.registers.getRegister(this.rn);
 
         return {
-            aluAction: 0b1011,
             readData1: this.opn
         };
     }
@@ -36,6 +35,7 @@ class SUBISInstruction extends Instruction {
         cpu.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
         
         return {
+            aluAction: 0b1011,
             aluResult: this.result
         };
     }

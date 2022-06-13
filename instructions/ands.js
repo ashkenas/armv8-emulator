@@ -27,7 +27,6 @@ class ANDSInstruction extends Instruction {
         this.opm = cpu.registers.getRegister(this.rm);
 
         return {
-            aluAction: 0b1000,
             readData1: this.opn,
             readData2: this.opm
         };
@@ -38,6 +37,7 @@ class ANDSInstruction extends Instruction {
         cpu.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
         
         return {
+            aluAction: 0b1000,
             aluResult: this.result
         };
     }

@@ -14,6 +14,7 @@ import SUBISInstruction from './subis';
 import LDURInstruction from './ldur';
 import STURInstruction from './stur';
 import BInstruction from './b';
+import BLInstruction from './bl';
 import CBZInstruction from './cbz';
 import RETInstruction from './ret';
 
@@ -71,6 +72,7 @@ const instructionConstructors = [
     LDURInstruction,
     STURInstruction,
     BInstruction,
+    BLInstruction,
     CBZInstruction,
     RETInstruction
 ];

@@ -13,6 +13,9 @@ import SUBIInstruction from './subi';
 import SUBISInstruction from './subis';
 import LDURInstruction from './ldur';
 import STURInstruction from './stur';
+import BInstruction from './b';
+import CBZInstruction from './cbz';
+import RETInstruction from './ret';
 
 class InstructionRegistry {
     static registry = {};
@@ -66,7 +69,10 @@ const instructionConstructors = [
     SUBIInstruction,
     SUBISInstruction,
     LDURInstruction,
-    STURInstruction
+    STURInstruction,
+    BInstruction,
+    CBZInstruction,
+    RETInstruction
 ];
 
 for (const instructionConstructor of instructionConstructors)

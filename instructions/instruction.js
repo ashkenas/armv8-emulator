@@ -59,13 +59,28 @@ export class Instruction {
         switch(this.cycle++) {
             case 0:
                 flags = this.if ? this.if(cpu) : {};
+
+                this.nextPC = cpu.program.currentInstruction * 4 + 4;
+                flags.nextPC = this.nextPC;
+
                 break;
             case 1:
                 flags = this.id ? this.id(cpu) : {};
+
                 Object.assign(flags, this.controlSignals);
+
                 break;
             case 2:
                 flags = this.ex ? this.ex(cpu) : {};
+
+                if (flags.aluAction)
+                    flags.z = !this.aluResult;
+
+                if (this.controlSignals.pbr)
+                    flags.newPC = this.aluResult
+                else
+                    flags.newPC = (this.controlSignals.ubr || (this.controlSignals.cbr && flags.z)) ? flags.branchPC : this.nextPC;
+                
                 break;
             case 3:
                 flags = this.mem ? this.mem(cpu) : {};
@@ -80,6 +95,6 @@ export class Instruction {
         return {
             instructionComplete: this.cycle >= 4,
             flags: flags
-        }
+        };
     }
 };

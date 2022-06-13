@@ -1,52 +1,51 @@
 import { Instruction, ArgumentType } from "./instruction";
 
-class SUBISInstruction extends Instruction {
-    static mnemonic = 'subs';
+class STURInstruction extends Instruction {
+    static mnemonic = 'stur';
     static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Immediate];
     static restrictions = [null, null, 11];
-
-    constructor(rd, rn, imm11) {
-        super(0b11110001000);
-        this.rd = rd;
+    
+    constructor(rt, rn, imm11) {
+        super(0b11111000000);
+        this.rt = rt;
         this.rn = rn;
         this.imm11 = imm11;
         this.encodeInstruction();
-        this.setControlSignals(1, 1, 0b11, 0, 0, 0, 0, 0, 0, 0, 1);
+        this.setControlSignals(0, 1, 0b00, 0, 0, 0, 1, 0, 0, 0, 0);
     }
 
     if(cpu) {
         return {
             readReg1: this.rn,
-            writeReg: this.rd,
+            readReg2: this.rt,
             aluImm: this.imm11
         };
     }
 
     id(cpu) {
         this.opn = cpu.registers.getRegister(this.rn);
+        this.data = cpu.registers.getRegister(this.rt);
 
         return {
-            aluAction: 0b1011,
-            readData1: this.opn
+            aluAction: 0b0010,
+            readData1: this.opn,
+            readData2: this.data
         };
     }
 
     ex(cpu) {
-        this.result = this.opn - this.imm11;
-        cpu.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
+        this.result = this.opn + this.imm11;
         
         return {
             aluResult: this.result
         };
     }
 
-    wb(cpu) {
-        cpu.registers.setRegister(this.rd, this.result);
+    mem(cpu) {
+        cpu.memory.writeDoubleWord(this.result, this.data);
 
-        return {
-            writeData: this.result
-        };
+        return {};
     }
 }
 
-export default SUBISInstruction;
+export default STURInstruction;

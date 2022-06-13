@@ -1,23 +1,23 @@
 import { Instruction, ArgumentType } from "./instruction";
 
-class SUBISInstruction extends Instruction {
-    static mnemonic = 'subs';
+class LDURInstruction extends Instruction {
+    static mnemonic = 'ldur';
     static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Immediate];
     static restrictions = [null, null, 11];
-
-    constructor(rd, rn, imm11) {
-        super(0b11110001000);
-        this.rd = rd;
+    
+    constructor(rt, rn, imm11) {
+        super(0b11111000010);
+        this.rt = rt;
         this.rn = rn;
         this.imm11 = imm11;
         this.encodeInstruction();
-        this.setControlSignals(1, 1, 0b11, 0, 0, 0, 0, 0, 0, 0, 1);
+        this.setControlSignals(0, 1, 0b00, 0, 0, 0, 0, 1, 1, 0, 1);
     }
 
     if(cpu) {
         return {
             readReg1: this.rn,
-            writeReg: this.rd,
+            writeReg: this.rt,
             aluImm: this.imm11
         };
     }
@@ -26,27 +26,34 @@ class SUBISInstruction extends Instruction {
         this.opn = cpu.registers.getRegister(this.rn);
 
         return {
-            aluAction: 0b1011,
+            aluAction: 0b0010,
             readData1: this.opn
         };
     }
 
     ex(cpu) {
-        this.result = this.opn - this.imm11;
-        cpu.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
+        this.result = this.opn + this.imm11;
         
         return {
             aluResult: this.result
         };
     }
 
-    wb(cpu) {
-        cpu.registers.setRegister(this.rd, this.result);
+    mem(cpu) {
+        this.memValue = cpu.memory.readDoubleWord(this.result);
 
         return {
-            writeData: this.result
+            readDataM: this.memValue
+        };
+    }
+
+    wb(cpu) {
+        cpu.registers.setRegister(this.rt, this.result);
+
+        return {
+            writeData: this.memValue
         };
     }
 }
 
-export default SUBISInstruction;
+export default LDURInstruction;

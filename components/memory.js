@@ -26,7 +26,26 @@ class Memory extends React.Component {
         while (address < Memory.MAX_ADDRESS - BigInt(this.stack.length) * 8n) // check math
             this.stack.push(0n);
 
-        this.stack[(Memory.MAX_ADDRESS - address) / 8n] = doubleWord
+        this.stack[(Memory.MAX_ADDRESS - address) / 8n] = doubleWord;
+    }
+
+    readDoubleWord(address) {
+        if (typeof address !== 'bigint')
+            address = BigInt(address);
+        
+        if (address % 8n !== 0n)
+            throw 'Attempted to read a double word offset from a double word boundary!';
+
+        if (address > Memory.MAX_ADDRESS - 7n)
+            throw 'Tried to read above stack!';
+        
+        if (address < this.bssStartAddress)
+            throw 'Tried to read below BSS!';
+            
+        while (address < Memory.MAX_ADDRESS - BigInt(this.stack.length) * 8n) // check math
+            this.stack.push(0n);
+
+        return this.stack[(Memory.MAX_ADDRESS - address) / 8n];
     }
 
     storeProgram(program) {

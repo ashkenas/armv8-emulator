@@ -1,17 +1,17 @@
 import { Instruction, ArgumentType } from "./instruction";
 
-class SUBSInstruction extends Instruction {
-    static mnemonic = 'subs';
+class ANDInstruction extends Instruction {
+    static mnemonic = 'and';
     static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Register];
     static restrictions = [null, null, null];
-
+    
     constructor(rd, rn, rm) {
-        super(0b11101011001);
+        super(0b10001010000);
         this.rd = rd;
         this.rn = rn;
         this.rm = rm;
         this.encodeInstruction();
-        this.setControlSignals(1, 0, 0b11, 0, 0, 0, 0, 0, 0, 0, 1);
+        this.setControlSignals(1, 0, 0b10, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
     if(cpu) {
@@ -27,15 +27,14 @@ class SUBSInstruction extends Instruction {
         this.opm = cpu.registers.getRegister(this.rm);
 
         return {
-            aluAction: 0b1011,
+            aluAction: 0b0000,
             readData1: this.opn,
             readData2: this.opm
         };
     }
 
     ex(cpu) {
-        this.result = this.opn - this.opm;
-        cpu.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
+        this.result = this.opn & this.opm;
         
         return {
             aluResult: this.result
@@ -51,4 +50,4 @@ class SUBSInstruction extends Instruction {
     }
 }
 
-export default SUBSInstruction;
+export default ANDInstruction;

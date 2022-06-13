@@ -1,5 +1,6 @@
 import React from 'react';
 import Register from './register';
+import Memory from './memory';
 import styles from '../styles/Registers.module.css';
 
 class Registers extends React.Component {
@@ -11,8 +12,8 @@ class Registers extends React.Component {
             this.col1.push(<Register key={`register${i}`} registerName={'X' + i} />);
         }
 
-        this.col2 = [<Register key={'register28'} registerName="SP" />,
-                     <Register key={'register29'} registerName="FP" />,
+        this.col2 = [<Register key={'register28'} registerName="SP" value={Memory.MAX_ADDRESS - 7n} />,
+                     <Register key={'register29'} registerName="FP" value={Memory.MAX_ADDRESS - 7n} />,
                      <Register key={'register30'} registerName="LR" />,
                      <Register key={'register31'} registerName="XZR" />];
         for (let i = 27; i > 15; i--) {

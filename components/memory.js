@@ -23,10 +23,15 @@ class Memory extends React.Component {
         if (address < this.bssStartAddress)
             throw 'Tried to write below BSS!';
 
-        while (address < Memory.MAX_ADDRESS - BigInt(this.stack.length) * 8n) // check math
-            this.stack.push(0n);
-
-        this.stack[(Memory.MAX_ADDRESS - address) / 8n] = doubleWord;
+        // Write to appropriate array (stack/BSS)
+        if (address < this.bssEndAddress) {
+            this.program[address / 8n] = doubleWord;
+        } else {
+            while (address < Memory.MAX_ADDRESS - BigInt(this.stack.length) * 8n)
+                this.stack.push(0n);
+    
+            this.stack[(Memory.MAX_ADDRESS - address) / 8n] = doubleWord;
+        }
     }
 
     readDoubleWord(address) {
@@ -41,11 +46,16 @@ class Memory extends React.Component {
         
         if (address < this.bssStartAddress)
             throw 'Tried to read below BSS!';
-            
-        while (address < Memory.MAX_ADDRESS - BigInt(this.stack.length) * 8n) // check math
-            this.stack.push(0n);
 
-        return this.stack[(Memory.MAX_ADDRESS - address) / 8n];
+        // Read from appropriate array (stack/BSS)
+        if (address < this.bssEndAddress) {
+            return this.program[address / 8n];
+        } else {
+            while (address < Memory.MAX_ADDRESS - BigInt(this.stack.length) * 8n)
+                this.stack.push(0n);
+    
+            return this.stack[(Memory.MAX_ADDRESS - address) / 8n];
+        }
     }
 
     storeProgram(program) {
@@ -59,8 +69,13 @@ class Memory extends React.Component {
         if (program.length % 2)
             this.program.push(BigInt(program[program.length - 1]));
         
-        this.bssStartAddress = i * 32;
-        this.bssEndAddress = this.bssStartAddress + program.bssSize;
+        this.bssStartAddress = BigInt(this.program.length * 8);
+        this.bssEndAddress = this.bssStartAddress + BigInt(program.bssSize);
+        this.bssEndAddress += 7n - (this.bssEndAddress % 8n); // Align BSS on double word boundary
+
+        while (this.program.length * 8 < this.bssEndAddress)
+            this.program.push(0n);
+
         this.stack = BigUint64Array.of(0n);
     }
 

@@ -22,3 +22,7 @@ Run `npm run dev` to host the simulation at http://localhost:3000/. Refreshes as
 * `SUBS Rd, Rn, Imm11`
 * `LDUR Rt, [Rn, Imm11]`
 * `STUR Rt, [Rn, Imm11]`
+* `B Label`
+* `BL Label`
+* `CBZ Rt, Label`
+* `RET`

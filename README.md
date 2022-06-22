@@ -26,3 +26,5 @@ Run `npm run dev` to host the simulation at http://localhost:3000/. Refreshes as
 * `BL Label`
 * `CBZ Rt, Label`
 * `RET`
+* `ADR Rt, Label`
+* `NOP`

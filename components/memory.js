@@ -64,10 +64,10 @@ class Memory extends React.Component {
         // Turn 32 bit encodings into 64 bit blocks
         let i = 0;
         for(; i < program.length - (program.length % 2); i += 2)
-            this.program.push((BigInt(program[i + 1]) << 32) + BigInt(program[i]));
+            this.program.push((BigInt(program[i + 1].encoding) << 32) + BigInt(program[i].encoding));
         
         if (program.length % 2)
-            this.program.push(BigInt(program[program.length - 1]));
+            this.program.push(BigInt(program[program.length - 1].encoding));
         
         this.bssStartAddress = BigInt(this.program.length * 8);
         this.bssEndAddress = this.bssStartAddress + BigInt(program.bssSize);

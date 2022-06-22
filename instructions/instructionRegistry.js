@@ -17,6 +17,8 @@ import BInstruction from './b';
 import BLInstruction from './bl';
 import CBZInstruction from './cbz';
 import RETInstruction from './ret';
+import ADRInstruction from './adr';
+import NOPInstruction from './nop';
 
 class InstructionRegistry {
     static registry = {};
@@ -74,7 +76,9 @@ const instructionConstructors = [
     BInstruction,
     BLInstruction,
     CBZInstruction,
-    RETInstruction
+    RETInstruction,
+    ADRInstruction,
+    NOPInstruction
 ];
 
 for (const instructionConstructor of instructionConstructors)

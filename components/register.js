@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../styles/Register.module.css';
+import { bigIntToHexString } from '../util/formatUtils';
 
 class Register extends React.Component {
     constructor(props) {
@@ -35,14 +36,7 @@ class Register extends React.Component {
     }
 
     render() {
-        const hex = [];
-        
-        let currVal = this.state.value;
-        for (let i = 0; i < 8; i++) {
-            hex.unshift((currVal & 0b11111111n).toString(16).toLocaleUpperCase().padStart(2, '0'));
-            currVal >>= 8n;
-        }
-        return <div className={styles.register}>{this.props.registerName}: <span className={styles.value}>{hex.join(' ')}</span></div>;
+        return <div className={styles.register}>{this.props.registerName}: <span className={styles.value}>{bigIntToHexString(this.state.value, 64)}</span></div>;
     }
 }
 

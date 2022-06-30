@@ -5,19 +5,6 @@ import { bigIntToHexString } from '../util/formatUtils';
 class Register extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = { value: props.value ?? 0n };
-    }
-
-    setValue(value) {
-        if (typeof value !== 'bigint')
-            throw 'Register value must be a bigint!';
-
-        this.setState({ value: value });
-    }
-
-    getValue() {
-        return this.state.value;
     }
 
     setBit(bit, value) {
@@ -39,7 +26,14 @@ class Register extends React.Component {
     }
 
     render() {
-        return <div className={styles.register}>{this.props.registerName}: <span className={styles.value}>{bigIntToHexString(this.state.value, 64)}</span></div>;
+        return (
+            <div className={styles.register}>
+                {this.props.registerName}:
+                <span className={styles.value}>
+                    {bigIntToHexString(this.props.value, 64)}
+                </span>
+            </div>
+        );
     }
 }
 

@@ -27,22 +27,22 @@ export class Instruction {
     }
 
     encodeInstruction() {
-        this.encoding = Number(BigInt(this.opcode) << 21n);
+        this.encoding = BigInt(this.opcode) << 21n;
 
         if (this.rm)
-            this.encoding += this.rm << 15;
+            this.encoding += BigInt(this.rm) << 15n;
         
         if (this.rn)
-            this.encoding += this.rn << 5;
+            this.encoding += BigInt(this.rn) << 5n;
         
         if (this.rd)
-            this.encoding += this.rd;
+            this.encoding += BigInt(this.rd);
         
         if (this.rt)
-            this.encoding += this.rt;
+            this.encoding += BigInt(this.rt);
         
         if (this.imm11)
-            this.encoding += this.imm11 << 10;
+            this.encoding += this.imm11 << 10n;
     }
 
     setControlSignals(...signals) {
@@ -91,14 +91,14 @@ export class Instruction {
                 flags = this.mem ? this.mem(cpu) : {};
                 break;
             case 4:
-                flags = this.wb ? this.web(cpu) : {};
+                flags = this.wb ? this.wb(cpu) : {};
                 break;
             default:
                 throw 'Instruction execution complete, no more cycles to tick.';
         }
 
         return {
-            instructionComplete: this.cycle >= 4,
+            instructionComplete: this.cycle >= 5,
             flags: flags
         };
     }

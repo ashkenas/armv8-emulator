@@ -7,53 +7,25 @@ class Registers extends React.Component {
     constructor(props) {
         super(props);
 
-        this.col1 = [];
-        for (let i = 0; i < 16; i++) {
-            this.col1.push(<Register key={`register${i}`} registerName={'X' + i} />);
-        }
-
-        this.col2 = [<Register key={'register28'} registerName="SP" value={BigInt(Memory.MAX_ADDRESS - 7)} />,
-                     <Register key={'register29'} registerName="FP" value={BigInt(Memory.MAX_ADDRESS - 7)} />,
-                     <Register key={'register30'} registerName="LR" />,
-                     <Register key={'register31'} registerName="XZR" />];
-        for (let i = 27; i > 15; i--) {
-            this.col2.unshift(<Register key={`register${i}`} registerName={'X' + i} />);
-        }
-
-        this.registers = [...this.col1, ...this.col2]
-        this.flags = <Register registerName="FLAGS" />
-    }
-
-    setRegister(register, value) {
-        if (register < 0 || register > 31)
-            throw `Register X${register} does not exist!`;
-
-        if (typeof value != 'bigint')
-            throw `Cannot put value of type '${typeof value}' into register X${register}!`;
-
-        this.registers[register].setValue(value);
-    }
-
-    getRegister(register) {
-        if (register < 0 || register > 31)
-            throw `Register X${register} does not exist!`;
-
-        return this.registers[register].getValue(value);
-    }
-
-    resetRegisters() {
-        for(const register of this.registers)
-            register.setValue(0n);
+        this.registerLabels = ['SP', 'FP', 'LR', 'XZR'];
+        for (let i = 27; i >= 0; i--)
+            this.registerLabels.unshift(`X${i}`);
     }
 
     render() {
+        const col1 = [], col2 = [];
+        for (let i = 0; i < 16; i++) {
+            col1.push(<Register key={`register${i}`} registerName={this.registerLabels[i]} value={this.props.values[i]} />);
+            col2.push(<Register key={`register${i + 16}`} registerName={this.registerLabels[i + 16]} value={this.props.values[i + 16]} />);
+        }
+
         return (
             <div className={styles.row}>
                 <div className={styles.column}>
-                    {this.col1}
+                    {col1}
                 </div>
                 <div className={styles.column}>
-                    {this.col2}
+                    {col2}
                 </div>
             </div>
         );

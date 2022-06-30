@@ -1,3 +1,5 @@
+import Simulator from "./simulator";
+
 /**
  * Represent an unencoded instruction.
  */
@@ -18,9 +20,10 @@ export default class Program {
         this.initData = {};
         this.uninitData = {};
         this.labels = {};
+        this.initSize = 0;
+        this.bssSize = 0;
         this.currentInstruction = 0;
         this.nextInstruction = 1;
-        this.bssSize = 0;
     }
 
     /**
@@ -40,6 +43,7 @@ export default class Program {
      */
     addInitializedData(label, value, length) {
         this.initData[label] = { value: value, length: length };
+        this.initSize += length;
     }
 
     /**
@@ -49,6 +53,7 @@ export default class Program {
      */
     addUninitializedData(label, length) {
         this.uninitData[label] = length;
+        this.bssSize += length;
     }
 
     /**
@@ -56,7 +61,7 @@ export default class Program {
      * @param {string} label Label text
      */
     addLabel(label) {
-        this.labels[label] = this.instructions.length;
+        this.labels[label] = this.instructions.length * 4;
     }
 
     /**
@@ -64,12 +69,38 @@ export default class Program {
      * with their appropriate integer values.
      */
     runSubstitutions() {
-        // TODO: Implement proper substitutions
+        let nextAddress = this.staging.length * 4;
+        
+        for(const label of Object.keys(this.initData)) {
+            this.initData[label].address = nextAddress;
+            this.labels[label] = nextAddress;
+            nextAddress += this.initData[label].length;
+        }
+        
+        for(const label of Object.keys(this.uninitData)) {
+            this.labels[label] = nextAddress;
+            nextAddress += this.uninitData[label];
+        }
+
+        for(const staged of this.staging) {
+            staged.args = staged.args.map((arg) => {
+                if (typeof arg === 'string') {
+                    if (this.labels[arg])
+                        return this.labels[arg];
+                    else
+                        throw `Parsing Error: Label '${arg}' not found.`;
+                }
+
+                return arg;
+            });
+
+            this.instructions.push(new (staged.type)(...staged.args));
+        }
     }
 
     /**
      * Run one cycle of the current instruction.
-     * @param {CPU} cpu The CPU to run the instruction on.
+     * @param {Simulator} cpu The CPU to run the instruction on.
      * @returns {boolean} If the program has concluded.
      */
     tick(cpu) {

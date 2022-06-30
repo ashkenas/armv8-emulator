@@ -51,8 +51,8 @@ export default class ByteArray {
         if (typeof value !== 'bigint')
             throw 'ByteArray.setBytes: value must be of type bigint';
         
-        if ((length > 0 && (start < 0 || start + length >= this.data.length))
-            || (length < 0 && (start >= this.data.length || start + length < 0)))
+        if ((length > 0 && (start < 0 || start + length > this.data.length))
+            || (length < 0 && (start >= this.data.length || start + length + 1 < 0)))
             throw 'ByteArray.setBytes: index out of bounds';
 
         for (let i = start, j = 0n; (length > 0) ? (i < start + length) : (i > start - length); (length > 0 ? i++ : i--), j += 8n) {

@@ -15,6 +15,7 @@ class ADDIInstruction extends Instruction {
     }
 
     if(cpu) {
+        console.log('test');
         return {
             readReg1: this.rn,
             writeReg: this.rd,
@@ -23,6 +24,7 @@ class ADDIInstruction extends Instruction {
     }
 
     id(cpu) {
+        console.log('test2');
         this.opn = cpu.registers.getRegister(this.rn);
 
         return {
@@ -31,6 +33,7 @@ class ADDIInstruction extends Instruction {
     }
 
     ex(cpu) {
+        console.log('test3');
         this.result = this.imm11 + this.opn;
         
         return {
@@ -40,6 +43,7 @@ class ADDIInstruction extends Instruction {
     }
 
     wb(cpu) {
+        console.log('test5');
         cpu.registers.setRegister(this.rd, this.result);
 
         return {

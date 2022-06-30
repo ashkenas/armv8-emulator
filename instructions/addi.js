@@ -14,8 +14,7 @@ class ADDIInstruction extends Instruction {
         this.setControlSignals(1, 1, 0b10, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
-    if(cpu) {
-        console.log('test');
+    if(simulator) {
         return {
             readReg1: this.rn,
             writeReg: this.rd,
@@ -23,17 +22,15 @@ class ADDIInstruction extends Instruction {
         };
     }
 
-    id(cpu) {
-        console.log('test2');
-        this.opn = cpu.registers.getRegister(this.rn);
+    id(simulator) {
+        this.opn = simulator.registers.getRegister(this.rn);
 
         return {
             readData1: this.opn
         };
     }
 
-    ex(cpu) {
-        console.log('test3');
+    ex(simulator) {
         this.result = this.imm11 + this.opn;
         
         return {
@@ -42,9 +39,8 @@ class ADDIInstruction extends Instruction {
         };
     }
 
-    wb(cpu) {
-        console.log('test5');
-        cpu.registers.setRegister(this.rd, this.result);
+    wb(simulator) {
+        simulator.registers.setRegister(this.rd, this.result);
 
         return {
             writeData: this.result

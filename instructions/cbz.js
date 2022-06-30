@@ -13,26 +13,26 @@ class CBZInstruction extends Instruction {
         this.setControlSignals(0, 0, 0b01, 1, 0, 0, 0, 0, 0, 0, 0);
     }
 
-    if(cpu) {
+    if(simulator) {
         return {
             aluImm: this.imm11,
             readReg2: this.rt
         };
     }
 
-    id(cpu) {
-        this.opn = cpu.registers.getRegister(this.rt);
+    id(simulator) {
+        this.opn = simulator.registers.getRegister(this.rt);
 
         return {
             readData2: this.opn
         };
     }
     
-    ex(cpu) {
+    ex(simulator) {
         return {
             aluAction: 0b0111,
             aluResult: this.opn,
-            branchPC: this.imm11 + cpu.program.currentInstruction * 4
+            branchPC: this.imm11 + simulator.program.currentInstruction * 4
         };
     }
 }

@@ -13,14 +13,14 @@ class ADRInstruction extends Instruction {
         this.setControlSignals(0, 1, 0b01, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
-    if(cpu) {
+    if(simulator) {
         return {
             aluImm: this.imm11,
             readReg2: this.rt
         };
     }
     
-    ex(cpu) {
+    ex(simulator) {
         return {
             aluAction: 0b0111,
             aluResult: this.imm11

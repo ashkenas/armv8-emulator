@@ -14,7 +14,7 @@ class SUBIInstruction extends Instruction {
         this.setControlSignals(1, 1, 0b10, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
-    if(cpu) {
+    if(simulator) {
         return {
             readReg1: this.rn,
             writeReg: this.rd,
@@ -22,15 +22,15 @@ class SUBIInstruction extends Instruction {
         };
     }
 
-    id(cpu) {
-        this.opn = cpu.registers.getRegister(this.rn);
+    id(simulator) {
+        this.opn = simulator.registers.getRegister(this.rn);
 
         return {
             readData1: this.opn
         };
     }
 
-    ex(cpu) {
+    ex(simulator) {
         this.result = this.opn - this.imm11;
         
         return {
@@ -39,8 +39,8 @@ class SUBIInstruction extends Instruction {
         };
     }
 
-    wb(cpu) {
-        cpu.registers.setRegister(this.rd, this.result);
+    wb(simulator) {
+        simulator.registers.setRegister(this.rd, this.result);
 
         return {
             writeData: this.result

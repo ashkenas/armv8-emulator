@@ -14,7 +14,7 @@ class LDURInstruction extends Instruction {
         this.setControlSignals(0, 1, 0b00, 0, 0, 0, 0, 1, 1, 0, 1);
     }
 
-    if(cpu) {
+    if(simulator) {
         return {
             readReg1: this.rn,
             writeReg: this.rt,
@@ -22,15 +22,15 @@ class LDURInstruction extends Instruction {
         };
     }
 
-    id(cpu) {
-        this.opn = cpu.registers.getRegister(this.rn);
+    id(simulator) {
+        this.opn = simulator.registers.getRegister(this.rn);
 
         return {
             readData1: this.opn
         };
     }
 
-    ex(cpu) {
+    ex(simulator) {
         this.result = this.opn + this.imm11;
         
         return {
@@ -39,16 +39,16 @@ class LDURInstruction extends Instruction {
         };
     }
 
-    mem(cpu) {
-        this.memValue = cpu.memory.readDoubleWord(this.result);
+    mem(simulator) {
+        this.memValue = simulator.memory.readDoubleWord(this.result);
 
         return {
             readDataM: this.memValue
         };
     }
 
-    wb(cpu) {
-        cpu.registers.setRegister(this.rt, this.result);
+    wb(simulator) {
+        simulator.registers.setRegister(this.rt, this.result);
 
         return {
             writeData: this.memValue

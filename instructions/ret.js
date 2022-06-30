@@ -12,21 +12,21 @@ class RETInstruction extends Instruction {
         this.setControlSignals(0, 0, 0b01, 0, 0, 1, 0, 0, 0, 0, 0);
     }
 
-    if(cpu) {
+    if(simulator) {
         return {
             readReg2: this.rt
         };
     }
 
-    id(cpu) {
-        this.opn = cpu.registers.getRegister(this.rt);
+    id(simulator) {
+        this.opn = simulator.registers.getRegister(this.rt);
 
         return {
             readData2: this.opn
         };
     }
     
-    ex(cpu) {
+    ex(simulator) {
         return {
             aluAction: 0b0111,
             aluResult: this.opn

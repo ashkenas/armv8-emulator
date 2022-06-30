@@ -14,7 +14,7 @@ class ADDInstruction extends Instruction {
         this.setControlSignals(1, 0, 0b10, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
-    if(cpu) {
+    if(simulator) {
         return {
             readReg1: this.rn,
             readReg2: this.rm,
@@ -22,9 +22,9 @@ class ADDInstruction extends Instruction {
         };
     }
 
-    id(cpu) {
-        this.opn = cpu.registers.getRegister(this.rn);
-        this.opm = cpu.registers.getRegister(this.rm);
+    id(simulator) {
+        this.opn = simulator.registers.getRegister(this.rn);
+        this.opm = simulator.registers.getRegister(this.rm);
 
         return {
             readData1: this.opn,
@@ -32,7 +32,7 @@ class ADDInstruction extends Instruction {
         };
     }
     
-    ex(cpu) {
+    ex(simulator) {
         this.result = this.opn + this.opm;
         
         return {
@@ -41,8 +41,8 @@ class ADDInstruction extends Instruction {
         };
     }
 
-    wb(cpu) {
-        cpu.registers.setRegister(this.rd, this.result);
+    wb(simulator) {
+        simulator.registers.setRegister(this.rd, this.result);
 
         return {
             writeData: this.result

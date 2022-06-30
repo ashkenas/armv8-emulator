@@ -14,7 +14,7 @@ class STURInstruction extends Instruction {
         this.setControlSignals(0, 1, 0b00, 0, 0, 0, 1, 0, 0, 0, 0);
     }
 
-    if(cpu) {
+    if(simulator) {
         return {
             readReg1: this.rn,
             readReg2: this.rt,
@@ -22,9 +22,9 @@ class STURInstruction extends Instruction {
         };
     }
 
-    id(cpu) {
-        this.opn = cpu.registers.getRegister(this.rn);
-        this.data = cpu.registers.getRegister(this.rt);
+    id(simulator) {
+        this.opn = simulator.registers.getRegister(this.rn);
+        this.data = simulator.registers.getRegister(this.rt);
 
         return {
             readData1: this.opn,
@@ -32,7 +32,7 @@ class STURInstruction extends Instruction {
         };
     }
 
-    ex(cpu) {
+    ex(simulator) {
         this.result = this.opn + this.imm11;
         
         return {
@@ -41,8 +41,8 @@ class STURInstruction extends Instruction {
         };
     }
 
-    mem(cpu) {
-        cpu.memory.writeDoubleWord(this.result, this.data);
+    mem(simulator) {
+        simulator.memory.writeDoubleWord(this.result, this.data);
 
         return {};
     }

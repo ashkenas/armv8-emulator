@@ -14,7 +14,7 @@ class ADDSInstruction extends Instruction {
         this.setControlSignals(1, 0, 0b11, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
-    if(cpu) {
+    if(simulator) {
         return {
             readReg1: this.rn,
             readReg2: this.rm,
@@ -22,9 +22,9 @@ class ADDSInstruction extends Instruction {
         };
     }
 
-    id(cpu) {
-        this.opn = cpu.registers.getRegister(this.rn);
-        this.opm = cpu.registers.getRegister(this.rm);
+    id(simulator) {
+        this.opn = simulator.registers.getRegister(this.rn);
+        this.opm = simulator.registers.getRegister(this.rm);
 
         return {
             readData1: this.opn,
@@ -32,9 +32,9 @@ class ADDSInstruction extends Instruction {
         };
     }
 
-    ex(cpu) {
+    ex(simulator) {
         this.result = this.opn + this.opm;
-        cpu.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
+        simulator.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
         
         return {
             aluAction: 0b1010,
@@ -42,8 +42,8 @@ class ADDSInstruction extends Instruction {
         };
     }
 
-    wb(cpu) {
-        cpu.registers.setRegister(this.rd, this.result);
+    wb(simulator) {
+        simulator.registers.setRegister(this.rd, this.result);
 
         return {
             writeData: this.result

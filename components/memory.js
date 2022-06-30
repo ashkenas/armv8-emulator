@@ -1,22 +1,60 @@
 import React from 'react'
 import ByteArray from '../util/byteArray';
 
+/**
+ * React Component representing a virtual memory space for a process.
+ */
 class Memory extends React.Component {
+    /**
+     * Address of the start of the stack.
+     */
     static MAX_ADDRESS = 0x40000000 - 1;
 
     constructor(props) {
         super(props);
     }
+
+    /**
+     * Write a byte to memory at a specific location.
+     * @param {number} address Byte address
+     * @param {bigint} byte Byte value
+     */
+    writeByte(address, byte) {
+        if (typeof byte !== 'bigint')
+            throw "Only type 'bigint' can be written to memory.";
+
+        if (byte < 0 || byte > 0b11111111n)
+            throw 'Byte value must be within [0, 255].'
+        
+        if (address >= Memory.MAX_ADDRESS)
+            throw 'Tried to write outside virtual memory.';
+
+        if (address < this.bssStartAddress)
+            throw 'Tried to write to read-only memory.';
+
+        if (address <= this.bssEndAddress) {
+            this.program.setByte(address, byte);
+        } else {
+            this.stack.expandTo(Memory.MAX_ADDRESS - address);
+            this.stack.setByte(Memory.MAX_ADDRESS - address, byte)
+        }
+    }
     
+    /**
+     * Write eight bytes to memory, starting at a
+     * specific location.
+     * @param {number} address Start address
+     * @param {bigint} doubleWord Long value
+     */
     writeDoubleWord(address, doubleWord) {
         if (typeof doubleWord !== 'bigint')
-            throw `Attempted to write type '${typeof doubleWord}' instead of a 'bigint'!`;
+            throw "Only type 'bigint' can be written to memory.";
 
         if (address + 7 > Memory.MAX_ADDRESS)
-            throw 'Tried to write above stack!';
+            throw 'Tried to write outside of virtual memory.';
         
         if (address < this.bssStartAddress)
-            throw 'Tried to write below BSS!';
+            throw 'Tried to write to read-only memory.';
 
         // Write to appropriate array (stack/BSS)
         if (address <= this.bssEndAddress) {
@@ -28,12 +66,32 @@ class Memory extends React.Component {
         }
     }
 
+    /**
+     * Read a byte from a specific location in memory.
+     * @param {number} address Byte address
+     * @returns {bigint}
+     */
+    readByte(address) {
+        if (address >= Memory.MAX_ADDRESS || address < 0)
+            throw 'Tried to write outside virtual memory.';
+
+        if (address <= this.bssEndAddress) {
+            return this.program.getByte(address);
+        } else {
+            this.stack.expandTo(Memory.MAX_ADDRESS - address);
+            return this.stack.getByte(Memory.MAX_ADDRESS - address)
+        }
+    }
+
+    /**
+     * Read eight bytes, starting at a
+     * specific location in memory.
+     * @param {number} address Start address
+     * @returns {bigint} Long integer
+     */
     readDoubleWord(address) {
-        if (address + 7 > Memory.MAX_ADDRESS)
-            throw 'Tried to read above stack!';
-        
-        if (address < this.bssStartAddress)
-            throw 'Tried to read below BSS!';
+        if (address + 7 > Memory.MAX_ADDRESS || address < 0)
+            throw 'Tried to read outside virtual memory.';
 
         // Read from appropriate array (stack/BSS)
         if (address <= this.bssEndAddress) {
@@ -45,6 +103,11 @@ class Memory extends React.Component {
         }
     }
 
+    /**
+     * Encodes a program's instructions and initialized
+     * data into the virtual memory space.
+     * @param {Program} program Program to load
+     */
     storeProgram(program) {
         this.program = new ByteArray();
         this.program.expandTo(program.instructions.length * 4 + program.initSize + program.bssSize);

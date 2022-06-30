@@ -10,6 +10,9 @@ class Register extends React.Component {
     }
 
     setValue(value) {
+        if (typeof value !== 'bigint')
+            throw 'Register value must be a bigint!';
+
         this.setState({ value: value });
     }
 
@@ -32,7 +35,7 @@ class Register extends React.Component {
     }
 
     getBit(bit) {
-        return (this.state.value >> bit) & 1;
+        return (this.state.value >> BigInt(bit)) & 1n;
     }
 
     render() {

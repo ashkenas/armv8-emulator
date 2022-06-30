@@ -1,13 +1,13 @@
 /**
  * Convert a BigInt to a hex string broken up by byte.
  * If `data` is not big enough, zeroed bytes will be padded on.
- * @param {BigInt} data Data to convert to hex
- * @param {Number} bitLength Number of bits to convert
- * @returns Hex string representation of `data` to `bitLength` bits
+ * @param {bigint} data Data to convert to hex
+ * @param {number} bitLength Number of bits to convert
+ * @returns {string}
  */
 export function bigIntToHexString(data, bitLength) {
     if (typeof data !== 'bigint')
-        throw 'bigintToHexString: only BigInts are permitted!';
+        throw "bigintToHexString: only 'bigint's are permitted!";
         
     const hex = [];
     for (let i = 0n; (data >> i) > 0; i += 8n)

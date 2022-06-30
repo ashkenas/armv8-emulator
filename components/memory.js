@@ -1,7 +1,8 @@
 import React from 'react'
+import ByteArray from '../util/byteArray';
 
 class Memory extends React.Component {
-    static MAX_ADDRESS = 0x10000000000n;
+    static MAX_ADDRESS = 0x40000000 - 1;
 
     constructor(props) {
         super(props);
@@ -9,78 +10,78 @@ class Memory extends React.Component {
     
     writeDoubleWord(address, doubleWord) {
         if (typeof doubleWord !== 'bigint')
-            throw `Attempted to write '${typeof doubleWord}' instead of a 'BigInt'!`;
-        
-        if (typeof address !== 'bigint')
-            address = BigInt(address);
+            throw `Attempted to write type '${typeof doubleWord}' instead of a 'bigint'!`;
 
-        if (address % 8n !== 0n)
-            throw 'Attempted to write a double word offset from a double word boundary!';
-
-        if (address > Memory.MAX_ADDRESS - 7n)
+        if (address + 7 > Memory.MAX_ADDRESS)
             throw 'Tried to write above stack!';
         
         if (address < this.bssStartAddress)
             throw 'Tried to write below BSS!';
 
         // Write to appropriate array (stack/BSS)
-        if (address < this.bssEndAddress) {
-            this.program[address / 8n] = doubleWord;
+        if (address <= this.bssEndAddress) {
+            // TODO: error if address less than bss end but length takes it into stack
+            this.program.setBytes(address, doubleWord, 8);
         } else {
-            while (address < Memory.MAX_ADDRESS - BigInt(this.stack.length) * 8n)
-                this.stack.push(0n);
-    
-            this.stack[(Memory.MAX_ADDRESS - address) / 8n] = doubleWord;
+            this.stack.expandTo(Memory.MAX_ADDRESS - address);
+            this.stack.setBytes(Memory.MAX_ADDRESS - address, doubleWord, -8)
         }
     }
 
     readDoubleWord(address) {
-        if (typeof address !== 'bigint')
-            address = BigInt(address);
-        
-        if (address % 8n !== 0n)
-            throw 'Attempted to read a double word offset from a double word boundary!';
-
-        if (address > Memory.MAX_ADDRESS - 7n)
+        if (address + 7 > Memory.MAX_ADDRESS)
             throw 'Tried to read above stack!';
         
         if (address < this.bssStartAddress)
             throw 'Tried to read below BSS!';
 
         // Read from appropriate array (stack/BSS)
-        if (address < this.bssEndAddress) {
-            return this.program[address / 8n];
+        if (address <= this.bssEndAddress) {
+            // TODO: error if address less than bss end but length takes it into stack
+            return this.program.getBytes(address, 8);
         } else {
-            while (address < Memory.MAX_ADDRESS - BigInt(this.stack.length) * 8n)
-                this.stack.push(0n);
-    
-            return this.stack[(Memory.MAX_ADDRESS - address) / 8n];
+            this.stack.expandTo(Memory.MAX_ADDRESS - address);
+            return this.stack.getBytes(Memory.MAX_ADDRESS - address, 8);
         }
     }
 
     storeProgram(program) {
-        this.program = new BigUint64Array();
+        this.program = new ByteArray();
+        this.program.expandTo(program.instructions.length * 4 + program.initSize + program.bssSize);
 
-        // Turn 32 bit encodings into 64 bit blocks
-        let i = 0;
-        for(; i < program.length - (program.length % 2); i += 2)
-            this.program.push((BigInt(program[i + 1].encoding) << 32) + BigInt(program[i].encoding));
+        for(let i = 0; i < program.instructions.length; i++)
+            this.program.setBytes(i, BigInt(program.instructions[i + 1].encoding), 4);
         
-        if (program.length % 2)
-            this.program.push(BigInt(program[program.length - 1].encoding));
+        for(const {value, length, address} of program.initData)
+            this.program.setBytes(address, value, length);
         
-        this.bssStartAddress = BigInt(this.program.length * 8);
-        this.bssEndAddress = this.bssStartAddress + BigInt(program.bssSize);
-        this.bssEndAddress += 7n - (this.bssEndAddress % 8n); // Align BSS on double word boundary
+        this.bssStartAddress = BigInt(program.instructions.length * 4 + program.initSize);
+        this.bssEndAddress = this.bssStartAddress + BigInt(program.bssSize) - 1;
 
-        while (this.program.length * 8 < this.bssEndAddress)
-            this.program.push(0n);
-
-        this.stack = BigUint64Array.of(0n);
+        this.stack = new ByteArray();
+        this.stack.expandTo(8);
     }
 
     render() {
-        return <></>;
+        if (!this.program)
+            return <></>;
+
+        // Count hex digits in max address
+        let digits = -1;
+        while ((this.MAX_ADDRESS >> BigInt((digits + 1) * 8)) > 0)
+            digits += 1;
+        
+        return <>{[...this.program].map((val, i) =>
+            <div key={`block${i}`} className={styles.dword}>
+                {(i*8).toString(16).padStart(digits, '0')}:
+                <span className={styles.value}>{bigIntToHexString(val, 64)}</span>
+            </div>
+        ).concat([...this.stack].map((val, i) =>
+            <div key={`block${i}`} className={styles.dword}>
+                {(this.MAX_ADDRESS - BigInt(i*8)).toString(16).padStart(digits, '0')}:
+                <span className={styles.value}>{bigIntToHexString(val, 64)}</span>
+            </div>
+        ))}</>;
     }
 }
 

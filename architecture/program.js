@@ -61,7 +61,7 @@ export default class Program {
      * @param {string} label Label text
      */
     addLabel(label) {
-        this.labels[label] = this.instructions.length * 4;
+        this.labels[label] = this.staging.length * 4;
     }
 
     /**
@@ -82,11 +82,15 @@ export default class Program {
             nextAddress += this.uninitData[label];
         }
 
-        for(const staged of this.staging) {
-            staged.args = staged.args.map((arg) => {
+        for(let i = 0; i < this.staging.length; i++) {
+            this.staging[i].args = this.staging[i].args.map((arg) => {
                 if (typeof arg === 'string') {
-                    if (this.labels[arg])
-                        return this.labels[arg];
+                    if (this.labels[arg]) {
+                        if (this.initData[arg] || this.uninitData[arg]) // data value, use address
+                            return BigInt(this.labels[arg]);
+                        else // branch label, compute offset
+                            return BigInt(this.labels[arg] - (i * 4));
+                    }
                     else
                         throw `Parsing Error: Label '${arg}' not found.`;
                 }
@@ -94,7 +98,7 @@ export default class Program {
                 return arg;
             });
 
-            this.instructions.push(new (staged.type)(...staged.args));
+            this.instructions.push(new (this.staging[i].type)(...this.staging[i].args));
         }
     }
 

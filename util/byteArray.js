@@ -81,14 +81,13 @@ export default class ByteArray {
      * @returns {bigint}
      */
     getBytes(start, length) {
-        if ((length > 0 && (start < 0 || start + length >= this.data.length))
-            || (length < 0 && (start >= this.data.length || start + length < 0)))
+        if ((length > 0 && (start < 0 || start + length - 1 >= this.data.length))
+            || (length < 0 && (start >= this.data.length || start + length + 1 < 0)))
             throw 'ByteArray.getBytes: index out of bounds';
 
         let value = 0n;
-        for (let i = start + length + (length > 0 ? -1 : 1); (length > 0) ? (i >= start) : (i <= start); (length > 0 ? i-- : i++)) {
+        for (let i = start + length + (length > 0 ? -1 : 1); (length > 0) ? (i >= start) : (i <= start); (length > 0 ? i-- : i++))
             value = (value << 8n) | this.data[i];
-        }
 
         return value;
     }

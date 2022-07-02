@@ -42,7 +42,7 @@ class STURInstruction extends Instruction {
     }
 
     mem(simulator) {
-        simulator.memory.writeDoubleWord(this.result, this.data);
+        simulator.memory.writeDoubleWord(Number(this.result), this.data);
 
         return {};
     }

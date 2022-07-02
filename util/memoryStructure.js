@@ -22,18 +22,18 @@ import ByteArray from "./byteArray";
         for(let i = 0; i < program.instructions.length; i++)
             this.text.setBytes(i*4, BigInt(program.instructions[i].encoding), 4);
 
-        for(const data of Object.keys(program.initData)) {
-            const {value, length, address} = data;
+        for(const key of Object.keys(program.initData)) {
+            const {value, length, address} = program.initData[key];
             this.text.setBytes(address, value, length);
         }
         
-        this.bssStartAddress = BigInt(program.instructions.length * 4 + program.initSize);
+        this.bssStartAddress = BigInt((program.instructions.length * 4) + program.initSize);
         this.bssEndAddress = this.bssStartAddress + BigInt(program.bssSize) - 1n;
 
         this.stack = new ByteArray();
         this.stack.expandTo(8);
 
-        this.simulator.state.memory = this;
+        this.simulator.setState({ memory: this });
     }
 
     /**
@@ -48,7 +48,7 @@ import ByteArray from "./byteArray";
         if (byte < 0 || byte > 0b11111111n)
             throw 'Byte value must be within [0, 255].'
         
-        if (address >= Memory.MAX_ADDRESS)
+        if (address >= MemoryStructure.MAX_ADDRESS)
             throw 'Tried to write outside virtual memory.';
 
         if (address < this.bssStartAddress)
@@ -57,8 +57,8 @@ import ByteArray from "./byteArray";
         if (address <= this.bssEndAddress) {
             this.text.setByte(address, byte);
         } else {
-            this.stack.expandTo(Memory.MAX_ADDRESS - address);
-            this.stack.setByte(Memory.MAX_ADDRESS - address, byte)
+            this.stack.expandTo(MemoryStructure.MAX_ADDRESS - address);
+            this.stack.setByte(MemoryStructure.MAX_ADDRESS - address, byte)
         }
 
         this.simulator.setState({ memory: this });
@@ -74,7 +74,7 @@ import ByteArray from "./byteArray";
         if (typeof doubleWord !== 'bigint')
             throw "Only type 'bigint' can be written to memory.";
 
-        if (address + 7 > Memory.MAX_ADDRESS)
+        if (address + 7 > MemoryStructure.MAX_ADDRESS)
             throw 'Tried to write outside of virtual memory.';
         
         if (address < this.bssStartAddress)
@@ -85,8 +85,8 @@ import ByteArray from "./byteArray";
             // TODO: error if address less than bss end but length takes it into stack
             this.text.setBytes(address, doubleWord, 8);
         } else {
-            this.stack.expandTo(Memory.MAX_ADDRESS - address);
-            this.stack.setBytes(Memory.MAX_ADDRESS - address, doubleWord, -8)
+            this.stack.expandTo(MemoryStructure.MAX_ADDRESS - address);
+            this.stack.setBytes(MemoryStructure.MAX_ADDRESS - address, doubleWord, -8)
         }
         
         this.simulator.setState({ memory: this });
@@ -98,14 +98,14 @@ import ByteArray from "./byteArray";
      * @returns {bigint}
      */
     readByte(address) {
-        if (address >= Memory.MAX_ADDRESS || address < 0)
+        if (address >= MemoryStructure.MAX_ADDRESS || address < 0)
             throw 'Tried to write outside virtual memory.';
 
         if (address <= this.bssEndAddress) {
             return this.text.getByte(address);
         } else {
-            this.stack.expandTo(Memory.MAX_ADDRESS - address);
-            return this.stack.getByte(Memory.MAX_ADDRESS - address)
+            this.stack.expandTo(MemoryStructure.MAX_ADDRESS - address);
+            return this.stack.getByte(MemoryStructure.MAX_ADDRESS - address)
         }
     }
 
@@ -116,7 +116,7 @@ import ByteArray from "./byteArray";
      * @returns {bigint} Long integer
      */
     readDoubleWord(address) {
-        if (address + 7 > Memory.MAX_ADDRESS || address < 0)
+        if (address + 7 > MemoryStructure.MAX_ADDRESS || address < 0)
             throw 'Tried to read outside virtual memory.';
 
         // Read from appropriate array (stack/BSS)
@@ -124,8 +124,8 @@ import ByteArray from "./byteArray";
             // TODO: error if address less than bss end but length takes it into stack
             return this.text.getBytes(address, 8);
         } else {
-            this.stack.expandTo(Memory.MAX_ADDRESS - address);
-            return this.stack.getBytes(Memory.MAX_ADDRESS - address, 8);
+            this.stack.expandTo(MemoryStructure.MAX_ADDRESS - address);
+            return this.stack.getBytes(MemoryStructure.MAX_ADDRESS - address, 8);
         }
     }
 }

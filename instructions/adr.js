@@ -26,6 +26,14 @@ class ADRInstruction extends Instruction {
             aluResult: this.imm11
         };
     }
+
+    wb(simulator) {
+        simulator.registers.setRegister(this.rt, this.imm11);
+
+        return {
+            writeData: this.imm11
+        };
+    }
 }
 
 export default ADRInstruction;

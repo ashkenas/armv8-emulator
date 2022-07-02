@@ -40,7 +40,7 @@ class LDURInstruction extends Instruction {
     }
 
     mem(simulator) {
-        this.memValue = simulator.memory.readDoubleWord(this.result);
+        this.memValue = simulator.memory.readDoubleWord(Number(this.result));
 
         return {
             readDataM: this.memValue
@@ -48,7 +48,7 @@ class LDURInstruction extends Instruction {
     }
 
     wb(simulator) {
-        simulator.registers.setRegister(this.rt, this.result);
+        simulator.registers.setRegister(this.rt, this.memValue);
 
         return {
             writeData: this.memValue

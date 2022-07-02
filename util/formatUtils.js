@@ -18,3 +18,18 @@ export function bigIntToHexString(data, bitLength) {
 
     return hex.join(' ');
 }
+
+/**
+ * Converts an array of bigint's into a single
+ * large bigint.
+ * @param {bigint[]} data Values to concatenate
+ * @returns {bigint}
+ */
+export function bigIntArrayToBigInt(data) {
+    let result = 0n;
+
+    for(let i = data.length - 1; i >= 0; i--)
+        result = (result << 64n) + data[i];
+
+    return result;
+}

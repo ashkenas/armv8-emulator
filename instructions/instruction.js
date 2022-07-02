@@ -60,7 +60,7 @@ export class Instruction {
             case 0:
                 flags = this.if ? this.if(simulator) : {};
 
-                this.nextPC = simulator.program.currentInstruction * 4 + 4;
+                this.nextPC = (simulator.program.currentInstruction * 4) + 4;
                 flags.nextPC = this.nextPC;
 
                 break;
@@ -79,7 +79,7 @@ export class Instruction {
                 flags.aluInputB = this.controlSignals.aluSrc ? this.imm11 : this.readData2;
 
                 if (flags.aluAction)
-                    flags.z = +!this.aluResult;
+                    flags.z = flags.aluResult == 0;
 
                 if (this.controlSignals.pbr)
                     flags.newPC = this.aluResult
@@ -97,8 +97,12 @@ export class Instruction {
                 throw 'Instruction execution complete, no more cycles to tick.';
         }
 
+        const complete = this.cycle === 5;
+        if (complete)
+            this.cycle = 0;
+
         return {
-            instructionComplete: this.cycle >= 5,
+            instructionComplete: complete,
             flags: flags
         };
     }

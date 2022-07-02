@@ -32,7 +32,7 @@ class CBZInstruction extends Instruction {
         return {
             aluAction: 0b0111,
             aluResult: this.opn,
-            branchPC: this.imm11 + simulator.program.currentInstruction * 4
+            branchPC: Number(this.imm11) + (simulator.program.currentInstruction * 4)
         };
     }
 }

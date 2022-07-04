@@ -1,0 +1,12 @@
+.blocks {
+    display: flex;
+    flex-direction: column;
+}
+
+.block {
+    margin: 0;
+}
+
+.block .value {
+
+}

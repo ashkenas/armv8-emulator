@@ -33,7 +33,7 @@ import ByteArray from "./byteArray";
         this.stack = new ByteArray();
         this.stack.expandTo(8);
 
-        this.simulator.setState({ memory: this });
+        this.simulator.setState({ memory: { text: this.text.data, stack: this.stack.data } });
     }
 
     /**
@@ -61,7 +61,7 @@ import ByteArray from "./byteArray";
             this.stack.setByte(MemoryStructure.MAX_ADDRESS - address, byte)
         }
 
-        this.simulator.setState({ memory: this });
+        this.simulator.setState({ memory: { text: this.text.data, stack: this.stack.data } });
     }
     
     /**
@@ -89,7 +89,7 @@ import ByteArray from "./byteArray";
             this.stack.setBytes(MemoryStructure.MAX_ADDRESS - address, doubleWord, -8)
         }
         
-        this.simulator.setState({ memory: this });
+        this.simulator.setState({ memory: { text: this.text.data, stack: this.stack.data } });
     }
 
     /**

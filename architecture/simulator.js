@@ -25,7 +25,10 @@ export default class Simulator extends React.Component {
 
         this.state = {
             registers: [],
-            memory: null
+            memory: {
+                text: null,
+                stack: null
+            }
         }
 
         this.registers = new RegisterStructure(this);

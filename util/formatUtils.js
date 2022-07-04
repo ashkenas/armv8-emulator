@@ -23,13 +23,14 @@ export function bigIntToHexString(data, bitLength) {
  * Converts an array of bigint's into a single
  * large bigint.
  * @param {bigint[]} data Values to concatenate
+ * @param {bigint} elemSize Size of each element in bits
  * @returns {bigint}
  */
-export function bigIntArrayToBigInt(data) {
+export function bigIntArrayToBigInt(data, elemSize = 64n) {
     let result = 0n;
 
     for(let i = data.length - 1; i >= 0; i--)
-        result = (result << 64n) + data[i];
+        result = (result << elemSize) + data[i];
 
     return result;
 }

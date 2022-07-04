@@ -118,7 +118,10 @@ export default class Program {
 
         if (state.instructionComplete) {
             this.currentInstruction = this.nextInstruction;
-            simulator.setState({ encoding: this.instructions[this.currentInstruction]?.encodingParts });
+            simulator.setState({
+                encoding: this.instructions[this.currentInstruction]?.encodingParts,
+                controlSignals: this.instructions[this.currentInstruction]?.controlSignals
+            });
         }
 
         // TODO: Push state to data path diagram {@ceiphr, expose function?}

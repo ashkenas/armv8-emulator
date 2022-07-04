@@ -18,6 +18,7 @@ import BInstruction from "../instructions/b";
 import LDURInstruction from "../instructions/ldur";
 import NOPInstruction from "../instructions/nop";
 import { bigIntArrayToBigInt } from "../util/formatUtils";
+import ControlSignals from "../components/controlSignals";
 
 export default class Simulator extends React.Component {
     constructor(props) {
@@ -29,7 +30,8 @@ export default class Simulator extends React.Component {
                 text: null,
                 stack: null
             },
-            encoding: null
+            encoding: null,
+            controlSignals: null
         }
 
         this.registers = new RegisterStructure(this);
@@ -62,7 +64,10 @@ export default class Simulator extends React.Component {
         this.program = program;
         this.memory = new MemoryStructure(program, this);
         this.registers = new RegisterStructure(this);
-        this.setState({ encoding: this.program.instructions[this.program.currentInstruction].encodingParts });
+        this.setState({
+            encoding: this.program.instructions[this.program.currentInstruction].encodingParts,
+            controlSignals: this.program.instructions[this.program.currentInstruction].controlSignals
+        });
     }
 
     tick() {
@@ -102,6 +107,7 @@ export default class Simulator extends React.Component {
 
                     <div className={styles.card}>
                         <h2>Control Signals</h2>
+                        <ControlSignals signals={this.state.controlSignals} />
                     </div>
 
                     <div className={`${styles.card} ${styles.expand}`}>

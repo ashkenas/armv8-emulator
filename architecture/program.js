@@ -113,14 +113,19 @@ export default class Program {
 
         const state = this.instructions[this.currentInstruction].tick(simulator);
 
+        if (this.instructions[this.currentInstruction].cycle == 2) {
+            simulator.setState({
+                controlSignals: this.instructions[this.currentInstruction].controlSignals
+            });
+        }
+
         if (state.flags.newPC)
             this.nextInstruction = state.flags.newPC / 4;
 
         if (state.instructionComplete) {
             this.currentInstruction = this.nextInstruction;
             simulator.setState({
-                encoding: this.instructions[this.currentInstruction]?.encodingParts,
-                controlSignals: this.instructions[this.currentInstruction]?.controlSignals
+                encoding: this.instructions[this.currentInstruction]?.encodingParts
             });
         }
 

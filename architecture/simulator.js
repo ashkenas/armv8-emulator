@@ -65,8 +65,7 @@ export default class Simulator extends React.Component {
         this.memory = new MemoryStructure(program, this);
         this.registers = new RegisterStructure(this);
         this.setState({
-            encoding: this.program.instructions[this.program.currentInstruction].encodingParts,
-            controlSignals: this.program.instructions[this.program.currentInstruction].controlSignals
+            encoding: this.program.instructions[this.program.currentInstruction].encodingParts
         });
     }
 

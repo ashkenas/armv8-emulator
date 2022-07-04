@@ -104,20 +104,22 @@ export default class Program {
 
     /**
      * Run one cycle of the current instruction.
-     * @param {Simulator} cpu The CPU to run the instruction on.
+     * @param {Simulator} simulator The simulator to run the instruction on.
      * @returns {boolean} If the program has concluded.
      */
-    tick(cpu) {
+    tick(simulator) {
         if (this.currentInstruction >= this.instructions.length)
             return true;
 
-        const state = this.instructions[this.currentInstruction].tick(cpu);
+        const state = this.instructions[this.currentInstruction].tick(simulator);
 
         if (state.flags.newPC)
             this.nextInstruction = state.flags.newPC / 4;
 
-        if (state.instructionComplete)
+        if (state.instructionComplete) {
             this.currentInstruction = this.nextInstruction;
+            simulator.setState({ encoding: this.instructions[this.currentInstruction]?.encodingParts });
+        }
 
         // TODO: Push state to data path diagram {@ceiphr, expose function?}
 

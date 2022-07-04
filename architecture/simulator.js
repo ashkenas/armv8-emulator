@@ -28,7 +28,8 @@ export default class Simulator extends React.Component {
             memory: {
                 text: null,
                 stack: null
-            }
+            },
+            encoding: null
         }
 
         this.registers = new RegisterStructure(this);
@@ -61,6 +62,7 @@ export default class Simulator extends React.Component {
         this.program = program;
         this.memory = new MemoryStructure(program, this);
         this.registers = new RegisterStructure(this);
+        this.setState({ encoding: this.program.instructions[this.program.currentInstruction].encodingParts });
     }
 
     tick() {
@@ -88,14 +90,7 @@ export default class Simulator extends React.Component {
 
                     <div className={styles.card}>
                         <h2>Encoding</h2>
-                        <Encoding
-                            parts={[
-                                ["opcode", 0b10010001000, 11, "Op-code"],
-                                ["immediate", 4, 11, "Immediate"],
-                                ["register", 31, 5, "Rd"],
-                                ["register", 1, 5, "Rn"]
-                            ]}
-                        />
+                        <Encoding parts={this.state.encoding} />
                     </div>
                 </div>
 

@@ -31,7 +31,6 @@ class Memory extends React.Component {
         }
 
         const text = [];
-        console.log(this.props.memory.text.length);
         for(let i = 0; i < this.props.memory.text.length; i += 8) {
             text.unshift(
                 <div key={`block${i}`} className={styles.block}>

@@ -7,11 +7,18 @@ class Encoding extends React.Component {
     }
 
     render() {
-        return (<p>{this.props.parts.map((part, i) => {
-            return (<span key={`encodingPart${i}`} className={`${styles.encoding} ${styles[part[0]]}`} data-label={part[3]}>
-                {part[1].toString(2).padStart(part[2], '0')}
-            </span>);
-        })}</p>);
+        if (!this.props.parts)
+            return <></>;
+
+        return (
+            <p>
+                {this.props.parts.map((part, i) => 
+                    <span key={`encodingPart${i}`} className={`${styles.encoding} ${styles[part.type]}`} data-label={part.tooltip}>
+                        {part.value.toString(2).padStart(part.length, '0')}
+                    </span>
+                )}
+            </p>
+        );
     }
 }
 

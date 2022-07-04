@@ -27,22 +27,90 @@ export class Instruction {
     }
 
     encodeInstruction() {
+        this.encodingParts = [];
         this.encoding = BigInt(this.opcode) << 21n;
+        this.encodingParts.push({
+            type: 'opcode',
+            value: this.opcode,
+            length: 11,
+            tooltip: 'Op-code'
+        });
 
-        if (this.rm)
+        if (this.rm !== undefined) {
             this.encoding += BigInt(this.rm) << 15n;
-        
-        if (this.rn)
-            this.encoding += BigInt(this.rn) << 5n;
-        
-        if (this.rd)
-            this.encoding += BigInt(this.rd);
-        
-        if (this.rt)
-            this.encoding += BigInt(this.rt);
-        
-        if (this.imm11)
+            this.encodingParts.push({
+                type: 'register',
+                value: this.rm,
+                length: 5,
+                tooltip: 'Rm'
+            });
+        } else if (this.imm11 === undefined) {
+            this.encodingParts.push({
+                type: 'none',
+                value: 0,
+                length: 11,
+                tooltip: 'Insignificant'
+            });
+        }
+
+        if (this.imm11 !== undefined) {
             this.encoding += this.imm11 << 10n;
+            this.encodingParts.push({
+                type: 'immediate',
+                value: Number(this.imm11),
+                length: 11,
+                tooltip: 'Immediate'
+            });
+        } else if (this.rm !== undefined) {
+            this.encodingParts.push({
+                type: 'none',
+                value: 0,
+                length: 6,
+                tooltip: 'Insignificant'
+            });
+        }
+        
+        if (this.rn !== undefined) {
+            this.encoding += BigInt(this.rn) << 5n;
+            this.encodingParts.push({
+                type: 'register',
+                value: this.rn,
+                length: 5,
+                tooltip: 'Rn'
+            });
+        } else {
+            this.encodingParts.push({
+                type: 'none',
+                value: 0,
+                length: 5,
+                tooltip: 'Insignificant'
+            });
+        }
+
+        if (this.rd !== undefined) {
+            this.encoding += BigInt(this.rd);
+            this.encodingParts.push({
+                type: 'register',
+                value: this.rd,
+                length: 5,
+                tooltip: 'Rd'
+            });
+        } else if (this.rt !== undefined) {
+            this.encoding += BigInt(this.rt);
+            this.encodingParts.push({
+                type: 'register',
+                value: this.rt,
+                length: 5,
+                tooltip: 'Rr'
+            });
+        } else {
+            this.encodingParts.push({
+                type: 'none',
+                value: 0,
+                length: 5,
+                tooltip: 'Insignificant'
+            });
+        }
     }
 
     setControlSignals(...signals) {

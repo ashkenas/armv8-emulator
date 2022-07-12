@@ -17,7 +17,7 @@ class Register extends React.Component {
         if (typeof bit !== 'bigint')
             bit = BigInt(bit);
         
-        const mask = (2n ** 65n) - 1n - (2n ** bit);
+        const mask = (1n << 65n) - 1n - (1n << bit);
         this.setValue((this.getValue() & mask) | (value << bit))
     }
 
@@ -30,7 +30,7 @@ class Register extends React.Component {
             <div className={styles.register}>
                 {this.props.registerName}:
                 <span className={styles.value}>
-                    {bigIntToHexString(this.props.value, 64)}
+                    {bigIntToHexString(this.props.value < 0 ? (1n << 64n) + this.props.value : this.props.value, 64)}
                 </span>
             </div>
         );

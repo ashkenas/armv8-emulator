@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../styles/Encoding.module.css';
+import BinaryNumber from './binaryNumber';
 
 class Encoding extends React.Component {
     constructor(props) {
@@ -14,7 +15,7 @@ class Encoding extends React.Component {
             <p>
                 {this.props.parts.map((part, i) => 
                     <span key={`encodingPart${i}`} className={`${styles.encoding} ${styles[part.type]}`} data-label={part.tooltip}>
-                        {part.value.toString(2).padStart(part.length, '0')}
+                        <BinaryNumber value={part.value} length={part.length} />
                     </span>
                 )}
             </p>

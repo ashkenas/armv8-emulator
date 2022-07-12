@@ -25,7 +25,7 @@ class Memory extends React.Component {
             stack.push(
                 <div key={`block${i}`} className={styles.block}>
                     0x{(MemoryStructure.MAX_ADDRESS - (i + 7)).toString(16).padStart(digits, '0')}:
-                    <span className={styles.value}>{bigIntToHexString(bigIntArrayToBigInt(this.props.memory.text.slice(i, i + 8).reverse(), 8n), 64)}</span>
+                    <span className={styles.value}>{bigIntToHexString(bigIntArrayToBigInt(this.props.memory.stack.slice(i, i + 8).reverse(), 8n), 64)}</span>
                 </div>
             );
         }

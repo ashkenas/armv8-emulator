@@ -1,12 +1,33 @@
-.blocks {
-    display: flex;
-    flex-direction: column;
+table.memory {
+    border-collapse: collapse;
 }
 
-.block {
-    margin: 0;
+tr.block {
+    font-family: 'Courier New', Courier, monospace;
 }
 
-.block .value {
+th.header, tr.spacer > td {
+    text-align: center;
+}
 
+tr.spacer > td:last-child {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+tr.block td.addr {
+    padding-right: 6px;
+}
+
+tr.block:first-child td.value {
+    border-top: 1px solid black;
+}
+
+tr.block:last-child td.value {
+    border-bottom: 1px solid black;
+}
+
+tr.block td.value {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }

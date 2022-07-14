@@ -23,31 +23,40 @@ class Memory extends React.Component {
         const stack = [];
         for(let i = 0; i < this.props.memory.stack.length / 8; i += 8) {
             stack.push(
-                <div key={`block${i}`} className={styles.block}>
-                    0x{(MemoryStructure.MAX_ADDRESS - (i + 7)).toString(16).padStart(digits, '0')}:
-                    <span className={styles.value}>{bigIntToHexString(bigIntArrayToBigInt(this.props.memory.stack.slice(i, i + 8).reverse(), 8n), 64)}</span>
-                </div>
+                <tr key={`block${i}`} className={styles.block}>
+                    <td className={styles.addr}>0x{(MemoryStructure.MAX_ADDRESS - (i + 7)).toString(16).padStart(digits, '0')}</td>
+                    <td className={styles.value}>{bigIntToHexString(bigIntArrayToBigInt(this.props.memory.stack.slice(i, i + 8).reverse(), 8n), 64)}</td>
+                </tr>
             );
         }
 
         const text = [];
         for(let i = 0; i < this.props.memory.text.length; i += 8) {
             text.unshift(
-                <div key={`block${i}`} className={styles.block}>
-                    0x{(i).toString(16).padStart(digits, '0')}:
-                    <span className={styles.value}>{bigIntToHexString(bigIntArrayToBigInt(this.props.memory.text.slice(i, i + 8), 8n), 64)}</span>
-                </div>
+                <tr key={`block${i}`} className={styles.block}>
+                    <td className={styles.addr}>0x{(i).toString(16).padStart(digits, '0')}</td>
+                    <td className={styles.value}>{bigIntToHexString(bigIntArrayToBigInt(this.props.memory.text.slice(i, i + 8), 8n), 64)}</td>
+                </tr>
             );
         }
             
         
-        return (<>
-            <div className={styles.blocks}>
-                {stack}
-                <div className={styles.separator}></div>
-                {text}
-            </div>
-        </>);
+        return (
+            <table className={styles.memory}>
+                <thead>
+                    <th className={styles.header}>Address</th>
+                    <th className={styles.header}>Value</th>
+                </thead>
+                <tbody>
+                    {stack}
+                    <tr className={styles.spacer}>
+                        <td>⋮</td>
+                        <td>⋮</td>
+                    </tr>
+                    {text}
+                </tbody>
+            </table>
+        );
     }
 }
 

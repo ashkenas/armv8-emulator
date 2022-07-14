@@ -1,5 +1,5 @@
 # ARM-LIVE - a really dope ARM visualizer
-Coming soon...
+Live version: https://arm-live-sit.vercel.app
 
 ## Building and running [development only]
 ### First time setup

@@ -30,6 +30,7 @@ export default class Simulator extends React.Component {
                 text: null,
                 stack: null
             },
+            wires: {},
             encoding: null,
             controlSignals: null
         }
@@ -118,7 +119,7 @@ export default class Simulator extends React.Component {
                 <div className={styles.column} style={{ flexGrow: 2 }}>
                     <div className={styles.card}>
                         <h2>Datapath</h2>
-                        <Datapath />
+                        <Datapath wires={this.state.wires} />
                     </div>
                 </div>
             </div>

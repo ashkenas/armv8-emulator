@@ -129,6 +129,8 @@ export default class Program {
             });
         }
 
+        simulator.setState({ wires: Object.assign(simulator.state.wires, state) });
+
         // TODO: Push state to data path diagram {@ceiphr, expose function?}
 
         return false;

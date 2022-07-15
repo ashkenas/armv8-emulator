@@ -108,14 +108,16 @@ export default class Simulator extends React.Component {
                         <Registers values={this.state.registers} />
                     </div>
 
-                    <div className={styles.card}>
-                        <h2>Control Signals</h2>
-                        <ControlSignals signals={this.state.controlSignals} />
-                    </div>
+                    <div className={styles.row}>
+                        <div className={styles.card}>
+                            <h2>Control Signals</h2>
+                            <ControlSignals signals={this.state.controlSignals} />
+                        </div>
 
-                    <div className={`${styles.card} ${styles.expand}`}>
-                        <h2>Memory</h2>
-                        <Memory memory={this.state.memory} />
+                        <div className={`${styles.card} ${styles.expand}`}>
+                            <h2>Memory</h2>
+                            <Memory memory={this.state.memory} />
+                        </div>
                     </div>
                 </div>
 

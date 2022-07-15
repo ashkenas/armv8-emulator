@@ -10,6 +10,13 @@
     height: 100%;
 }
 
+.row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex: 1;
+}
+
 .code {
     background: #fafafa;
     border-radius: 5px;
@@ -28,6 +35,8 @@
 }
 
 .card {
+    display: flex;
+    flex-direction: column;
     margin: 1rem;
     padding: 1.5rem;
     text-align: left;
@@ -41,7 +50,7 @@
 }
 
 .card.expand {
-    height: -webkit-fill-available;
+    flex-grow: 1;
 }
 
 .card h2 {

@@ -1,4 +1,5 @@
 import React from 'react';
+import ScrollContent from './scrollContent';
 
 class ControlSignals extends React.Component {
     constructor(props) {
@@ -10,11 +11,11 @@ class ControlSignals extends React.Component {
             return <></>;
 
         return (
-            <p>
+            <ScrollContent>
                 {Object.keys(this.props.signals).map((signal) => 
-                    <span key={signal}>{signal}: {this.props.signals[signal]}</span>
+                    <div key={signal}>{signal}: {this.props.signals[signal]}</div>
                 )}
-            </p>
+            </ScrollContent>
         );
     }
 }

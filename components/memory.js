@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../styles/Memory.module.css';
 import MemoryStructure from "../util/memoryStructure";
+import ScrollContent from "../components/scrollContent";
 import { bigIntArrayToBigInt, bigIntToHexString } from '../util/formatUtils';
 
 /**
@@ -42,22 +43,24 @@ class Memory extends React.Component {
             
         
         return (
-            <table className={styles.memory}>
-                <thead>
-                    <tr>
-                        <th className={styles.header}>Address</th>
-                        <th className={styles.header}>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {stack}
-                    <tr className={styles.spacer}>
-                        <td>⋮</td>
-                        <td>⋮</td>
-                    </tr>
-                    {text}
-                </tbody>
-            </table>
+            <ScrollContent>
+                <table className={styles.memory}>
+                    <thead>
+                        <tr>
+                            <th className={styles.header}>Address</th>
+                            <th className={styles.header}>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {stack}
+                        <tr className={styles.spacer}>
+                            <td>⋮</td>
+                            <td>⋮</td>
+                        </tr>
+                        {text}
+                    </tbody>
+                </table>
+            </ScrollContent>
         );
     }
 }

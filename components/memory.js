@@ -25,7 +25,7 @@ class Memory extends React.Component {
         for(let i = 0; i < this.props.memory.stack.length / 8; i += 8) {
             stack.push(
                 <tr key={`block${i}`} className={styles.block}>
-                    <td className={styles.addr}>0x{(MemoryStructure.MAX_ADDRESS - (i + 7)).toString(16).padStart(digits, '0')}</td>
+                    <td className={styles.addr}>{(MemoryStructure.MAX_ADDRESS - (i + 7)).toString(16).padStart(digits, '0')}<sub>16</sub></td>
                     <td className={styles.value}>{bigIntToHexString(bigIntArrayToBigInt(this.props.memory.stack.slice(i, i + 8).reverse(), 8n), 64)}</td>
                 </tr>
             );
@@ -35,7 +35,7 @@ class Memory extends React.Component {
         for(let i = 0; i < this.props.memory.text.length; i += 8) {
             text.unshift(
                 <tr key={`block${i}`} className={styles.block}>
-                    <td className={styles.addr}>0x{(i).toString(16).padStart(digits, '0')}</td>
+                    <td className={styles.addr}>{(i).toString(16).padStart(digits, '0')}<sub>16</sub></td>
                     <td className={styles.value}>{bigIntToHexString(bigIntArrayToBigInt(this.props.memory.text.slice(i, i + 8), 8n), 64)}</td>
                 </tr>
             );

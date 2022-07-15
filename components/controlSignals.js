@@ -13,7 +13,10 @@ class ControlSignals extends React.Component {
         return (
             <ScrollContent>
                 {Object.keys(this.props.signals).map((signal) => 
-                    <div key={signal}>{signal}: {this.props.signals[signal]}</div>
+                    <div key={signal}>
+                        {signal.toLowerCase() === signal ? signal.toUpperCase() : signal[0].toUpperCase() + signal.substring(1)}:&nbsp;
+                        {this.props.signals[signal].toString(2).padStart('0', signal === 'aluOp' ? 2 : 1)}<sub>2</sub>
+                    </div>
                 )}
             </ScrollContent>
         );

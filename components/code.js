@@ -1,6 +1,6 @@
 import React from 'react';
 import hljs from 'highlight.js/lib/core';
-import armasm from 'highlight.js/lib/languages/armasm';
+import armasm from '../util/langdecl';
 import styles from '../styles/Code.module.css';
 import "highlight.js/styles/default.css";
 
@@ -28,6 +28,7 @@ class Code extends React.Component {
     }
 
     componentDidMount() {
+        console.log(armasm(hljs));
         hljs.highlightElement(this.codeRef.current);
     }
     
@@ -59,9 +60,9 @@ loop_end:
     svc 0             // exit
 .data
 array:
-    .double 7, 5, 4, 8, 2, 9, 1, 3, 10, 6
+    .dword 7, 5, 4, 8, 2, 9, 1, 3, 10, 6
 length:
-    .double 10`}
+    .dword 10`}
                 </code>
             </pre>
         );

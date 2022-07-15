@@ -1,5 +1,5 @@
 import Program from "./program";
-import { Instruction, ArgumentType } from "./instruction";
+import { ArgumentType } from "./instruction";
 
 export default class Parse {
     constructor(text){
@@ -42,7 +42,7 @@ export default class Parse {
     mov x9, #0"
     */
     processText(){
-        this.text = this.text.replace(/\n{2,}/g, '\n');   //delete all free lines
+        // this.text = this.text.replace(/\n{2,}/g, '\n');   //delete all free lines
         this.text = this.text.trim();
         this.text = this.text.replaceAll(',', ', ');
         var progArr = this.text.split(/\n/);
@@ -55,16 +55,16 @@ export default class Parse {
      * Loops over program array, adds lables to lable dict, parses .data and .bss
      */
     processProgram(){
-        var program_array = this.text.split(/\n/); 
-        var program_len = program_array.length;
+        this.program_array = this.text.split(/\n/); 
+        this.program_len = this.program_array.length;
 
         let dataFlag = 0;
         let bssFlag = 0;        
 
-        for (let i = 0; i < program_len; i++) {
-            program_array[i] = program_array[i].trim(); // delete leading white space of each line
-            let line = program_array[i];
-            let line_len = program_array[i].length
+        for (let i = 0; i < this.program_len; i++) {
+            this.program_array[i] = this.program_array[i].trim(); // delete leading white space of each line
+            let line = this.program_array[i];
+            let line_len = this.program_array[i].length
             if (line == ""){continue;}  // this might mess up line number for addLable
             
             if(!line.includes('.') && !line.includes(':') ){
@@ -74,12 +74,12 @@ export default class Parse {
                 this.program.addLabel(line);
                 this.lableLineNum[line] = i;
             }
-            else if (program_array[i] == ".data"){  // does .data always come before .bss
+            else if (this.program_array[i] == ".data"){  // does .data always come before .bss
                 this.dataIndex = i;
                 dataFlag = 1;
                 bssFlag = 0;
             }
-            else if (program_array[i] == ".bss"){
+            else if (this.program_array[i] == ".bss"){
                 this.bssIndex = i;
                 bssFlag = 1;
                 dataFlag = 0;
@@ -134,15 +134,15 @@ export default class Parse {
      * Loops over program array and adds all instructions to the program
      */
     processInstructions(){
-        for (let i = 0; i < program_len; i++) {
-            program_array[i] = program_array[i].trim(); // delete leading white space of each line
-            let line = program_array[i];
+        for (let i = 0; i < this.program_len; i++) {
+            this.program_array[i] = this.program_array[i].trim(); // delete leading white space of each line
+            let line = this.program_array[i];
             if (line == ""){continue;}
             if(!line.includes('.') && !line.includes(':') ){
                 let instr_arr = this.parseInstruction(line);
                 const instrType = this.matchParsedInstruction(instr_arr);
                 let decode = this.decodeParsedInstruction(instr_arr);
-                this.program.addInstruction(instrType, decode);
+                this.program.addInstruction(instrType, decode, i);
             }
         }
     }

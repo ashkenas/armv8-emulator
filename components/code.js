@@ -1,23 +1,43 @@
 import React from 'react';
 import hljs from 'highlight.js/lib/core';
 import armasm from 'highlight.js/lib/languages/armasm';
+import styles from '../styles/Code.module.css';
 import "highlight.js/styles/default.css";
 
+let currentCodeComp = null;
+
+hljs.addPlugin({
+    'after:highlight': (result) => {
+        result.value = result.value.replace(/^(.*?)$/gm, (() => {
+            let i = 0; // Internally maintain line number as function state
+            return (m, g) => {
+                if (i++ == currentCodeComp.props.lineNumber)
+                    return `<span class="${styles.highlighter}">${g}</span>`;
+                return g;
+            };
+        })());
+    }
+});
 hljs.registerLanguage('armasm', armasm);
 
 class Code extends React.Component {
     constructor(props) {
         super(props);
         this.codeRef = React.createRef();
+        currentCodeComp = this;
     }
 
     componentDidMount() {
         hljs.highlightElement(this.codeRef.current);
     }
+    
+    componentDidUpdate() {
+        hljs.highlightElement(this.codeRef.current);
+    }
 
     render() {
         return (
-            <pre>
+            <pre className={styles['code-container']}>
                 <code ref={this.codeRef} className="language-armasm">
 {`.text
 .global _start

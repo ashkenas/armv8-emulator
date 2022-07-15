@@ -25,6 +25,7 @@ export default class Simulator extends React.Component {
         super(props);
 
         this.state = {
+            lineNumber: 0,
             registers: [],
             memory: {
                 text: null,
@@ -40,21 +41,21 @@ export default class Simulator extends React.Component {
     // Temporary demo code, function will be removed later
     componentDidMount() {
         const p = new Program();
-        p.addInstruction(ADDIInstruction, [0, 31, 0n]);
-        p.addInstruction(ADRInstruction, [1, 'array']);
-        p.addInstruction(ADDIInstruction, [2, 31, 0n]);
-        p.addInstruction(ADRInstruction, [3, 'length']);
-        p.addInstruction(LDURInstruction, [3, 3, 0n]);
+        p.addInstruction(ADDIInstruction, [0, 31, 0n], 3);
+        p.addInstruction(ADRInstruction, [1, 'array'], 4);
+        p.addInstruction(ADDIInstruction, [2, 31, 0n], 5);
+        p.addInstruction(ADRInstruction, [3, 'length'], 6);
+        p.addInstruction(LDURInstruction, [3, 3, 0n], 7);
         p.addLabel('loop');
-        p.addInstruction(SUBInstruction, [5, 3, 0]);
-        p.addInstruction(CBZInstruction, [5, 'loop_end']);
-        p.addInstruction(LDURInstruction, [6, 1, 0n]);
-        p.addInstruction(ADDInstruction, [2, 2, 6]);
-        p.addInstruction(ADDIInstruction, [0, 0, 1n]);
-        p.addInstruction(ADDIInstruction, [1, 1, 8n]);
-        p.addInstruction(BInstruction, ['loop']);
+        p.addInstruction(SUBInstruction, [5, 3, 0], 9);
+        p.addInstruction(CBZInstruction, [5, 'loop_end'], 10);
+        p.addInstruction(LDURInstruction, [6, 1, 0n], 11);
+        p.addInstruction(ADDInstruction, [2, 2, 6], 12);
+        p.addInstruction(ADDIInstruction, [0, 0, 1n], 13);
+        p.addInstruction(ADDIInstruction, [1, 1, 8n], 14);
+        p.addInstruction(BInstruction, ['loop'], 15);
         p.addLabel('loop_end');
-        p.addInstruction(NOPInstruction, []);
+        p.addInstruction(NOPInstruction, [], 16);
         p.addInitializedData('array', bigIntArrayToBigInt([7n, 5n, 4n, 8n, 2n, 9n, 1n, 3n, 10n, 6n]), 8 * 10);
         p.addInitializedData('length', 10n, 8);
         p.runSubstitutions();
@@ -66,7 +67,8 @@ export default class Simulator extends React.Component {
         this.memory = new MemoryStructure(program, this);
         this.registers = new RegisterStructure(this);
         this.setState({
-            encoding: this.program.instructions[this.program.currentInstruction].encodingParts
+            encoding: this.program.instructions[this.program.currentInstruction].encodingParts,
+            lineNumber: this.program.instructions[this.program.currentInstruction].lineNumber
         });
     }
 
@@ -89,8 +91,9 @@ export default class Simulator extends React.Component {
                 <div className={styles.column}>
                     <div className={`${styles.card} ${styles.expand}`}>
                         <h2>Code</h2>
-                        <Code />
-                        <button className={styles.btest} onClick={() => { for(let i = 0; i < 5; i++)this.program?.tick(this); }}>Next Cycle</button>
+                        <Code lineNumber={this.state.lineNumber} />
+                        <button className={styles.btest} onClick={() => { this.program?.tick(this); }}>Next Cycle</button>
+                        <button className={styles.btest} onClick={() => { for(let i = 0; i < 5; i++)this.program?.tick(this); }}>Next 5 Cycles</button>
                     </div>
 
                     <div className={styles.card}>

@@ -4,9 +4,10 @@ import Simulator from "./simulator";
  * Represent an unencoded instruction.
  */
 class StagedInstruction {
-    constructor(instructionType, instructionArgs) {
+    constructor(instructionType, instructionArgs, lineNumber) {
         this.type = instructionType;
         this.args = instructionArgs;
+        this.lineNumber = lineNumber;
     }
 }
 
@@ -31,8 +32,8 @@ export default class Program {
      * @param {Instruction} instructionType A class that extends `Instruction` 
      * @param {any[]} instructionArgs Arguments for the instruction
      */
-    addInstruction(instructionType, instructionArgs) {
-        this.staging.push(new StagedInstruction(instructionType, instructionArgs));
+    addInstruction(instructionType, instructionArgs, lineNumber) {
+        this.staging.push(new StagedInstruction(instructionType, instructionArgs, lineNumber));
     }
 
     /**
@@ -98,7 +99,9 @@ export default class Program {
                 return arg;
             });
 
-            this.instructions.push(new (this.staging[i].type)(...this.staging[i].args));
+            const instruction = new (this.staging[i].type)(...this.staging[i].args);
+            instruction.lineNumber = this.staging[i].lineNumber;
+            this.instructions.push(instruction);
         }
     }
 
@@ -125,13 +128,12 @@ export default class Program {
         if (state.instructionComplete) {
             this.currentInstruction = this.nextInstruction;
             simulator.setState({
-                encoding: this.instructions[this.currentInstruction]?.encodingParts
+                encoding: this.instructions[this.currentInstruction]?.encodingParts,
+                lineNumber: this.instructions[this.currentInstruction]?.lineNumber
             });
         }
 
         simulator.setState({ wires: Object.assign(simulator.state.wires, state) });
-
-        // TODO: Push state to data path diagram {@ceiphr, expose function?}
 
         return false;
     }

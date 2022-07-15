@@ -44,8 +44,10 @@ class Memory extends React.Component {
         return (
             <table className={styles.memory}>
                 <thead>
-                    <th className={styles.header}>Address</th>
-                    <th className={styles.header}>Value</th>
+                    <tr>
+                        <th className={styles.header}>Address</th>
+                        <th className={styles.header}>Value</th>
+                    </tr>
                 </thead>
                 <tbody>
                     {stack}

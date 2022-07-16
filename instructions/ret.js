@@ -25,6 +25,10 @@ class RETInstruction extends Instruction {
             readData2: this.opn
         };
     }
+
+    mem(simulator) {
+        simulator.memory.removeFrame();
+    }
     
     ex(simulator) {
         return {

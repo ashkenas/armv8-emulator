@@ -29,7 +29,8 @@ export default class Simulator extends React.Component {
             registers: [],
             memory: {
                 text: null,
-                stack: null
+                stack: null,
+                frames: []
             },
             wires: {},
             encoding: null,
@@ -92,6 +93,7 @@ export default class Simulator extends React.Component {
                     <div className={`${styles.card} ${styles.expand}`}>
                         <h2>Code</h2>
                         <Code lineNumber={this.state.lineNumber} />
+                        {/* Demo buttons, will be removed later */}
                         <button className={styles.btest} onClick={() => { this.program?.tick(this); }}>Next Cycle</button>
                         <button className={styles.btest} onClick={() => { for(let i = 0; i < 5; i++)this.program?.tick(this); }}>Next 5 Cycles</button>
                     </div>

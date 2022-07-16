@@ -36,6 +36,10 @@ class BLInstruction extends Instruction {
         };
     }
 
+    mem(simulator) {
+        simulator.memory.addFrame(simulator.registers.getRegister(28));
+    }
+
     wb(simulator) {
         simulator.registers.setRegister(this.rt, this.nextPC);
 

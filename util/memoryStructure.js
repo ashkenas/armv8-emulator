@@ -1,4 +1,5 @@
 import ByteArray from "./byteArray";
+import { bigIntToHexString } from "./formatUtils";
 
 /**
  * Represents a program's virtual memory.
@@ -33,7 +34,24 @@ import ByteArray from "./byteArray";
         this.stack = new ByteArray();
         this.stack.expandTo(8);
 
-        this.simulator.setState({ memory: { text: this.text.data, stack: this.stack.data } });
+        this.frames = [0];
+
+        this.simulator.setState({ memory: { text: this.text.data, stack: this.stack.data, frames: this.frames } });
+    }
+
+    /**
+     * Starts a new frame with topmost address `address`.
+     * @param {number} address Frame top address 
+     */
+    pushFrame(address) {
+        this.frames.push(address);
+    }
+
+    /**
+     * Removes the active frame.
+     */
+    popFrame() {
+        this.frames.pop();
     }
 
     /**

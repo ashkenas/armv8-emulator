@@ -6,6 +6,7 @@ import "highlight.js/styles/default.css";
 
 let currentCodeComp = null;
 
+hljs.configure({ ignoreUnescapedHTML: true });
 hljs.addPlugin({
     'after:highlight': (result) => {
         result.value = result.value.replace(/^(.*?)$/gm, (() => {
@@ -28,7 +29,6 @@ class Code extends React.Component {
     }
 
     componentDidMount() {
-        console.log(armasm(hljs));
         hljs.highlightElement(this.codeRef.current);
     }
     

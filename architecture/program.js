@@ -58,6 +58,24 @@ export default class Program {
     }
 
     /**
+     * Align the initialized data section on a boundary of
+     * a multiple of `bytes` bytes.
+     * @param {number} bytes 
+     */
+    alignInitializedData(bytes) {
+        this.addInitializedData('', 0n, (bytes - (this.initSize % bytes)) % bytes);
+    }
+
+    /**
+     * Align the bss section on a boundary of
+     * a multiple of `bytes` bytes.
+     * @param {number} bytes 
+     */
+    alignUninitializedData(bytes) {
+        this.addUninitializedData('', 0n, (bytes - ((this.bssSize + this.initSize) % bytes)) % bytes);
+    }
+
+    /**
      * Add a label at the current program position.
      * @param {string} label Label text
      */
@@ -70,7 +88,8 @@ export default class Program {
      * with their appropriate integer values.
      */
     runSubstitutions() {
-        let nextAddress = this.staging.length * 4;
+        this.programSize = (this.staging.length + (this.staging.length % 2)) * 4;
+        let nextAddress = this.programSize;
         
         for(const label of Object.keys(this.initData)) {
             this.initData[label].address = nextAddress;

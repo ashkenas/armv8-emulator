@@ -18,7 +18,7 @@ import { bigIntToHexString } from "./formatUtils";
         this.simulator = simulator;
 
         this.text = new ByteArray();
-        this.text.expandTo(program.instructions.length * 4 + program.initSize + program.bssSize);
+        this.text.expandTo(program.programSize + program.initSize + program.bssSize);
 
         for(let i = 0; i < program.instructions.length; i++)
             this.text.setBytes(i*4, BigInt(program.instructions[i].encoding), 4);
@@ -28,7 +28,7 @@ import { bigIntToHexString } from "./formatUtils";
             this.text.setBytes(address, value, length);
         }
         
-        this.bssStartAddress = BigInt((program.instructions.length * 4) + program.initSize);
+        this.bssStartAddress = BigInt(program.programSize + program.initSize);
         this.bssEndAddress = this.bssStartAddress + BigInt(program.bssSize) - 1n;
 
         this.stack = new ByteArray();

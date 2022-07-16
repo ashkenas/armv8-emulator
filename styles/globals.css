@@ -7,6 +7,8 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
         Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
     box-sizing: border-box;
+    background-color: var(--bg-primary);
+    color: var(--text-color);
 }
 
 #__next {
@@ -23,4 +25,10 @@ body {
     width: 100%;
     height: 600px;
     background-color: white;
+}
+
+:root {
+    --bg-primary: #252526;
+    --bg-secondary: #333333;
+    --text-color: #dedede;
 }

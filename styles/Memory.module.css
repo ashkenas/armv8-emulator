@@ -11,8 +11,8 @@ th.header, tr.spacer > td {
 }
 
 tr.spacer > td:last-child {
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    border-top: 1px solid var(--text-color);
+    border-bottom: 1px solid var(--text-color);
 }
 
 tr.block td.addr {
@@ -20,14 +20,14 @@ tr.block td.addr {
 }
 
 tr.block:first-child td.value {
-    border-top: 1px solid black;
+    border-top: 1px solid var(--text-color);
 }
 
 tr.block:last-child td.value {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--text-color);
 }
 
 tr.block td.value {
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+    border-left: 1px solid var(--text-color);
+    border-right: 1px solid var(--text-color);
 }

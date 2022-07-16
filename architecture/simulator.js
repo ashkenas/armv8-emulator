@@ -55,7 +55,7 @@ export default class Simulator extends React.Component {
         p.addInstruction(ADDIInstruction, [1, 1, 8n], 14);
         p.addInstruction(BInstruction, ['loop'], 15);
         p.addLabel('loop_end');
-        p.addInstruction(NOPInstruction, [], 16);
+        p.addInstruction(NOPInstruction, [], 17);
         p.addInitializedData('array', bigIntArrayToBigInt([7n, 5n, 4n, 8n, 2n, 9n, 1n, 3n, 10n, 6n]), 8 * 10);
         p.addInitializedData('length', 10n, 8);
         p.runSubstitutions();

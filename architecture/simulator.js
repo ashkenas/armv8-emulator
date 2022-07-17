@@ -1,24 +1,30 @@
 import React from "react";
-import MemoryStructure from "../util/memoryStructure";
-import RegisterStructure from "../util/registerStructure";
-import Code from "../components/code";
-import Encoding from "../components/encoding";
-import Registers from "../components/registers";
-import Memory from "../components/memory";
-import Datapath from "../components/datapath";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
-import Program from "./program";
-import ADDIInstruction from "../instructions/addi";
-import ADDInstruction from "../instructions/add";
-import SUBInstruction from "../instructions/sub";
-import ADRInstruction from "../instructions/adr";
-import CBZInstruction from "../instructions/cbz";
-import BInstruction from "../instructions/b";
-import LDURInstruction from "../instructions/ldur";
-import NOPInstruction from "../instructions/nop";
-import { bigIntArrayToBigInt } from "../util/formatUtils";
-import ControlSignals from "../components/controlSignals";
+import Program from "@arch/program";
+import {
+    Code,
+    Encoding,
+    Registers,
+    Memory,
+    Datapath,
+    ControlSignals
+} from "@components/index"
+import {
+    MemoryStructure,
+    RegisterStructure,
+    bigIntArrayToBigInt,
+} from "@util/index"
+import {
+    ADDIInstruction,
+    ADDInstruction,
+    SUBInstruction,
+    ADRInstruction,
+    CBZInstruction,
+    BInstruction,
+    LDURInstruction,
+    NOPInstruction
+} from "@inst/index";
+import styles from "@styles/Home.module.css";
 
 export default class Simulator extends React.Component {
     constructor(props) {

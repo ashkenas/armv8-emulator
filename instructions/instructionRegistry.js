@@ -1,24 +1,26 @@
-import { ArgumentType } from './instruction';
-import ANDInstruction from './and';
-import ANDSInstruction from './ands';
-import ORRInstruction from './orr';
-import ORRIInstruction from './orri';
-import ADDInstruction from './add';
-import ADDSInstruction from './adds';
-import ADDIInstruction from './addi';
-import ADDISInstruction from './addis';
-import SUBInstruction from './sub';
-import SUBSInstruction from './subs';
-import SUBIInstruction from './subi';
-import SUBISInstruction from './subis';
-import LDURInstruction from './ldur';
-import STURInstruction from './stur';
-import BInstruction from './b';
-import BLInstruction from './bl';
-import CBZInstruction from './cbz';
-import RETInstruction from './ret';
-import ADRInstruction from './adr';
-import NOPInstruction from './nop';
+import { ArgumentType } from '@inst/instruction';
+import {
+    ANDInstruction,
+    ANDSInstruction,
+    ORRInstruction,
+    ORRIInstruction,
+    ADDInstruction,
+    ADDSInstruction,
+    ADDIInstruction,
+    ADDISInstruction,
+    SUBInstruction,
+    SUBSInstruction,
+    SUBIInstruction,
+    SUBISInstruction,
+    LDURInstruction,
+    STURInstruction,
+    BInstruction,
+    BLInstruction,
+    CBZInstruction,
+    RETInstruction,
+    ADRInstruction,
+    NOPInstruction,
+} from '@inst/index';
 
 class InstructionRegistry {
     static registry = {};
@@ -56,7 +58,7 @@ class InstructionRegistry {
         else
             return undefined;
     }
-};
+}
 
 const instructionConstructors = [
     ANDInstruction,

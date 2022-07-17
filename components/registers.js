@@ -1,7 +1,6 @@
 import React from 'react';
-import Register from './register';
-import Memory from './memory';
-import styles from '../styles/Registers.module.css';
+import Register from '@components/register';
+import styles from '@styles/Registers.module.css';
 
 class Registers extends React.Component {
     constructor(props) {

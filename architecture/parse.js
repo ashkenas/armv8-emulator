@@ -1,5 +1,6 @@
 import Program from "./program";
-import { ArgumentType } from "./instruction";
+import { ArgumentType } from "@inst/instruction";
+import InstructionRegistry from "@inst/instructionRegistry";
 
 export default class Parse {
     constructor(text){
@@ -65,29 +66,29 @@ export default class Parse {
             this.program_array[i] = this.program_array[i].trim(); // delete leading white space of each line
             let line = this.program_array[i];
             let line_len = this.program_array[i].length
-            if (line == ""){continue;}  // this might mess up line number for addLable
+            if (line === ""){continue;}  // this might mess up line number for addLable
             
             if(!line.includes('.') && !line.includes(':') ){
                 this.numInstrs++;
             }
-            else if (line[0] != '.' && line[line_len-1] == ':'){
+            else if (line[0] !== '.' && line[line_len-1] === ':'){
                 this.program.addLabel(line);
                 this.lableLineNum[line] = i;
             }
-            else if (this.program_array[i] == ".data"){  // does .data always come before .bss
+            else if (this.program_array[i] === ".data"){  // does .data always come before .bss
                 this.dataIndex = i;
                 dataFlag = 1;
                 bssFlag = 0;
             }
-            else if (this.program_array[i] == ".bss"){
+            else if (this.program_array[i] === ".bss"){
                 this.bssIndex = i;
                 bssFlag = 1;
                 dataFlag = 0;
             }
-            else if (dataFlag == 1){
+            else if (dataFlag === 1){
                 parsed_line = this.parseLineofData(line);
             }
-            else if (bssFlag == 1){
+            else if (bssFlag === 1){
                 parsed_line = this.parseLineofBss(line);
             }
             else{
@@ -137,7 +138,7 @@ export default class Parse {
         for (let i = 0; i < this.program_len; i++) {
             this.program_array[i] = this.program_array[i].trim(); // delete leading white space of each line
             let line = this.program_array[i];
-            if (line == ""){continue;}
+            if (line === ""){continue;}
             if(!line.includes('.') && !line.includes(':') ){
                 let instr_arr = this.parseInstruction(line);
                 const instrType = this.matchParsedInstruction(instr_arr);
@@ -200,9 +201,9 @@ export default class Parse {
 
     /* Return if an arg is a register or an immediate */
     getArgumentType(arg){
-        if (arg.length >= 2 && arg.length <= 3 && arg[0].toUpperCase() == 'X'){
+        if (arg.length >= 2 && arg.length <= 3 && arg[0].toUpperCase() === 'X'){
             let reg_num = arg.slice(1, 3);
-            if ((parseInt(reg_num) >= 1 && parseInt(reg_num) <= 32) || reg_num == "ZR"){
+            if ((parseInt(reg_num) >= 1 && parseInt(reg_num) <= 32) || reg_num === "ZR"){
                 return ArgumentType.Register;
             }
             // check if it is a lable
@@ -224,12 +225,12 @@ export default class Parse {
         instr.shift();
         for(let i=0; i < instr.length; i++){
             let param = instr[i];   
-            if(param.toLowerCase() == "xzr"){
+            if(param.toLowerCase() === "xzr"){
                 decode.push(0);
             }
-            else if(param[0].toLowerCase() == 'x' || param[0] == '#'){
+            else if(param[0].toLowerCase() === 'x' || param[0] === '#'){
                 let int = parseInt(param.substring(1));
-                if(int == NaN){
+                if(isNaN(int)){
                     console.log("Error: decodeParsedInstruction incorrect register or number");
                     return;
                 }
@@ -237,7 +238,7 @@ export default class Parse {
             }
             else{   //lable?
                 let lableLineNum = this.lableLineNum.param;
-                if (lableLineNum == NaN){
+                if (isNaN(lableLineNum)){
                     console.log("Error: decodeParsedInstruction lable not in dict");
                 }
                 let offset = (lableLineNum - instrLineNum) * 4;
@@ -251,16 +252,16 @@ export default class Parse {
         if(typeof init !== 'string'){
             return("Error: inisializer is not a string");
         }
-        if(init == ".dword"){
+        if(init === ".dword"){
             return 4;
         }
-        if(init == ".char"){
+        if(init === ".char"){
             return 1;
         }
-        if(init == ".int"){
+        if(init === ".int"){
             return 4;
         }
-        if(init == ".double"){
+        if(init === ".double"){
             return 8;
         }
     }

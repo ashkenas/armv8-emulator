@@ -1,5 +1,4 @@
-import ByteArray from "./byteArray";
-import { bigIntToHexString } from "./formatUtils";
+import ByteArray from "@util/byteArray";
 
 /**
  * Represents a program's virtual memory.

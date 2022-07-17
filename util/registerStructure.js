@@ -1,4 +1,4 @@
-import MemoryStructure from "./memoryStructure";
+import MemoryStructure from "@util/memoryStructure";
 
 export default class RegisterStructure {
     constructor(simulator) {

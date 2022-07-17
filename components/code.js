@@ -2,10 +2,11 @@ import React from 'react';
 import hljs from 'highlight.js/lib/core';
 import armasm from '@util/langdecl';
 import styles from '@styles/Code.module.css';
-import "highlight.js/styles/default.css";
+import "highlight.js/styles/base16/ashes.css";
 
 let currentCodeComp = null;
 
+hljs.configure({ ignoreUnescapedHTML: true });
 hljs.addPlugin({
     'after:highlight': (result) => {
         result.value = result.value.replace(/^(.*?)$/gm, (() => {
@@ -28,7 +29,6 @@ class Code extends React.Component {
     }
 
     componentDidMount() {
-        console.log(armasm(hljs));
         hljs.highlightElement(this.codeRef.current);
     }
     

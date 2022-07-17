@@ -1,4 +1,4 @@
-.code-container {
+.code-container > code {
     position: relative;
 }
 
@@ -6,7 +6,6 @@
     position: absolute;
     left: 0;
     padding-left: inherit;
-    height: 1rem;
     width: 100%;
-    outline: 1px solid black;
+    background-color: #ffff0033;
 }

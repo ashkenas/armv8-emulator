@@ -52,9 +52,9 @@ class InstructionRegistry {
         const serialSyntax = this.serializeSyntax(syntax);
 
         if(mnemonic in this.registry)
-            return this.registry[mnemonic][serialSyntax]
+            return this.registry[mnemonic][serialSyntax];
         else
-            return undefined;
+            return null;
     }
 };
 

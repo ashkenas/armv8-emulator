@@ -39,29 +39,6 @@ export default class Simulator extends React.Component {
 
         this.registers = new RegisterStructure(this);
     }
-    // Temporary demo code, function will be removed later
-    componentDidMount() {
-        const p = new Program();
-        p.addInstruction(ADDIInstruction, [0, 31, 0n], 3);
-        p.addInstruction(ADRInstruction, [1, 'array'], 4);
-        p.addInstruction(ADDIInstruction, [2, 31, 0n], 5);
-        p.addInstruction(ADRInstruction, [3, 'length'], 6);
-        p.addInstruction(LDURInstruction, [3, 3, 0n], 7);
-        p.addLabel('loop');
-        p.addInstruction(SUBInstruction, [5, 3, 0], 9);
-        p.addInstruction(CBZInstruction, [5, 'loop_end'], 10);
-        p.addInstruction(LDURInstruction, [6, 1, 0n], 11);
-        p.addInstruction(ADDInstruction, [2, 2, 6], 12);
-        p.addInstruction(ADDIInstruction, [0, 0, 1n], 13);
-        p.addInstruction(ADDIInstruction, [1, 1, 8n], 14);
-        p.addInstruction(BInstruction, ['loop'], 15);
-        p.addLabel('loop_end');
-        p.addInstruction(NOPInstruction, [], 17);
-        p.addInitializedData('array', bigIntArrayToBigInt([7n, 5n, 4n, 8n, 2n, 9n, 1n, 3n, 10n, 6n]), 8 * 10);
-        p.addInitializedData('length', 10n, 8);
-        p.runSubstitutions();
-        this.load(p);
-    }
 
     load(program) {
         this.program = program;
@@ -92,7 +69,7 @@ export default class Simulator extends React.Component {
                 <div className={styles.column}>
                     <div className={`${styles.card} ${styles.expand}`}>
                         <h2>Code</h2>
-                        <Code lineNumber={this.state.lineNumber} />
+                        <Code simulator={this} lineNumber={this.state.lineNumber} />
                         {/* Demo buttons, will be removed later */}
                         <button className={styles.btest} onClick={() => { this.program?.tick(this); }}>Next Cycle</button>
                         <button className={styles.btest} onClick={() => { for(let i = 0; i < 5; i++)this.program?.tick(this); }}>Next 5 Cycles</button>

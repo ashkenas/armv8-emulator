@@ -42,6 +42,8 @@ export default class Program {
      * @param {number} length Byte length of data
      */
     addInitializedData(label, value, length) {
+        if (typeof value !== 'bigint')
+            throw 'addInitializedData: value must be type bigint!';
         this.initData[label] = { value: value, length: length };
         this.initSize += length;
     }

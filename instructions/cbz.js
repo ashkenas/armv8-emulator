@@ -2,7 +2,7 @@ import { Instruction, ArgumentType } from "@inst/instruction";
 
 class CBZInstruction extends Instruction {
     static mnemonic = 'cbz';
-    static syntax = [ArgumentType.register, ArgumentType.Immediate];
+    static syntax = [ArgumentType.Register, ArgumentType.Immediate];
     static restrictions = [null, 11];
 
     constructor(rt, imm11) {

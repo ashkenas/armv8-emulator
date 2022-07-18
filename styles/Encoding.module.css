@@ -1,6 +1,7 @@
 span.encoding {
     font-family: 'Courier New', Courier, monospace;
     position: relative;
+    font-size: 1.2rem;
 }
 
 span.encoding:hover::after {

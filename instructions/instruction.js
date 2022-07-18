@@ -4,7 +4,7 @@ export class ArgumentType {
 
     static Register = 0b1;
     static Immediate = 0b0;
-};
+}
 
 export class Instruction {
     static _controlSignalNames = [
@@ -174,4 +174,4 @@ export class Instruction {
             flags: flags
         };
     }
-};
+}

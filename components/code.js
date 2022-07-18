@@ -1,7 +1,7 @@
 import React from 'react';
 import hljs from 'highlight.js/lib/core';
-import armasm from '../util/langdecl';
-import styles from '../styles/Code.module.css';
+import armasm from '@util/langdecl';
+import styles from '@styles/Code.module.css';
 import "highlight.js/styles/base16/ashes.css";
 import Parse from '../architecture/parse';
 
@@ -13,7 +13,7 @@ hljs.addPlugin({
         result.value = result.value.replace(/^(.*?)$/gm, (() => {
             let i = 0; // Internally maintain line number as function state
             return (m, g) => {
-                if (i++ == currentCodeComp.props.lineNumber)
+                if (i++ === currentCodeComp.props.lineNumber)
                     return `<span class="${styles.highlighter}">${g}</span>`;
                 return g;
             };

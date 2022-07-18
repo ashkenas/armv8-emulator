@@ -1,7 +1,7 @@
-import Program from "./program";
-import { ArgumentType } from "../instructions/instruction";
-import InstructionRegistry from "../instructions/instructionRegistry";
-import { bigIntArrayToBigInt } from "../util/formatUtils";
+import Program from "@arch/program";
+import { ArgumentType } from "@inst/instruction";
+import InstructionRegistry from "@inst/instructionRegistry";
+import { bigIntArrayToBigInt } from "@util/formatUtils";
 
 export default class Parse {
     constructor(text){
@@ -75,23 +75,23 @@ export default class Parse {
                 let decode = this.decodeParsedInstruction(instr_arr);
                 this.program.addInstruction(instrType, decode, i);
             }
-            else if (line[0] != '.' && line[line_len-1] == ':'){
+            else if (line[0] !== '.' && line[line_len-1] === ':'){
                 this.program.addLabel(line.substring(0, line_len - 1));
             }
-            else if (this.program_array[i] == ".data"){  // does .data always come before .bss
+            else if (this.program_array[i] === ".data"){  // does .data always come before .bss
                 this.dataIndex = i;
                 dataFlag = 1;
                 bssFlag = 0;
             }
-            else if (this.program_array[i] == ".bss"){
+            else if (this.program_array[i] === ".bss"){
                 this.bssIndex = i;
                 bssFlag = 1;
                 dataFlag = 0;
             }
-            else if (dataFlag == 1){
+            else if (dataFlag === 1){
                 this.parseLineofData(line);
             }
-            else if (bssFlag == 1){
+            else if (bssFlag === 1){
                 this.parseLineofBss(line);
             }
             else{
@@ -194,9 +194,9 @@ export default class Parse {
 
     /* Return if an arg is a register or an immediate */
     getArgumentType(arg){
-        if (arg.length >= 2 && arg.length <= 3 && arg[0].toUpperCase() == 'X'){
+        if (arg.length >= 2 && arg.length <= 3 && arg[0].toUpperCase() === 'X'){
             let reg_num = arg.substring(1);
-            if ((+reg_num >= 0 && +reg_num <= 31) || reg_num == "ZR"){
+            if ((+reg_num >= 0 && +reg_num <= 31) || reg_num === "ZR"){
                 return ArgumentType.Register;
             }
             // check if it is a lable
@@ -218,12 +218,12 @@ export default class Parse {
         instr.shift();
         for(let i=0; i < instr.length; i++){
             let param = instr[i];   
-            if(param.toLowerCase() == "xzr"){
+            if(param.toLowerCase() === "xzr"){
                 decode.push(0);
             }
-            else if(param[0].toLowerCase() == 'x' || param[0] == '#'){
+            else if(param[0].toLowerCase() === 'x' || param[0] === '#'){
                 let int = +param.substring(1);
-                if(int == NaN){
+                if(isNaN(int)){
                     throw "Error: decodeParsedInstruction incorrect register or number";
                 }
                 decode.push(param[0] === '#' ? BigInt(int) : int);

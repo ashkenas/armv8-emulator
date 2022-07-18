@@ -1,26 +1,21 @@
 import React from 'react';
-import styles from '../styles/Encoding.module.css';
-import BinaryNumber from './binaryNumber';
+import BinaryNumber from '@components/binaryNumber';
+import styles from '@styles/Encoding.module.css';
 
-class Encoding extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+function Encoding(props) {
+    if (!props.parts)
+        return <></>;
 
-    render() {
-        if (!this.props.parts)
-            return <></>;
-
-        return (
-            <p>
-                {this.props.parts.map((part, i) => 
-                    <span key={`encodingPart${i}`} className={`${styles.encoding} ${styles[part.type]}`} data-label={part.tooltip}>
-                        <BinaryNumber value={part.value} length={part.length} />
+    return (
+        <>
+            {props.parts.map((part, i) =>
+                <span key={`encodingPart${i}`} className={`${styles.encoding} ${styles[part.type]}`}
+                      data-label={part.tooltip}>
+                        <BinaryNumber value={part.value} length={part.length}/>
                     </span>
-                )}
-            </p>
-        );
-    }
+            )}
+        </>
+    );
 }
 
 export default Encoding;

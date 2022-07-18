@@ -1,4 +1,4 @@
-import { Instruction, ArgumentType } from "./instruction";
+import { Instruction } from "@inst/instruction";
 
 class RETInstruction extends Instruction {
     static mnemonic = 'ret';

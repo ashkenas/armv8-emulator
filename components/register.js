@@ -1,6 +1,6 @@
 import React from 'react';
-import styles from '../styles/Register.module.css';
-import { bigIntToHexString } from '../util/formatUtils';
+import { bigIntToHexString } from '@util/formatUtils';
+import styles from '@styles/Register.module.css';
 
 class Register extends React.Component {
     constructor(props) {

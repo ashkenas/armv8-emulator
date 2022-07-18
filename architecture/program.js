@@ -1,5 +1,3 @@
-import Simulator from "./simulator";
-
 /**
  * Represent an unencoded instruction.
  */
@@ -29,8 +27,9 @@ export default class Program {
 
     /**
      * Add an instruction to the program.
-     * @param {Instruction} instructionType A class that extends `Instruction` 
+     * @param {Instruction} instructionType A class that extends `Instruction`
      * @param {any[]} instructionArgs Arguments for the instruction
+     * @param lineNumber
      */
     addInstruction(instructionType, instructionArgs, lineNumber) {
         this.staging.push(new StagedInstruction(instructionType, instructionArgs, lineNumber));
@@ -137,7 +136,7 @@ export default class Program {
 
         const state = this.instructions[this.currentInstruction].tick(simulator);
 
-        if (this.instructions[this.currentInstruction].cycle == 2) {
+        if (this.instructions[this.currentInstruction].cycle === 2) {
             simulator.setState({
                 controlSignals: this.instructions[this.currentInstruction].controlSignals
             });

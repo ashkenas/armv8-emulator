@@ -1,4 +1,4 @@
-import Program from "./program";
+import Program from "@arch/program";
 import { ArgumentType } from "@inst/instruction";
 import InstructionRegistry from "@inst/instructionRegistry";
 import { bigIntArrayToBigInt } from "@util/formatUtils";
@@ -76,8 +76,7 @@ export default class Parse {
                 this.program.addInstruction(instrType, decode, i);
             }
             else if (line[0] !== '.' && line[line_len-1] === ':'){
-                this.program.addLabel(line);
-                this.lableLineNum[line] = i;
+                this.program.addLabel(line.substring(0, line_len - 1));
             }
             else if (this.program_array[i] === ".data"){  // does .data always come before .bss
                 this.dataIndex = i;
@@ -90,10 +89,10 @@ export default class Parse {
                 dataFlag = 0;
             }
             else if (dataFlag === 1){
-                parsed_line = this.parseLineofData(line);
+                this.parseLineofData(line);
             }
             else if (bssFlag === 1){
-                parsed_line = this.parseLineofBss(line);
+                this.parseLineofBss(line);
             }
             else{
                 console.log(`Ignoring line: ${line}`);
@@ -135,23 +134,7 @@ export default class Parse {
         let byteLen = num_args * initLen;
         this.program.addUninitializedData(var_name, byteLen);
     }
-    /**
-     * Loops over program array and adds all instructions to the program
-     */
-    processInstructions(){
-        for (let i = 0; i < this.program_len; i++) {
-            this.program_array[i] = this.program_array[i].trim(); // delete leading white space of each line
-            let line = this.program_array[i];
-            if (line === ""){continue;}
-            if(!line.includes('.') && !line.includes(':') ){
-                let instr_arr = this.parseInstruction(line);
-                const instrType = this.matchParsedInstruction(instr_arr);
-                let decode = this.decodeParsedInstruction(instr_arr);
-                this.program.addInstruction(instrType, decode, i);
-            }
-        }
-    }
-    
+
     /* Takes an instr and returns an array [mnemonic, arg1, ..., argN]
     Exampels:
         ADD X1, X2, X3 --> ["add", "X1", "X2", "X3"]
@@ -212,8 +195,8 @@ export default class Parse {
     /* Return if an arg is a register or an immediate */
     getArgumentType(arg){
         if (arg.length >= 2 && arg.length <= 3 && arg[0].toUpperCase() === 'X'){
-            let reg_num = arg.slice(1, 3);
-            if ((parseInt(reg_num) >= 1 && parseInt(reg_num) <= 32) || reg_num === "ZR"){
+            let reg_num = arg.substring(1);
+            if ((+reg_num >= 0 && +reg_num <= 31) || reg_num === "ZR"){
                 return ArgumentType.Register;
             }
             // check if it is a lable
@@ -239,7 +222,7 @@ export default class Parse {
                 decode.push(0);
             }
             else if(param[0].toLowerCase() === 'x' || param[0] === '#'){
-                let int = parseInt(param.substring(1));
+                let int = +param.substring(1);
                 if(isNaN(int)){
                     throw "Error: decodeParsedInstruction incorrect register or number";
                 }

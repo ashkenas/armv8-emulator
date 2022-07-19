@@ -62,7 +62,7 @@ export default (hljs) => {
                     + 'rev(16|sh)?|sel|[su]sat(16)?|nop|pop|push|rfe([id][ab])?|'
                     + 'stm([id][ab])?|stu?r(ex)?[bhd]?|(qd?)?sub|(sh?|q|u[qh]?)?sub(8|16)|'
                     + '[su]xt(a?h|a?b(16)?)|srs([id][ab])?|swpb?|swi|smi|tst|teq|'
-                    + 'wfe|wfi|yield'
+                    + 'wfe|wfi|yield|ret'
                     + ')'
                     + '(eq|ne|cs|cc|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al|hs|lo)?' // condition codes
                     + '[sptrx]?' // legal postfixes

@@ -46,7 +46,7 @@ rec_add:
     bl rec_add
     b rec_add_end
 rec_add_base:
-    add X0, X31, #0
+    mov X0, #0
     ret
 rec_add_end:
     ldur X30, [X28, #0]

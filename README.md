@@ -20,6 +20,8 @@ Run `npm run dev` to host the simulation at http://localhost:3000/. Refreshes as
 * `SUB Rd, Rn, Imm11`
 * `SUBS Rd, Rn, Rm`
 * `SUBS Rd, Rn, Imm11`
+* `LSL Rd, Rn, Rm`
+* `LSL Rd, Rn, Imm11`
 * `LDUR Rt, [Rn, Imm11]`
 * `STUR Rt, [Rn, Imm11]`
 * `B Label`
@@ -27,4 +29,7 @@ Run `npm run dev` to host the simulation at http://localhost:3000/. Refreshes as
 * `CBZ Rt, Label`
 * `RET`
 * `ADR Rt, Label`
+* `SVC 0`
 * `NOP`
+* `MOV Rd, Rm`
+* `MOV Rd, Imm11`

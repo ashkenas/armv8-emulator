@@ -23,7 +23,8 @@ import {
     LSLInstruction,
     LSLIInstruction,
     MOVIInstruction,
-    MOVInstruction
+    MOVInstruction,
+    SVCInstruction
 } from '@inst/index';
 
 class InstructionRegistry {
@@ -88,7 +89,8 @@ const instructionConstructors = [
     ADRInstruction,
     NOPInstruction,
     MOVInstruction,
-    MOVIInstruction
+    MOVIInstruction,
+    SVCInstruction
 ];
 
 for (const instructionConstructor of instructionConstructors)

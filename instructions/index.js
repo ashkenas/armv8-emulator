@@ -22,5 +22,6 @@ export { default as SUBInstruction } from './sub';
 export { default as SUBIInstruction } from './subi';
 export { default as SUBISInstruction } from './subis';
 export { default as SUBSInstruction } from './subs';
+export { default as SVCInstruction } from './svc';
 export { default as InstructionRegistry } from './instructionRegistry';
 export { default as Instruction } from './instruction';

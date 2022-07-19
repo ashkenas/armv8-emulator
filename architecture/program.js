@@ -24,6 +24,7 @@ export default class Program {
         this.currentInstruction = 0;
         this.nextInstruction = 1;
         this.startLabel = null;
+        this.exit = false;
     }
 
     /**
@@ -136,7 +137,7 @@ export default class Program {
      * @returns {boolean} If the program has concluded.
      */
     tick(simulator) {
-        if (this.currentInstruction >= this.instructions.length)
+        if (this.exit || this.currentInstruction >= this.instructions.length)
             return true;
 
         const state = this.instructions[this.currentInstruction].tick(simulator);
@@ -149,6 +150,9 @@ export default class Program {
 
         if (state.flags.newPC !== undefined)
             this.nextInstruction = state.flags.newPC / 4;
+
+        if (state.flags.exit)
+            this.exit = true;
 
         if (state.instructionComplete) {
             this.currentInstruction = this.nextInstruction;

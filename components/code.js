@@ -53,9 +53,9 @@ _start:
     adr X0, array
     adr X19, end
     bl rec_add
-    nop
+    svc #0
 .data
-array: .dword 7, 5, 4, 8, 2, 9, 1, 3, 10, 6
+array: .dword 8, 4, 3
 end: .char 0` };
         currentCodeComp = this;
         const p = new Parse(this.state.text);

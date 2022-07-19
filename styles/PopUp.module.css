@@ -1,0 +1,30 @@
+div.popup {
+    display: none;
+    position: absolute;
+    bottom: calc(100%);
+    z-index: 99;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--text-color);
+    border-radius: .5rem;
+}
+
+div.popup.flipY {
+    bottom: auto;
+    top: calc(100%);
+}
+
+div.popup.flipX {
+    right: 0;
+}
+
+h3.title {
+    text-align: center;
+    margin: 0;
+    padding: 0 .5rem;
+    border-bottom: 1px solid var(--text-color);
+}
+
+div.body {
+    padding: .25rem;
+    white-space: nowrap;
+}

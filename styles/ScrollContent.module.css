@@ -5,4 +5,20 @@
     flex-shrink: 1;
     flex-basis: 0;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-color) #00000033;
+}
+
+.scroll::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+    background-color: var(--text-color);
+    border-radius: 2px;
+}
+
+.scroll::-webkit-scrollbar-track {
+    background-color: #00000033;
 }

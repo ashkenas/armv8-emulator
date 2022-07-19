@@ -1,8 +1,9 @@
 import React from 'react';
 import ScrollContent from "@components/scrollContent";
 import MemoryStructure from "@util/memoryStructure";
-import { bigIntToHexString } from '@util/formatUtils';
+import { bigIntArrayToBigInt, bigIntToHexString } from '@util/formatUtils';
 import styles from '@styles/Memory.module.css';
+import PopUp from './popUp';
 
 /**
  * React Component representing a virtual memory space for a process.
@@ -21,8 +22,11 @@ function Memory(props) {
     const renderFrames = [...props.memory.frames, props.stackPointer - 1n]
     for (let i = 0; i < props.memory.stack.length; i += 8) {
         const dwordBytes = [];
-        for (let j = i, k = false; j < i + 8 && j < props.memory.stack.length; j++) {
+        for (let j = i, k = false; j < i + 8; j++) {
             const address = MemoryStructure.MAX_ADDRESS - j;
+            const addressText = address.toString(16).padStart(digits, '0').toUpperCase();
+            const value = j < props.memory.stack.length ? props.memory.stack[j] : 0n;
+
             let additionalStyles = '';
             if (renderFrames.includes(BigInt(address))) {
                 if (lastFrame >= address)
@@ -50,15 +54,24 @@ function Memory(props) {
 
             dwordBytes.unshift(
                 <td key={j} className={`${styles.value} ${additionalStyles}`}>
-                    {bigIntToHexString(props.memory.stack[j], 8)}
+                    <PopUp title={addressText} flipX={j - i < 6} flipY={i < 24}>
+                        Decimal: {value.toString()}
+                        <br />
+                        Binary: {value.toString(2).padStart(8, '0')}
+                    </PopUp>
+                    {bigIntToHexString(value, 8)}
                 </td>
-            )
+            );
         }
         const address = MemoryStructure.MAX_ADDRESS - (i + 7);
+        const addressText = address.toString(16).padStart(digits, '0').toUpperCase();
         stack.push(
             <tr key={`block${i}`} className={styles.block}>
                 <td className={`${styles.addr} ${(props.stackPointer >= address && props.stackPointer < address + 8) ? styles.sp : ''}`}>
-                    {address.toString(16).padStart(digits, '0').toUpperCase()}
+                    <PopUp title={addressText} flipY={i < 16}>
+                        Value: {bigIntArrayToBigInt(props.memory.stack.slice(i, i + 8).reverse(), 8n).toString()}
+                    </PopUp>
+                    {addressText}
                 </td>
                 {dwordBytes}
             </tr>
@@ -69,16 +82,27 @@ function Memory(props) {
     for (let i = 0; i < props.memory.text.length; i += 8) {
         const dwordBytes = [];
         for (let j = i; j < i + 8; j++) {
+            const addressText = (j).toString(16).padStart(digits, '0').toUpperCase();
+            const value = j < props.memory.text.length ? props.memory.text[j] : 0n;
             dwordBytes.push(
                 <td key={j} className={styles.value}>
-                    {bigIntToHexString(j < props.memory.text.length ? props.memory.text[j] : 0n, 8)}
+                    <PopUp title={addressText} flipX={j - i > 1}>
+                        Decimal: {value.toString()}
+                        <br />
+                        Binary: {value.toString(2).padStart(8, '0')}
+                    </PopUp>
+                    {bigIntToHexString(value, 8)}
                 </td>
-            )
+            );
         }
+        const addressText = (i).toString(16).padStart(digits, '0');
         text.unshift(
             <tr key={`block${i}`} className={styles.block}>
                 <td className={styles.addr}>
-                    {(i).toString(16).padStart(digits, '0')}
+                    <PopUp title={addressText}>
+                        Value: {bigIntArrayToBigInt(props.memory.text.slice(i, i + 8), 8n).toString()}
+                    </PopUp>
+                    {addressText}
                 </td>
                 {dwordBytes}
             </tr>

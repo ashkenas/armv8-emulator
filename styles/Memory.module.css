@@ -20,7 +20,16 @@ tr.spacer > td:last-child {
 }
 
 td.addr {
+    position: relative;
     text-align: center;
+}
+
+td.addr:hover > div, td.value:hover > div {
+    display: block;
+}
+
+td.value {
+    position: relative;
 }
 
 tr.block:first-child td.value {

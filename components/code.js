@@ -4,6 +4,7 @@ import armasm from '@util/langdecl';
 import styles from '@styles/Code.module.css';
 import "highlight.js/styles/base16/ashes.css";
 import Parse from '../architecture/parse';
+import ScrollContent from './scrollContent';
 
 let currentCodeComp = null;
 
@@ -82,11 +83,13 @@ end: .char 0` };
                     this.props.simulator.load(p.program);
                     this.setState({ text: text });
                 }} />
-                <pre className={styles['code-container']}>
-                    <code ref={this.codeRef} className="language-armasm">
-                        {this.state.text}
-                    </code>
-                </pre>
+                <ScrollContent>
+                    <pre className={styles['code-container']}>
+                        <code ref={this.codeRef} className="language-armasm">
+                            {this.state.text}
+                        </code>
+                    </pre>
+                </ScrollContent>
             </>
         );
     }

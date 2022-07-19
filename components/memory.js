@@ -22,22 +22,31 @@ function Memory(props) {
     for (let i = 0; i < props.memory.stack.length; i += 8) {
         const dwordBytes = [];
         for (let j = i, k = false; j < i + 8 && j < props.memory.stack.length; j++) {
+            const address = MemoryStructure.MAX_ADDRESS - j;
             let additionalStyles = '';
-            if (renderFrames.includes(BigInt(MemoryStructure.MAX_ADDRESS - j))) {
-                if (lastFrame >= MemoryStructure.MAX_ADDRESS - j)
+            if (renderFrames.includes(BigInt(address))) {
+                if (lastFrame >= address)
                     additionalStyles = styles['frame-start-primary'];
                 else
                     additionalStyles = styles['frame-start'];
                 k = true;
             } else if(k) {
-                if (lastFrame > MemoryStructure.MAX_ADDRESS - j)
+                if (lastFrame > address)
                     additionalStyles = styles['frame-boundary-primary'];
                 else
                     additionalStyles = styles['frame-boundary'];
             }
             
-            if (props.stackPointer > MemoryStructure.MAX_ADDRESS - j)
+            if (props.stackPointer > address) {
                 additionalStyles += ` ${styles['unscoped']}`;
+            } else if (lastFrame >= address) {
+                additionalStyles += ` ${styles['frame-data-primary']}`;
+            } else {
+                additionalStyles += ` ${styles['frame-data']}`;
+            }
+
+            if (props.stackPointer == address)
+                additionalStyles += ` ${styles.sp}`;
 
             dwordBytes.unshift(
                 <td key={j} className={`${styles.value} ${additionalStyles}`}>
@@ -45,11 +54,11 @@ function Memory(props) {
                 </td>
             )
         }
+        const address = MemoryStructure.MAX_ADDRESS - (i + 7);
         stack.push(
             <tr key={`block${i}`} className={styles.block}>
-                <td className={styles.addr}>
-                    {(MemoryStructure.MAX_ADDRESS - (i + 7)).toString(16).padStart(digits, '0')}
-                    <sub>16</sub>
+                <td className={`${styles.addr} ${(props.stackPointer >= address && props.stackPointer < address + 8) ? styles.sp : ''}`}>
+                    {address.toString(16).padStart(digits, '0').toUpperCase()}
                 </td>
                 {dwordBytes}
             </tr>
@@ -70,7 +79,6 @@ function Memory(props) {
             <tr key={`block${i}`} className={styles.block}>
                 <td className={styles.addr}>
                     {(i).toString(16).padStart(digits, '0')}
-                    <sub>16</sub>
                 </td>
                 {dwordBytes}
             </tr>

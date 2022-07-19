@@ -6,6 +6,10 @@ tr.block {
     font-family: 'Courier New', Courier, monospace;
 }
 
+td.sp {
+    color: var(--sp-color);
+}
+
 th.header, tr.spacer > td {
     text-align: center;
 }
@@ -16,7 +20,7 @@ tr.spacer > td:last-child {
 }
 
 td.addr {
-    padding-right: 6px;
+    text-align: center;
 }
 
 tr.block:first-child td.value {
@@ -63,4 +67,28 @@ td.value.frame-boundary {
 
 td.value.unscoped {
     color: var(--text-color-unscoped);
+}
+
+td.value.frame-data-primary {
+    background-color: var(--primary-frame-bg);
+}
+
+td.value.frame-data-primary:nth-child(2) {
+    border-left: 1px solid var(--primary-frame);
+}
+
+td.value.frame-data-primary:last-child {
+    border-right: 1px solid var(--primary-frame);
+}
+
+td.value.frame-data {
+    background-color: var(--secondary-frame-bg);
+}
+
+td.value.frame-data:nth-child(2) {
+    border-left: 1px solid var(--secondary-frame);
+}
+
+td.value.frame-data:last-child {
+    border-right: 1px solid var(--secondary-frame);
 }

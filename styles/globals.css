@@ -34,4 +34,7 @@ body {
     --text-color-unscoped: #bebebe;
     --primary-frame: #4040cb;
     --secondary-frame: #6a6af1;
+    --primary-frame-bg: #4040cb44;
+    --secondary-frame-bg: #6a6af144;
+    --sp-color: #f15a5a;
 }

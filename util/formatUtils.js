@@ -34,3 +34,14 @@ export function bigIntArrayToBigInt(data, elemSize = 64n) {
 
     return result;
 }
+
+/**
+ * Returns the nearest multiple of `factor` to `value`
+ * that is greater than `value`.
+ * @param {number|bigint} value 
+ * @param {number|bigint} factor 
+ * @returns {number|bigint}
+ */
+export function nextMultiple(value, factor) {
+    return ((value - (value % factor)) % factor) + value;
+}

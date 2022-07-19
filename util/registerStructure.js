@@ -1,4 +1,5 @@
 import MemoryStructure from "@util/memoryStructure";
+import { nextMultiple } from "./formatUtils";
 
 export default class RegisterStructure {
     constructor(simulator) {
@@ -7,10 +8,10 @@ export default class RegisterStructure {
         this.values = [];
         for (let i = 0; i < 32; i++)
             this.values.push(0n);
-        this.values[28] = BigInt(MemoryStructure.MAX_ADDRESS - 7);
-        this.values[29] = BigInt(MemoryStructure.MAX_ADDRESS - 7);
+        this.values[28] = BigInt(MemoryStructure.MAX_ADDRESS + 1);
+        this.values[29] = BigInt(MemoryStructure.MAX_ADDRESS + 1);
 
-        this.simulator.state.registers = this.values;
+        this.simulator.setState({ registers: this.values });
     }
 
     setRegister(register, value) {
@@ -22,6 +23,9 @@ export default class RegisterStructure {
 
         if (register === 31)
             return;
+
+        if (register === 28)
+            this.simulator.memory.expandStack(nextMultiple(MemoryStructure.MAX_ADDRESS - Number(value) + 1, 8) + 8);
 
         this.values[register] = value;
         this.simulator.setState({ registers: this.values });

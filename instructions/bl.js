@@ -32,16 +32,18 @@ class BLInstruction extends Instruction {
         return {
             aluAction: 0b0111,
             aluResult: this.opn,
-            branchPC: this.imm11 + simulator.program.currentInstruction * 4
+            branchPC: Number(this.imm11) + simulator.program.currentInstruction * 4
         };
     }
 
     mem(simulator) {
-        simulator.memory.addFrame(simulator.registers.getRegister(28));
+        simulator.memory.pushFrame(simulator.registers.getRegister(28) - 1n);
+
+        return {};
     }
 
     wb(simulator) {
-        simulator.registers.setRegister(this.rt, this.nextPC);
+        simulator.registers.setRegister(this.rt, BigInt(this.nextPC));
 
         return {
             writeData: this.nextPC

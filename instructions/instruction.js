@@ -150,7 +150,7 @@ export class Instruction {
                     flags.z = flags.aluResult == 0;
 
                 if (this.controlSignals.pbr)
-                    flags.newPC = this.aluResult
+                    flags.newPC = Number(this.aluResult);
                 else
                     flags.newPC = (this.controlSignals.ubr || (this.controlSignals.cbr && flags.z)) ? flags.branchPC : this.nextPC;
                 

@@ -1,6 +1,5 @@
 import React from "react";
 import Head from "next/head";
-import Program from "@arch/program";
 import {
     Code,
     Encoding,
@@ -12,18 +11,7 @@ import {
 import {
     MemoryStructure,
     RegisterStructure,
-    bigIntArrayToBigInt,
 } from "@util/index"
-import {
-    ADDIInstruction,
-    ADDInstruction,
-    SUBInstruction,
-    ADRInstruction,
-    CBZInstruction,
-    BInstruction,
-    LDURInstruction,
-    NOPInstruction
-} from "@inst/index";
 import styles from "@styles/Home.module.css";
 
 export default class Simulator extends React.Component {
@@ -42,8 +30,6 @@ export default class Simulator extends React.Component {
             encoding: null,
             controlSignals: null
         }
-
-        this.registers = new RegisterStructure(this);
     }
 
     load(program) {
@@ -51,6 +37,9 @@ export default class Simulator extends React.Component {
         this.memory = new MemoryStructure(program, this);
         this.registers = new RegisterStructure(this);
         this.setState({
+            lineNumber: this.program.instructions[this.program.currentInstruction].lineNumber,
+            wires: {},
+            controlSignals: null,
             encoding: this.program.instructions[this.program.currentInstruction].encodingParts,
             lineNumber: this.program.instructions[this.program.currentInstruction].lineNumber
         });
@@ -101,7 +90,7 @@ export default class Simulator extends React.Component {
 
                         <div className={`${styles.card} ${styles.expand}`}>
                             <h2>Memory</h2>
-                            <Memory memory={this.state.memory} />
+                            <Memory stackPointer={this.state.registers[28]} memory={this.state.memory} />
                         </div>
                     </div>
                 </div>

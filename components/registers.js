@@ -12,6 +12,9 @@ class Registers extends React.Component {
     }
 
     render() {
+        if(!this.props.values.length)
+            return <></>;
+
         const col1 = [], col2 = [];
         for (let i = 0; i < 16; i++) {
             col1.push(<Register key={`register${i}`} registerName={this.registerLabels[i]} value={this.props.values[i]} />);

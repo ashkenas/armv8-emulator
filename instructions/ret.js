@@ -25,16 +25,20 @@ class RETInstruction extends Instruction {
             readData2: this.opn
         };
     }
-
-    mem(simulator) {
-        simulator.memory.removeFrame();
-    }
     
     ex(simulator) {
+        this.aluResult = this.opn;
+
         return {
             aluAction: 0b0111,
             aluResult: this.opn
         };
+    }
+
+    mem(simulator) {
+        simulator.memory.popFrame();
+
+        return {};
     }
 }
 

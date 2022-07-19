@@ -30,27 +30,37 @@ class Code extends React.Component {
 `.text
 .global _start
 _start:
-    add X0, XZR, #0   // i, loop counter
-    adr X1, array     // a, data offset
-    add X2, XZR, #0   // sum, aggregator
-    adr X3, length
-    ldur X3, [X3, #0]
-loop:
-    sub X5, X3, X0    // e = i - length
-    cbz X5, loop_end  // if(e == 0) break;
-    ldur X6, [X1, #0] // v = a[0]
-    add X2, X2, X6    // sum += v
-    add X0, X0, #1    // i++
-    add X1, X1, #8    // a += 8
-    b loop
-loop_end:
-    nop               // exit
+    adr X0, array
+    adr X19, end
+    bl rec_add
+    b end
+rec_add:
+    sub X1, X0, X19
+    cbz X1, rec_add_base
+    ldur X1, [X0, #0]
+    add X0, X0, #8
+    sub X28, X28, #16
+    stur X1, [X28, #8]
+    stur X30, [X28, #0]
+    bl rec_add
+    b rec_add_end
+rec_add_base:
+    add X0, X31, #0
+    ret
+rec_add_end:
+    ldur X30, [X28, #0]
+    ldur X1, [X28, #8]
+    add X28, X28, #16
+    add X0, X0, X1
+    ret
+end:
+    nop
 .data
 array: .dword 7, 5, 4, 8, 2, 9, 1, 3, 10, 6
-length: .dword 10` };
+end: .char 0` };
         currentCodeComp = this;
         const p = new Parse(this.state.text);
-        p.parseProgram()
+        p.parseProgram();
         props.simulator.load(p.program);
     }
 
@@ -66,10 +76,11 @@ length: .dword 10` };
         return (
             <>
                 <input type="file" onChange={async (e) => {
-                    const p = new Parse(this.state.text);
-                    p.parseProgram()
+                    const text = await e.target.files[0].text();
+                    const p = new Parse(text);
+                    p.parseProgram();
                     this.props.simulator.load(p.program);
-                    this.setState({ text: await e.target.files[0].text() })
+                    this.setState({ text: text });
                 }} />
                 <pre className={styles['code-container']}>
                     <code ref={this.codeRef} className="language-armasm">

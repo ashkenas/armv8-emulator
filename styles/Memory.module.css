@@ -15,7 +15,7 @@ tr.spacer > td:last-child {
     border-bottom: 1px solid var(--text-color);
 }
 
-tr.block td.addr {
+td.addr {
     padding-right: 6px;
 }
 
@@ -27,7 +27,40 @@ tr.block:last-child td.value {
     border-bottom: 1px solid var(--text-color);
 }
 
-tr.block td.value {
+td.value:nth-child(2) {
     border-left: 1px solid var(--text-color);
+}
+
+td.value:last-child {
     border-right: 1px solid var(--text-color);
+}
+
+td.value.frame-start-primary {
+    border-top: 1px solid var(--primary-frame) !important;
+    border-right: 1px solid var(--primary-frame) !important;
+}
+
+td.value.frame-start {
+    border-top: 1px solid var(--secondary-frame) !important;
+    border-right: 1px solid var(--secondary-frame) !important;
+}
+
+td.value.frame-start-primary ~ td.value {
+    border-bottom: 1px solid var(--primary-frame) !important;
+}
+
+td.value.frame-start ~ td.value {
+    border-bottom: 1px solid var(--secondary-frame) !important;
+}
+
+td.value.frame-boundary-primary {
+    border-top: 1px solid var(--primary-frame) !important;
+}
+
+td.value.frame-boundary {
+    border-top: 1px solid var(--secondary-frame) !important;
+}
+
+td.value.unscoped {
+    color: var(--text-color-unscoped);
 }

@@ -55,9 +55,8 @@ export default class ByteArray {
             || (length < 0 && (start >= this.data.length || start + length + 1 < 0)))
             throw 'ByteArray.setBytes: index out of bounds';
 
-        for (let i = start, j = 0n; (length > 0) ? (i < start + length) : (i > start - length); (length > 0 ? i++ : i--), j += 8n) {
+        for (let i = start, j = 0n; (length > 0) ? (i < start + length) : (i > start + length); (length > 0 ? i++ : i--), j += 8n)
             this.data[i] = (value >> j) & 0b11111111n;
-        }
     }
 
     /**

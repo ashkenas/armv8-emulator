@@ -1,4 +1,5 @@
 import ByteArray from "@util/byteArray";
+import { nextMultiple } from "./formatUtils";
 
 /**
  * Represents a program's virtual memory.
@@ -33,8 +34,15 @@ import ByteArray from "@util/byteArray";
         this.stack = new ByteArray();
         this.stack.expandTo(8);
 
-        this.frames = [0];
+        this.frames = [BigInt(MemoryStructure.MAX_ADDRESS)];
 
+        this.updateState();
+    }
+
+    /**
+     * Refreshes all simulator information about the memory model.
+     */
+    updateState() {
         this.simulator.setState({ memory: { text: this.text.data, stack: this.stack.data, frames: this.frames } });
     }
 
@@ -44,6 +52,7 @@ import ByteArray from "@util/byteArray";
      */
     pushFrame(address) {
         this.frames.push(address);
+        this.updateState();
     }
 
     /**
@@ -51,6 +60,15 @@ import ByteArray from "@util/byteArray";
      */
     popFrame() {
         this.frames.pop();
+    }
+
+    /**
+     * Expands the stack to be at least `newSize` bytes.
+     * @param {number} newSize 
+     */
+    expandStack(newSize) {
+        this.stack.expandTo(newSize);
+        this.updateState();
     }
 
     /**
@@ -74,11 +92,11 @@ import ByteArray from "@util/byteArray";
         if (address <= this.bssEndAddress) {
             this.text.setByte(address, byte);
         } else {
-            this.stack.expandTo(MemoryStructure.MAX_ADDRESS - address);
+            this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
             this.stack.setByte(MemoryStructure.MAX_ADDRESS - address, byte)
         }
 
-        this.simulator.setState({ memory: { text: this.text.data, stack: this.stack.data } });
+        this.updateState();
     }
     
     /**
@@ -102,11 +120,11 @@ import ByteArray from "@util/byteArray";
             // TODO: error if address less than bss end but length takes it into stack
             this.text.setBytes(address, doubleWord, 8);
         } else {
-            this.stack.expandTo(MemoryStructure.MAX_ADDRESS - address);
+            this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
             this.stack.setBytes(MemoryStructure.MAX_ADDRESS - address, doubleWord, -8)
         }
         
-        this.simulator.setState({ memory: { text: this.text.data, stack: this.stack.data } });
+        this.updateState();
     }
 
     /**
@@ -121,7 +139,7 @@ import ByteArray from "@util/byteArray";
         if (address <= this.bssEndAddress) {
             return this.text.getByte(address);
         } else {
-            this.stack.expandTo(MemoryStructure.MAX_ADDRESS - address);
+            this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
             return this.stack.getByte(MemoryStructure.MAX_ADDRESS - address)
         }
     }
@@ -141,8 +159,8 @@ import ByteArray from "@util/byteArray";
             // TODO: error if address less than bss end but length takes it into stack
             return this.text.getBytes(address, 8);
         } else {
-            this.stack.expandTo(MemoryStructure.MAX_ADDRESS - address);
-            return this.stack.getBytes(MemoryStructure.MAX_ADDRESS - address, 8);
+            this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
+            return this.stack.getBytes(MemoryStructure.MAX_ADDRESS - address, -8);
         }
     }
 }

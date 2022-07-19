@@ -23,6 +23,7 @@ export default class Program {
         this.bssSize = 0;
         this.currentInstruction = 0;
         this.nextInstruction = 1;
+        this.startLabel = null;
     }
 
     /**
@@ -106,13 +107,12 @@ export default class Program {
         for(let i = 0; i < this.staging.length; i++) {
             this.staging[i].args = this.staging[i].args.map((arg) => {
                 if (typeof arg === 'string') {
-                    if (this.labels[arg]) {
+                    if (this.labels[arg] !== undefined) {
                         if (this.initData[arg] || this.uninitData[arg]) // data value, use address
                             return BigInt(this.labels[arg]);
                         else // branch label, compute offset
                             return BigInt(this.labels[arg] - (i * 4));
-                    }
-                    else
+                    } else
                         throw `Parsing Error: Label '${arg}' not found.`;
                 }
 
@@ -122,6 +122,11 @@ export default class Program {
             const instruction = new (this.staging[i].type)(...this.staging[i].args);
             instruction.lineNumber = this.staging[i].lineNumber;
             this.instructions.push(instruction);
+        }
+
+        if (this.startLabel && this.labels[this.startLabel]) {
+            this.currentInstruction = this.labels[this.startLabel] / 4;
+            this.nextInstruction = this.currentInstruction + 1;
         }
     }
 
@@ -142,7 +147,7 @@ export default class Program {
             });
         }
 
-        if (state.flags.newPC)
+        if (state.flags.newPC !== undefined)
             this.nextInstruction = state.flags.newPC / 4;
 
         if (state.instructionComplete) {

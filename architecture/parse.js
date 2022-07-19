@@ -88,6 +88,9 @@ export default class Parse {
                 bssFlag = 1;
                 dataFlag = 0;
             }
+            else if (line.startsWith(".global")) {
+                this.program.startLabel = line.split(' ')[1];
+            }
             else if (dataFlag === 1){
                 this.parseLineofData(line);
             }

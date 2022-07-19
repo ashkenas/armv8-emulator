@@ -30,11 +30,6 @@ class Code extends React.Component {
         this.state = { text:
 `.text
 .global _start
-_start:
-    adr X0, array
-    adr X19, end
-    bl rec_add
-    b end
 rec_add:
     sub X1, X0, X19
     cbz X1, rec_add_base
@@ -54,7 +49,10 @@ rec_add_end:
     add X28, X28, #16
     add X0, X0, X1
     ret
-end:
+_start:
+    adr X0, array
+    adr X19, end
+    bl rec_add
     nop
 .data
 array: .dword 7, 5, 4, 8, 2, 9, 1, 3, 10, 6

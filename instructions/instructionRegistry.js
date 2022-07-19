@@ -20,6 +20,8 @@ import {
     RETInstruction,
     ADRInstruction,
     NOPInstruction,
+    LSLInstruction,
+    LSLIInstruction
 } from '@inst/index';
 
 class InstructionRegistry {
@@ -69,6 +71,8 @@ const instructionConstructors = [
     ADDSInstruction,
     ADDIInstruction,
     ADDISInstruction,
+    LSLInstruction,
+    LSLIInstruction,
     SUBInstruction,
     SUBSInstruction,
     SUBIInstruction,

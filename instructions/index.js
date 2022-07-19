@@ -9,6 +9,8 @@ export { default as BInstruction } from './b';
 export { default as BLInstruction } from './bl';
 export { default as CBZInstruction } from './cbz';
 export { default as LDURInstruction } from './ldur';
+export { default as LSLInstruction } from './lsl';
+export { default as LSLIInstruction } from './lsli';
 export { default as NOPInstruction } from './nop';
 export { default as ORRInstruction } from './orr';
 export { default as ORRIInstruction } from './orri';

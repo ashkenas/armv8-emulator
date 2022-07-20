@@ -1,7 +1,7 @@
 import React from 'react';
 import ScrollContent from "@components/scrollContent";
 import MemoryStructure from "@util/memoryStructure";
-import { bigIntArrayToBigInt, bigIntToHexString } from '@util/formatUtils';
+import { bigIntArrayToBigInt, bigIntToHexString, formatBinary } from '@util/formatUtils';
 import styles from '@styles/Memory.module.css';
 import PopUp from './popUp';
 
@@ -89,7 +89,7 @@ function Memory(props) {
                     <PopUp title={addressText} flipX={j - i > 1}>
                         Decimal: {value.toString()}
                         <br />
-                        Binary: {value.toString(2).padStart(8, '0')}
+                        Binary: {formatBinary(value, 8)}
                     </PopUp>
                     {bigIntToHexString(value, 8)}
                 </td>

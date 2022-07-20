@@ -45,3 +45,23 @@ export function bigIntArrayToBigInt(data, elemSize = 64n) {
 export function nextMultiple(value, factor) {
     return ((value - (value % factor)) % factor) + value;
 }
+
+/**
+ * Converts a number to a binary string with digit grouping.
+ * @param {bigint} data Data to convert to binary
+ * @param {number} bitLength Number of total binary digits
+ * @param {number} groupSize Size of digit groups
+ */
+export function formatBinary(data, bitLength, groupSize = 4) {
+    if (typeof data !== 'bigint')
+        throw "formatBinary: only 'bigint's are permitted!";
+        
+    const bin = [];
+    for (let i = 0n; (data >> i) > 0; i += BigInt(groupSize))
+        bin.unshift(((data >> i) & ((1n << BigInt(groupSize)) - 1n)).toString(2).toLocaleUpperCase().padStart(groupSize, '0'));
+    
+    while (bin.length < bitLength / groupSize)
+        bin.unshift(''.padStart(groupSize, '0'));
+
+    return bin.join(' ');
+}

@@ -57,7 +57,7 @@ function Memory(props) {
                     <PopUp title={addressText} flipX={j - i < 6} flipY={i < 24}>
                         Decimal: {value.toString()}
                         <br />
-                        Binary: {value.toString(2).padStart(8, '0')}
+                        Binary: {formatBinary(value, 8)}
                     </PopUp>
                     {bigIntToHexString(value, 8)}
                 </td>

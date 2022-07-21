@@ -140,29 +140,33 @@ export default class Program {
         if (this.exit || this.currentInstruction >= this.instructions.length)
             return true;
 
-        const state = this.instructions[this.currentInstruction].tick(simulator);
+        try {
+            const state = this.instructions[this.currentInstruction].tick(simulator);
 
-        if (this.instructions[this.currentInstruction].cycle === 2) {
-            simulator.setState({
-                controlSignals: this.instructions[this.currentInstruction].controlSignals
-            });
+            if (this.instructions[this.currentInstruction].cycle === 2) {
+                simulator.setState({
+                    controlSignals: this.instructions[this.currentInstruction].controlSignals
+                });
+            }
+
+            if (state.flags.newPC !== undefined)
+                this.nextInstruction = state.flags.newPC / 4;
+
+            if (state.flags.exit)
+                this.exit = true;
+
+            if (state.instructionComplete) {
+                this.currentInstruction = this.nextInstruction;
+                simulator.setState({
+                    encoding: this.instructions[this.currentInstruction]?.encodingParts,
+                    lineNumber: this.instructions[this.currentInstruction]?.lineNumber
+                });
+            }
+
+            simulator.setState({ wires: Object.assign(simulator.state.wires, state) });
+        } catch (e) {
+            simulator.setState(() => { throw e; });
         }
-
-        if (state.flags.newPC !== undefined)
-            this.nextInstruction = state.flags.newPC / 4;
-
-        if (state.flags.exit)
-            this.exit = true;
-
-        if (state.instructionComplete) {
-            this.currentInstruction = this.nextInstruction;
-            simulator.setState({
-                encoding: this.instructions[this.currentInstruction]?.encodingParts,
-                lineNumber: this.instructions[this.currentInstruction]?.lineNumber
-            });
-        }
-
-        simulator.setState({ wires: Object.assign(simulator.state.wires, state) });
 
         return false;
     }

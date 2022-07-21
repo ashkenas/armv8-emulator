@@ -83,11 +83,11 @@ import { nextMultiple } from "./formatUtils";
         if (byte < 0 || byte > 0b11111111n)
             throw 'Byte value must be within [0, 255].'
         
-        if (address >= MemoryStructure.MAX_ADDRESS)
-            throw 'Tried to write outside virtual memory.';
+        if (address > MemoryStructure.MAX_ADDRESS || address < 0)
+            throw 'Segmentation fault. Attempted to write outside of virtual memory. Did you move the stack pointer in the wrong direction?';
 
         if (address < this.bssStartAddress)
-            throw 'Tried to write to read-only memory.';
+            throw 'Segmentation fault. Attempted to write to read only memory. Did you try writing to a location in the .data section?';
 
         if (address <= this.bssEndAddress) {
             this.text.setByte(address, byte);
@@ -109,15 +109,16 @@ import { nextMultiple } from "./formatUtils";
         if (typeof doubleWord !== 'bigint')
             throw "Only type 'bigint' can be written to memory.";
 
-        if (address + 7 > MemoryStructure.MAX_ADDRESS)
-            throw 'Tried to write outside of virtual memory.';
+        if (address + 7 > MemoryStructure.MAX_ADDRESS || address < 0)
+            throw 'Segmentation fault. Attempted to write outside of virtual memory. Did you move the stack pointer in the wrong direction?';
         
         if (address < this.bssStartAddress)
-            throw 'Tried to write to read-only memory.';
+            throw 'Segmentation fault. Attempted to write to read only memory. Did you try writing to a location in the .data section?';
 
         // Write to appropriate array (stack/BSS)
         if (address <= this.bssEndAddress) {
-            // TODO: error if address less than bss end but length takes it into stack
+            if (address + 7 > this.bssEndAddress)
+                throw 'Warning: Attempted to write to an address in BSS that spilled into the stack. Did you allocate enough space to the variable?';
             this.text.setBytes(address, doubleWord, 8);
         } else {
             this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
@@ -133,8 +134,8 @@ import { nextMultiple } from "./formatUtils";
      * @returns {bigint}
      */
     readByte(address) {
-        if (address >= MemoryStructure.MAX_ADDRESS || address < 0)
-            throw 'Tried to write outside virtual memory.';
+        if (address > MemoryStructure.MAX_ADDRESS || address < 0)
+            throw 'Segmentation fault. Attempted to read from outside of virtual memory. Did you move the stack pointer in the wrong direction?';
 
         if (address <= this.bssEndAddress) {
             return this.text.getByte(address);
@@ -152,11 +153,12 @@ import { nextMultiple } from "./formatUtils";
      */
     readDoubleWord(address) {
         if (address + 7 > MemoryStructure.MAX_ADDRESS || address < 0)
-            throw 'Tried to read outside virtual memory.';
+            throw 'Segmentation fault. Attempted to read from outside of virtual memory. Did you move the stack pointer in the wrong direction?';
 
         // Read from appropriate array (stack/BSS)
         if (address <= this.bssEndAddress) {
-            // TODO: error if address less than bss end but length takes it into stack
+            if (address + 7 > this.bssEndAddress)
+                throw 'Warning: Attempted to read from an address in BSS that spilled into the stack. Did you allocate enough space to the variable?'
             return this.text.getBytes(address, 8);
         } else {
             this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);

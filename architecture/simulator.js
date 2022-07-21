@@ -13,6 +13,7 @@ import {
     RegisterStructure,
 } from "@util/index"
 import styles from "@styles/Home.module.css";
+import ErrorBoundary from "@components/errorBoundary";
 
 export default class Simulator extends React.Component {
     constructor(props) {
@@ -64,7 +65,9 @@ export default class Simulator extends React.Component {
                 <div className={styles.column}>
                     <div className={`${styles.card} ${styles.expand}`}>
                         <h2>Code</h2>
-                        <Code simulator={this} lineNumber={this.state.lineNumber} />
+                        <ErrorBoundary title={"Parsing Error"}>
+                            <Code simulator={this} lineNumber={this.state.lineNumber} />
+                        </ErrorBoundary>
                         {/* Demo buttons, will be removed later */}
                         <button className={styles.btest} onClick={() => { this.program?.tick(this); }}>Next Cycle</button>
                         <button className={styles.btest} onClick={() => { for(let i = 0; i < 5; i++)this.program?.tick(this); }}>Next 5 Cycles</button>

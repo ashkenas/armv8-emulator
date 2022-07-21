@@ -74,12 +74,18 @@ end: .char 0` };
     render() {
         return (
             <>
-                <input type="file" onChange={async (e) => {
-                    const text = await e.target.files[0].text();
-                    const p = new Parse(text);
-                    p.parseProgram();
-                    this.props.simulator.load(p.program);
-                    this.setState({ text: text });
+                <input type="file" onChange={(e) => {
+                    if (!e.target.files.length)
+                        return;
+                    
+                    e.target.files[0].text().then((text) => {
+                        this.setState({ text: text });
+                        const p = new Parse(text);
+                        p.parseProgram();
+                        this.props.simulator.load(p.program);
+                    }).catch((error) => {
+                        this.setState(() => { throw error; });
+                    });
                 }} />
                 <ScrollContent>
                     <pre className={styles['code-container']}>

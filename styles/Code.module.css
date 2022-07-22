@@ -9,3 +9,8 @@
     width: 100%;
     background-color: #ffff0033;
 }
+
+.error {
+    width: 100%;
+    white-space: break-spaces;
+}

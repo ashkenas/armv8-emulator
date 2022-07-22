@@ -28,10 +28,10 @@ class ADRInstruction extends Instruction {
     }
 
     wb(simulator) {
-        simulator.registers.setRegister(this.rt, this.imm11);
+        simulator.registers.setRegister(this.rt, this.imm11 + BigInt(simulator.program.currentInstruction * 4));
 
         return {
-            writeData: this.imm11
+            writeData: this.imm11 + BigInt(simulator.program.currentInstruction * 4)
         };
     }
 }

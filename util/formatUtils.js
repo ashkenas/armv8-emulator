@@ -43,7 +43,7 @@ export function bigIntArrayToBigInt(data, elemSize = 64n) {
  * @returns {number|bigint}
  */
 export function nextMultiple(value, factor) {
-    return ((value - (value % factor)) % factor) + value;
+    return ((factor - (value % factor)) % factor) + value;
 }
 
 /**

@@ -23,8 +23,7 @@ import { nextMultiple } from "./formatUtils";
         for(let i = 0; i < program.instructions.length; i++)
             this.text.setBytes(i*4, BigInt(program.instructions[i].encoding), 4);
 
-        for(const key of Object.keys(program.initData)) {
-            const {value, length, address} = program.initData[key];
+        for(const {value, length, address} of program.initData) {
             this.text.setBytes(address, value, length);
         }
         

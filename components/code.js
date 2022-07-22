@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import hljs from 'highlight.js/lib/core';
 import armasm from '@util/langdecl';
 import styles from '@styles/Code.module.css';
@@ -6,7 +6,7 @@ import "highlight.js/styles/base16/ashes.css";
 import Parse from '../architecture/parse';
 import ScrollContent from './scrollContent';
 
-let currentCodeComp = null;
+let currentLine = null;
 
 hljs.configure({ ignoreUnescapedHTML: true });
 hljs.addPlugin({
@@ -14,7 +14,7 @@ hljs.addPlugin({
         result.value = result.value.replace(/^(.*?)$/gm, (() => {
             let i = 0; // Internally maintain line number as function state
             return (m, g) => {
-                if (i++ === currentCodeComp.props.lineNumber)
+                if (i++ === currentLine)
                     return `<span class="${styles.highlighter}">${g}</span>`;
                 return g;
             };
@@ -23,12 +23,10 @@ hljs.addPlugin({
 });
 hljs.registerLanguage('armasm', armasm);
 
-class Code extends React.Component {
-    constructor(props) {
-        super(props);
-        this.codeRef = React.createRef();
-        this.state = { text:
-`.text
+export default function Code(props) {
+    currentLine = props.lineNumber;
+    const codeRef = useRef(null);
+    const [text, setText] = useState(`.text
 .global _start
 rec_add:
     sub X1, X0, X19
@@ -53,51 +51,59 @@ _start:
     adr X0, array
     adr X19, end
     bl rec_add
+    adr x1, out
+    stur x0, [x1, #0]
     svc #0
 .data
-array: .dword 8, 4, 3
-end: .char 0` };
-        currentCodeComp = this;
-        const p = new Parse(this.state.text);
-        p.parseProgram();
-        props.simulator.load(p.program);
-    }
+array:
+    .dword 8, 4, 3
+end:
+    .dword 0
+.bss
+out:
+    .space 8
+.end`);
+    const [error, setError] = useState(false);
 
-    componentDidMount() {
-        hljs.highlightElement(this.codeRef.current);
-    }
-    
-    componentDidUpdate() {
-        hljs.highlightElement(this.codeRef.current);
-    }
+    useEffect(() => {
+        if(!error && codeRef && codeRef.current)
+            hljs.highlightElement(codeRef.current);
+    }, [text, props.lineNumber]);
 
-    render() {
-        return (
-            <>
-                <input type="file" onChange={(e) => {
-                    if (!e.target.files.length)
-                        return;
-                    
-                    e.target.files[0].text().then((text) => {
-                        text = text.replaceAll(/\r/g, '');
-                        this.setState({ text: text });
-                        const p = new Parse(text);
-                        p.parseProgram();
-                        this.props.simulator.load(p.program);
-                    }).catch((error) => {
-                        this.setState(() => { throw error; });
-                    });
-                }} />
-                <ScrollContent>
-                    <pre className={styles['code-container']}>
-                        <code ref={this.codeRef} className="language-armasm">
-                            {this.state.text}
-                        </code>
-                    </pre>
-                </ScrollContent>
-            </>
-        );
-    }
+    useEffect(() => {
+        try {
+            const p = new Parse(text);
+            props.simulator.load(p.program);
+            setError(false);
+        } catch (e) {
+            setError(e);
+        }
+    }, [text])
+
+    const code = (
+        <ScrollContent>
+            <pre className={styles['code-container']}>
+                <code ref={codeRef} className="language-armasm">
+                    {text}
+                </code>
+            </pre>
+        </ScrollContent>
+    );
+
+    const parsingError = <pre className={styles.error}>Parsing error occurred.<br/><br/>{error.toString()}</pre>;
+
+    return (
+        <>
+            <input type="file" onChange={(e) => {
+                if (!e.target.files.length)
+                    return;
+                
+                e.target.files[0].text().then((newText) => {
+                    setText(newText.replaceAll(/\r/g, ''));
+                });
+            }} />
+            {!error && code}
+            {!!error && parsingError}
+        </>
+    );
 }
-
-export default Code;

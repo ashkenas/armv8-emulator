@@ -1,3 +1,5 @@
+import { nextMultiple } from "@util/formatUtils";
+
 /**
  * Represent an unencoded instruction.
  */
@@ -17,8 +19,7 @@ export default class Program {
     constructor() {
         this.instructions = [];
         this.staging = [];
-        this.initData = {};
-        this.uninitData = {};
+        this.initData = [];
         this.labels = {};
         this.initSize = 0;
         this.bssSize = 0;
@@ -41,24 +42,23 @@ export default class Program {
 
     /**
      * Add a piece of initialized data.
-     * @param {string} label Label text
      * @param {bigint} value Data value
      * @param {number} length Byte length of data
      */
-    addInitializedData(label, value, length) {
-        if (typeof value !== 'bigint')
-            throw 'addInitializedData: value must be type bigint!';
-        this.initData[label] = { value: value, length: length };
+    addInitializedData(value, length) {
+        this.initData.push({
+            value: value,
+            length: length,
+            address: (this.staging.length * 4) + this.initSize + this.bssSize
+        });
         this.initSize += length;
     }
 
     /**
      * Reserve space for uninitialized data.
-     * @param {string} label Label text
      * @param {number} length Byte length of space to reserve
      */
-    addUninitializedData(label, length) {
-        this.uninitData[label] = length;
+    addUninitializedData(length) {
         this.bssSize += length;
     }
 
@@ -68,7 +68,7 @@ export default class Program {
      * @param {number} bytes 
      */
     alignInitializedData(bytes) {
-        this.addInitializedData('', 0n, (bytes - (this.initSize % bytes)) % bytes);
+        this.addInitializedData('', 0n, nextMultiple(this.initSize, bytes) - this.initSize);
     }
 
     /**
@@ -77,7 +77,7 @@ export default class Program {
      * @param {number} bytes 
      */
     alignUninitializedData(bytes) {
-        this.addUninitializedData('', 0n, (bytes - ((this.bssSize + this.initSize) % bytes)) % bytes);
+        this.addUninitializedData('', 0n, nextMultiple(this.bssSize + this.initSize, bytes) - (this.bssSize + this.initSize));
     }
 
     /**
@@ -85,7 +85,7 @@ export default class Program {
      * @param {string} label Label text
      */
     addLabel(label) {
-        this.labels[label] = this.staging.length * 4;
+        this.labels[label] = this.staging.length * 4 + this.initSize + this.bssSize;
     }
 
     /**
@@ -93,32 +93,16 @@ export default class Program {
      * with their appropriate integer values.
      */
     runSubstitutions() {
-        this.programSize = (this.staging.length + (this.staging.length % 2)) * 4;
-        let nextAddress = this.programSize;
-        
-        for(const label of Object.keys(this.initData)) {
-            this.initData[label].address = nextAddress;
-            this.labels[label] = nextAddress;
-            nextAddress += this.initData[label].length;
-        }
-        
-        for(const label of Object.keys(this.uninitData)) {
-            this.labels[label] = nextAddress;
-            nextAddress += this.uninitData[label];
-        }
+        this.programSize = this.staging.length * 4;
 
         for(let i = 0; i < this.staging.length; i++) {
             this.staging[i].args = this.staging[i].args.map((arg) => {
                 if (typeof arg === 'string') {
                     if (this.labels[arg] !== undefined) {
-                        if (this.initData[arg] || this.uninitData[arg]) // data value, use address
-                            return BigInt(this.labels[arg]);
-                        else // branch label, compute offset
-                            return BigInt(this.labels[arg] - (i * 4));
+                        return BigInt(this.labels[arg] - (i * 4));
                     } else
-                        throw `Parsing Error: Label '${arg}' not found.`;
+                        throw `Line ${this.staging[i].lineNumber + 1}: ${this.staging[i].lineText}\n\nLabel '${arg}' not found.`;
                 }
-
                 return arg;
             });
 

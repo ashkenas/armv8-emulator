@@ -4,24 +4,11 @@ import InstructionRegistry from "@inst/instructionRegistry";
 import { bigIntArrayToBigInt } from "@util/formatUtils";
 
 export default class Parse {
-    constructor(text){
-        this.text = text;
+    constructor(text) {
+        this.text = this.processText(text);
         this.program = new Program();
-        // .text
-        this.numInstrs = 0;
-        this.numLables = 0;
-        this.lableAddrs = {};
-        this.lableLineNum = {};
-        // .data
-        this.dataSize = 0;
-        this.dataIndex = -1;
-        this.dataAddrs = {};
-        this.data_vars = [];
-        // .bss
-        this.bssSize = 0;
-        this.bssIndex = -1;
-        this.bssAddrs = {};
-        this.bss_vars = [];     
+        this.processProgram();
+        this.program.runSubstitutions();
     }
     /* prepare program for parsing by removing emply lines, white space, and doule spaces ADD make sure lable and declaraction on same line in data and bss
     Example:
@@ -43,227 +30,216 @@ export default class Parse {
     mov x8, #0
     mov x9, #0"
     */
-    processText(){
-        // this.text = this.text.replace(/\n{2,}/g, '\n');   //delete all free lines
-        this.text = this.text.trim();
-        this.text = this.text.replaceAll(/(?:\/\/.*$)|[\r]/gm, '');
-        var progArr = this.text.split(/\n/);
+    processText(text) {
+        text = text.trim();
+        text = text.replaceAll(/(?:\/\/.*$)|[\r]/gm, '');
+        const progArr = text.split(/\n/);
         for(let i=0; i < progArr.length; i++){
             progArr[i] = progArr[i].trim().replace(/\s+/g,' ');
         }
-        this.text = progArr.join('\n');
+        return progArr.join('\n');
     }
+
     /**
      * Loops over program array, adds lables to lable dict, parses .data and .bss
      */
     processProgram(){
-        this.program_array = this.text.split(/\n/); 
-        console.log(this.program_array);
-        this.program_len = this.program_array.length;
+        const program_array = this.text.split(/\n/);
+        const program_len = program_array.length;
 
         let dataFlag = 0;
         let bssFlag = 0;        
 
-        for (let i = 0; i < this.program_len; i++) {
-            this.program_array[i] = this.program_array[i].trim(); // delete leading white space of each line
-            let line = this.program_array[i];
-            let line_len = this.program_array[i].length
-            if (!line){continue;}  // this might mess up line number for addLable
-            
-            if(!line.includes('.') && !line.includes(':') ){
-                let instr_arr = this.parseInstruction(line);
-                const instrType = this.matchParsedInstruction(instr_arr);
-                let decode = this.decodeParsedInstruction(instr_arr);
-                this.program.addInstruction(instrType, decode, i, line);
-            }
-            else if (line[0] !== '.' && line[line_len-1] === ':'){
-                this.program.addLabel(line.substring(0, line_len - 1));
-            }
-            else if (this.program_array[i] === ".data"){  // does .data always come before .bss
-                this.dataIndex = i;
-                dataFlag = 1;
-                bssFlag = 0;
-            }
-            else if (this.program_array[i] === ".bss"){
-                this.bssIndex = i;
-                bssFlag = 1;
-                dataFlag = 0;
-            }
-            else if (line.startsWith(".global")) {
-                this.program.startLabel = line.split(' ')[1];
-            }
-            else if (dataFlag === 1){
-                this.parseLineofData(line);
-            }
-            else if (bssFlag === 1){
-                this.parseLineofBss(line);
-            }
-            else{
-                console.log(`Ignoring line: ${line}`);
+        for (let i = 0; i < program_len; i++) {
+            let line = program_array[i];
+            if (!line)
+                continue;
+
+            let line_len = line.length;
+
+            try {
+                if (!line.includes('.') && !line.includes(':')) {
+                    let instr_arr = this.parseInstruction(line);
+                    const instrType = this.matchParsedInstruction(instr_arr);
+                    let decode = this.decodeParsedInstruction(instr_arr);
+                    this.program.addInstruction(instrType, decode, i, line);
+                }
+                else if (line[0] !== '.' && line[line_len-1] === ':') {
+                    this.program.addLabel(line.substring(0, line_len - 1));
+                }
+                else if (line === ".text") {
+                    dataFlag = 0;
+                    bssFlag = 0;
+                }
+                else if (line === ".data") {
+                    dataFlag = 1;
+                    bssFlag = 0;
+                }
+                else if (line === ".bss") {
+                    bssFlag = 1;
+                    dataFlag = 0;
+                }
+                else if (line === ".end") {
+                    break;
+                }
+                else if (line.startsWith(".global")) {
+                    this.program.startLabel = line.split(' ')[1];
+                }
+                else if (dataFlag === 1) {
+                    this.parseLineofData(line);
+                }
+                else if (bssFlag === 1) {
+                    this.parseLineofBss(line);
+                }
+                else {
+                    throw `Unknown syntax/command.`;
+                }
+            } catch (e) {
+                throw `Line ${i + 1}: ${line}\n\n${e}`;
             }
         }
     }
 
     /**
-    * @param {string} data_line
-    * adds data to program
-    * x: .double 5, 6, 7
-    **/
+     * adds data to program
+     * x: .double 5, 6, 7
+     * @param {string} data_line
+     */
     parseLineofData(data_line) {
-        let temp = data_line.split(":");    // ["x", " .double 5, 6, 7"]
-        let var_name = temp[0].trim();      // "x"
+        if(data_line.includes(':'))
+            this.program.addLabel(data_line.split(':')[0]);
+
         let [fm, type, data] = (/(\.[a-z]*)\s*(.*)/i).exec(data_line);
         data = data.split(',').map((val) => BigInt(val.trim()));
         let initLen = this.getByteSizeofInitializer(type) * data.length;  // ".double"
-        this.program.addInitializedData(var_name, bigIntArrayToBigInt(data), initLen);   
+        this.program.addInitializedData(bigIntArrayToBigInt(data), initLen);   
     }
+
     /**
-     * @param {string} bss_line 
      * adds bss data to program
      * y: .dword 4
+     * @param {string} bss_line 
      */
-    parseLineofBss(bss_line){        
-        let temp = bss_line.split(":");
-        let var_name = temp[0].trim();
-        let info = temp[1].trim();
-        info = info.split(" ");
-        let initLen = this.getByteSizeofInitializer(info[0].trim());
-        let num_args = 0;
-        try{
-            num_args = +info[1].trim();
-        }
-        catch{
-            num_args = 1;
-        }
-        let byteLen = num_args * initLen;
-        this.program.addUninitializedData(var_name, byteLen);
-    }
+    parseLineofBss(bss_line){
+        if(bss_line.includes(':'))
+            this.program.addLabel(bss_line.split(':')[0]);
 
-    /* Takes an instr and returns an array [mnemonic, arg1, ..., argN]
-    Exampels:
-        ADD X1, X2, X3 --> ["add", "X1", "X2", "X3"]
-        SUB X1, X2, #4 --> ["sub", "X1", "X2", "#4"]
-        CMP X1, X2     --> ["cmp", "X1", "X2"]
-        B lable        --> ["b", "lable"]    
-    */
-    parseInstruction(instr_line){
-        let [fm, mnemonic, arg_string] = (/([a-z]*)\s*(.*)/i).exec(instr_line.replaceAll(/[\[\]]/g, ''));
-        mnemonic = mnemonic.toLowerCase();
-        if(arg_string) {
-            let args = arg_string.split(',').map((arg) => arg.trim());
-            return [mnemonic, ...args];
-        } else {
-            return [mnemonic];
-        }
-        let first_arg = instr_info[1];
-
-        res.push(mnemonic);
-        res.push(first_arg);
-
-        let second_arg = null;
-        let third_arg = null;
-        // we know there will be AT LEAST TWO, not sure about others
-        try {
-            second_arg = instr_info[2];
-            res.push(second_arg);
-            try{
-                third_arg = instr_info[3];
-                res.push(third_arg);
-            }
-            catch{
-                third_arg = null;                
-            }
-        }
-        catch{
-            second_arg = null;
-        }
-        return res;
+        let [fm, type, size] = (/(\.[a-z]*)\s*(-?[0-9]*)/i).exec(bss_line);
+        let initLen = this.getByteSizeofInitializer(type) * (size && !isNaN(+size) ? +size : 1);  // ".double"
+        this.program.addUninitializedData(initLen);
     }
 
     /**
-     * 
-     * @param {[string]} instr 
+     * Converts a string of an instruction include an array
+     * of its parts.
+     * @param {string} line Instruction as a string
+     * @returns {string[]} Instruction as array of [mnemonic, ...args]
+     */
+    parseInstruction(line){
+        let [fm, mnemonic, argString] = (/([a-z]*)\s*(.*)/i).exec(line.replaceAll(/[\[\]]/g, ''));
+        mnemonic = mnemonic.toLowerCase();
+
+        if(argString) {
+            let args = argString.split(',').map((arg) => arg.trim());
+            return [mnemonic, ...args];
+        } else { // No arguments found
+            return [mnemonic];
+        }
+    }
+
+    /** 
+     * Takes instruction array. Returns the appropriate constructor
+     * for that instruction.
+     * @param {string[]} instr Instruction array [type, ...args]
      * @returns Instruction
-     * Takes instruciton array. Returns the instruction type using the InstructionRegistry.match
      */
     matchParsedInstruction(instr){
         let mnemonic = (instr[0].trim()).toLowerCase();
         let argtypes = [];
-        for(let a=1; a < instr.length; a++){
+
+        for(let a = 1; a < instr.length; a++){
             argtypes.push(this.getArgumentType(instr[a]));
         }
-        const instrType = InstructionRegistry.match(mnemonic, argtypes);
-        return instrType;
+
+        return InstructionRegistry.match(mnemonic, argtypes);
     }
 
-    /* Return if an arg is a register or an immediate */
+    /**
+     * Gets the type of an argument from its string value.
+     * @param {string} arg Argument as a string
+     * @returns {ArgumentType} Type of the argument
+     */
     getArgumentType(arg){
         if (arg.length >= 2 && arg.length <= 3 && arg[0].toUpperCase() === 'X'){
             let reg_num = arg.substring(1);
             if ((+reg_num >= 0 && +reg_num <= 31) || reg_num === "ZR"){
                 return ArgumentType.Register;
             }
-            // check if it is a lable
-            throw `ArgType error: ${reg_num}`; // do like a class attribute for this
+            throw `Invalid register: ${arg}`;
         }
         else {
-            return ArgumentType.Immediate; // check if it even exists in lables
+            return ArgumentType.Immediate;
         }
     }
 
     /**
-     * 
-     * @param {string[]} instr -- ["add", "XZR", "X2"] with at least two
-     * @param {number} instrLineNum 
-     * @returns {number}
+     * Decode arguments into numeric forms where possible.
+     * @param {string[]} instr Instruction array [type, ...args]
+     * @returns {any[]} Decoded arguments
      */
-    decodeParsedInstruction(instr, instrLineNum){
-        let decode = [];
-        instr.shift();
-        for(let i=0; i < instr.length; i++){
-            let param = instr[i];   
-            if(param.toLowerCase() === "xzr"){
-                decode.push(0);
-            }
-            else if(param[0].toLowerCase() === 'x' || param[0] === '#'){
-                let int = +param.substring(1);
-                if(isNaN(int)){
-                    throw "Error: decodeParsedInstruction incorrect register or number";
-                }
-                decode.push(param[0] === '#' ? BigInt(int) : int);
-            }
-            else{   //lable?
-                // let lableLineNum = this.lableLineNum.param;
-                // if (lableLineNum == NaN){
-                //     throw "Error: decodeParsedInstruction lable not in dict";
-                // }
-                // let offset = (lableLineNum - instrLineNum) * 4;
-                decode.push(param)
+    decodeParsedInstruction(instr){
+        let args = [];
+        for(let i = 1; i < instr.length; i++) {
+            let param = instr[i];
+            switch(param.toLowerCase()) {
+                case "xzr":
+                    args.push(31);
+                    break;
+                case "lr":
+                    args.push(30);
+                    break;
+                case "fp":
+                    args.push(29);
+                    break;
+                case "sp":
+                    args.push(38);
+                    break;
+                default:
+                    if (param[0].toLowerCase() === 'x') {
+                        let arg = +param.substring(1);
+                        if (isNaN(arg))
+                            throw `Argument ${i} (${param}):\nInvalid register number '${arg}'.`;
+                        else if (arg < 0 || arg > 31)
+                            throw `Argument ${i} (${param}):\nRegister number must be in range [0, 31].`
+                        args.push(arg);
+                    } else if (param[0] === '#') {
+                        let arg = +param.substring(1);
+                        if (isNaN(arg))
+                            throw `Argument ${i} (${param}):\nInvalid immediate '${arg}'.`;
+                        else if (arg < -(2 ** 10) || arg > (2 ** 10) - 1)
+                            throw `Argument ${i} (${param}):\nImmediate must be in range [-2^10, 2^10 - 1].`
+                        args.push(BigInt(arg));
+                    } else {
+                        args.push(param)
+                    }
             }
         }
-        return decode;
+        return args;
     }
 
-    getByteSizeofInitializer(init){
-        if(typeof init !== 'string'){
-            throw "Error: inisializer is not a string";
-        }
+    getByteSizeofInitializer(init) {
         switch(init) {
             case ".word":
             case ".int":
+            case ".float":
                 return 4;
             case ".dword":
             case ".double":
                 return 8;
             case ".char":
+            case ".byte":
+            case ".space":
                 return 1;
         }
     }
-
-    parseProgram(){
-        this.processText();
-        this.processProgram();
-        this.program.runSubstitutions();
-    }
-
 }

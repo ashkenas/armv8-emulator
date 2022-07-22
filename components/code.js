@@ -79,6 +79,7 @@ end: .char 0` };
                         return;
                     
                     e.target.files[0].text().then((text) => {
+                        text = text.replaceAll(/\r/g, '');
                         this.setState({ text: text });
                         const p = new Parse(text);
                         p.parseProgram();

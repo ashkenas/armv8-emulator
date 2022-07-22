@@ -1,5 +1,5 @@
-th.header {
-    text-align: center;
+th.header:first-child {
+    text-align: right;
 }
 
 td.signal {

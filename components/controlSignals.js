@@ -11,7 +11,7 @@ function ControlSignals(props) {
             <table>
                 <thead>
                     <tr>
-                        <th className={styles.header}>Control Signal</th>
+                        <th className={styles.header}>Signal</th>
                         <th className={styles.header}>Value</th>
                     </tr>
                 </thead>

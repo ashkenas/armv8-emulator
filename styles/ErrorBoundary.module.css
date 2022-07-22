@@ -23,7 +23,11 @@ h2.title {
     padding: 1rem 1rem;
     margin: 0;
     color: #f14747;
+    background-color: #dfdfdf;
     box-shadow: 0 -2px 3px 2px black;
+    border-radius: inherit;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 div.body {

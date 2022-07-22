@@ -46,7 +46,7 @@ export default class Parse {
     processText(){
         // this.text = this.text.replace(/\n{2,}/g, '\n');   //delete all free lines
         this.text = this.text.trim();
-        this.text = this.text.replaceAll(/(?:\/\/.*$)|[\[\]]/gm, '');
+        this.text = this.text.replaceAll(/(?:\/\/.*$)|[\r]/gm, '');
         var progArr = this.text.split(/\n/);
         for(let i=0; i < progArr.length; i++){
             progArr[i] = progArr[i].trim().replace(/\s+/g,' ');
@@ -58,6 +58,7 @@ export default class Parse {
      */
     processProgram(){
         this.program_array = this.text.split(/\n/); 
+        console.log(this.program_array);
         this.program_len = this.program_array.length;
 
         let dataFlag = 0;
@@ -73,7 +74,7 @@ export default class Parse {
                 let instr_arr = this.parseInstruction(line);
                 const instrType = this.matchParsedInstruction(instr_arr);
                 let decode = this.decodeParsedInstruction(instr_arr);
-                this.program.addInstruction(instrType, decode, i);
+                this.program.addInstruction(instrType, decode, i, line);
             }
             else if (line[0] !== '.' && line[line_len-1] === ':'){
                 this.program.addLabel(line.substring(0, line_len - 1));
@@ -146,7 +147,7 @@ export default class Parse {
         B lable        --> ["b", "lable"]    
     */
     parseInstruction(instr_line){
-        let [fm, mnemonic, arg_string] = (/([a-z]*)\s*(.*)/i).exec(instr_line);
+        let [fm, mnemonic, arg_string] = (/([a-z]*)\s*(.*)/i).exec(instr_line.replaceAll(/[\[\]]/g, ''));
         mnemonic = mnemonic.toLowerCase();
         if(arg_string) {
             let args = arg_string.split(',').map((arg) => arg.trim());

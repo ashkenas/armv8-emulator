@@ -84,10 +84,10 @@ import { nextMultiple } from "./formatUtils";
             throw 'Byte value must be within [0, 255].'
         
         if (address > MemoryStructure.MAX_ADDRESS || address < 0)
-            throw 'Segmentation fault. Attempted to write outside of virtual memory. Did you move the stack pointer in the wrong direction?';
+            throw 'Segmentation fault. Attempted to write outside of virtual memory.\n\nTip:\nMake sure you\'re moving the stack pointer in the right direction.';
 
         if (address < this.bssStartAddress)
-            throw 'Segmentation fault. Attempted to write to read only memory. Did you try writing to a location in the .data section?';
+            throw 'Segmentation fault. Attempted to write to read only memory.\n\nTip:\nYou cannot write to locations in the .text or .data sections.';
 
         if (address <= this.bssEndAddress) {
             this.text.setByte(address, byte);
@@ -110,15 +110,15 @@ import { nextMultiple } from "./formatUtils";
             throw "Only type 'bigint' can be written to memory.";
 
         if (address + 7 > MemoryStructure.MAX_ADDRESS || address < 0)
-            throw 'Segmentation fault. Attempted to write outside of virtual memory. Did you move the stack pointer in the wrong direction?';
+            throw 'Segmentation fault. Attempted to write outside of virtual memory.\n\nTip:\nMake sure you\'re moving the stack pointer in the right direction.';
         
         if (address < this.bssStartAddress)
-            throw 'Segmentation fault. Attempted to write to read only memory. Did you try writing to a location in the .data section?';
+            throw 'Segmentation fault. Attempted to write to read only memory.\n\nTip:\nYou cannot write to locations in the .text or .data sections.';
 
         // Write to appropriate array (stack/BSS)
         if (address <= this.bssEndAddress) {
             if (address + 7 > this.bssEndAddress)
-                throw 'Warning: Attempted to write to an address in BSS that spilled into the stack. Did you allocate enough space to the variable?';
+                throw 'Warning: Attempted to write to an address in BSS that was too close to the stack boundary.\n\nTip:\nMake sure you allocate enough space to your variables.';
             this.text.setBytes(address, doubleWord, 8);
         } else {
             this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
@@ -135,7 +135,7 @@ import { nextMultiple } from "./formatUtils";
      */
     readByte(address) {
         if (address > MemoryStructure.MAX_ADDRESS || address < 0)
-            throw 'Segmentation fault. Attempted to read from outside of virtual memory. Did you move the stack pointer in the wrong direction?';
+            throw 'Segmentation fault. Attempted to read from outside of virtual memory.\n\nTip:\nMake sure you\'re moving the stack pointer in the right direction.';
 
         if (address <= this.bssEndAddress) {
             return this.text.getByte(address);
@@ -153,12 +153,12 @@ import { nextMultiple } from "./formatUtils";
      */
     readDoubleWord(address) {
         if (address + 7 > MemoryStructure.MAX_ADDRESS || address < 0)
-            throw 'Segmentation fault. Attempted to read from outside of virtual memory. Did you move the stack pointer in the wrong direction?';
+            throw 'Segmentation fault. Attempted to read from outside of virtual memory.\n\nTip:\nMake sure you\'re moving the stack pointer in the right direction.';
 
         // Read from appropriate array (stack/BSS)
         if (address <= this.bssEndAddress) {
             if (address + 7 > this.bssEndAddress)
-                throw 'Warning: Attempted to read from an address in BSS that spilled into the stack. Did you allocate enough space to the variable?'
+                throw 'Warning: Attempted to read from an address in BSS that was too close to the stack boundary.\n\nTip:\nMake sure you allocate enough space to your variables.';
             return this.text.getBytes(address, 8);
         } else {
             this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);

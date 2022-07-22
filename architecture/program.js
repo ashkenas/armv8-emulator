@@ -2,10 +2,11 @@
  * Represent an unencoded instruction.
  */
 class StagedInstruction {
-    constructor(instructionType, instructionArgs, lineNumber) {
+    constructor(instructionType, instructionArgs, lineNumber, lineText) {
         this.type = instructionType;
         this.args = instructionArgs;
         this.lineNumber = lineNumber;
+        this.lineText = lineText;
     }
 }
 
@@ -31,10 +32,11 @@ export default class Program {
      * Add an instruction to the program.
      * @param {Instruction} instructionType A class that extends `Instruction`
      * @param {any[]} instructionArgs Arguments for the instruction
-     * @param lineNumber
+     * @param {number} lineNumber File line number where instruction occurs
+     * @param {string} lineText Instruction text as given in file
      */
-    addInstruction(instructionType, instructionArgs, lineNumber) {
-        this.staging.push(new StagedInstruction(instructionType, instructionArgs, lineNumber));
+    addInstruction(instructionType, instructionArgs, lineNumber, lineText) {
+        this.staging.push(new StagedInstruction(instructionType, instructionArgs, lineNumber, lineText));
     }
 
     /**
@@ -122,6 +124,7 @@ export default class Program {
 
             const instruction = new (this.staging[i].type)(...this.staging[i].args);
             instruction.lineNumber = this.staging[i].lineNumber;
+            instruction.lineText = this.staging[i].lineText;
             this.instructions.push(instruction);
         }
 
@@ -165,7 +168,9 @@ export default class Program {
 
             simulator.setState({ wires: Object.assign(simulator.state.wires, state) });
         } catch (e) {
-            simulator.setState(() => { throw e; });
+            simulator.setState(() => {
+                throw `Line ${this.instructions[this.currentInstruction].lineNumber + 1}: ${this.instructions[this.currentInstruction].lineText}\n\n${e}`;
+            });
         }
 
         return false;

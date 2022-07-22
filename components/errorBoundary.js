@@ -16,18 +16,15 @@ export default class ErrorBoundary extends React.Component {
     }
 
     render() {
-        console.log(this.state);
         if (!this.state.errorInfo)
             return this.props.children;
 
         return (
             <div className={styles.overlay}>
                 <div className={styles.modal}>
-                    <div className={styles.head}>
-                        <h2 className={styles.title}>{this.props.title}</h2>
-                    </div>
+                    <h2 className={styles.title}>{this.props.title}</h2>
                     <div className={styles.body}>
-                        <p>{this.state.error}</p>
+                        <pre>{this.state.error}</pre>
                     </div>
                 </div>
             </div>

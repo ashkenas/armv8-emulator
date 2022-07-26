@@ -23,5 +23,7 @@ export { default as SUBIInstruction } from './subi';
 export { default as SUBISInstruction } from './subis';
 export { default as SUBSInstruction } from './subs';
 export { default as SVCInstruction } from './svc';
+export { default as CMPInstruction } from './cmp';
+export { default as CMPIInstruction } from './cmpi';
 export { default as InstructionRegistry } from './instructionRegistry';
 export { default as Instruction } from './instruction';

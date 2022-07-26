@@ -24,7 +24,9 @@ import {
     LSLIInstruction,
     MOVIInstruction,
     MOVInstruction,
-    SVCInstruction
+    SVCInstruction,
+    CMPInstruction,
+    CMPIInstruction
 } from '@inst/index';
 
 class InstructionRegistry {
@@ -90,7 +92,9 @@ const instructionConstructors = [
     NOPInstruction,
     MOVInstruction,
     MOVIInstruction,
-    SVCInstruction
+    SVCInstruction,
+    CMPInstruction,
+    CMPIInstruction
 ];
 
 for (const instructionConstructor of instructionConstructors)

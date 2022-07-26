@@ -33,3 +33,5 @@ Run `npm run dev` to host the simulation at http://localhost:3000/. Refreshes as
 * `NOP`
 * `MOV Rd, Rm`
 * `MOV Rd, Imm11`
+* `CMP Rn, Rm`
+* `CMP Rn, Imm11`

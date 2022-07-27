@@ -1,14 +1,12 @@
-import { Instruction } from "@inst/instruction";
+import MOVIInstruction from "./movi";
 
-class NOPInstruction extends Instruction {
+class NOPInstruction extends MOVIInstruction {
     static mnemonic = 'nop';
     static syntax = [];
     static restrictions = [];
     
     constructor() {
-        super(0b11010101000);
-        this.encodeInstruction();
-        this.setControlSignals(null, null, null, null, null, null, null, null, null, null, null);
+        super(31, 0);
     }
 }
 

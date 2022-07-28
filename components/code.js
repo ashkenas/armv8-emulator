@@ -5,16 +5,18 @@ import styles from '@styles/Code.module.css';
 import "highlight.js/styles/base16/ashes.css";
 import Parse from '../architecture/parse';
 import ScrollContent from './scrollContent';
-
-let currentLine = null;
+import { store } from "@util/reduxSetup";
+import { useSelector } from 'react-redux';
 
 hljs.configure({ ignoreUnescapedHTML: true });
 hljs.addPlugin({
     'after:highlight': (result) => {
+        const lineNumber = store.getState().lineNumber;
+
         result.value = result.value.replace(/^(.*?)$/gm, (() => {
             let i = 0; // Internally maintain line number as function state
             return (m, g) => {
-                if (i++ === currentLine)
+                if (i++ === lineNumber)
                     return `<span class="${styles.highlighter}">${g}</span>`;
                 return g;
             };
@@ -24,7 +26,7 @@ hljs.addPlugin({
 hljs.registerLanguage('armasm', armasm);
 
 export default function Code(props) {
-    currentLine = props.lineNumber;
+    const lineNumber = useSelector((state) => state.lineNumber);
     const codeRef = useRef(null);
     const [text, setText] = useState(`.text
 .global _start
@@ -68,7 +70,7 @@ out:
     useEffect(() => {
         if(!error && codeRef && codeRef.current)
             hljs.highlightElement(codeRef.current);
-    }, [text, props.lineNumber]);
+    }, [text, lineNumber]);
 
     useEffect(() => {
         try {

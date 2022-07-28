@@ -4,13 +4,18 @@ import MemoryStructure from "@util/memoryStructure";
 import { bigIntArrayToBigInt, bigIntToHexString, formatBinary } from '@util/formatUtils';
 import styles from '@styles/Memory.module.css';
 import PopUp from './popUp';
+import { useSelector } from 'react-redux';
 
 /**
  * React Component representing a virtual memory space for a process.
  */
 function Memory(props) {
-    if (props.memory.stack === null)
-        return <></>;
+    const stackData = useSelector((state) => state.stackData);
+    const textData = useSelector((state) => state.textData);
+    const frames = useSelector((state) => state.frames);
+    const stackPointer = useSelector((state) => state.registers)[28];
+    // if (stackData === null)
+    //     return <></>;
 
     // Count hex digits in max address
     let digits = 0;
@@ -18,14 +23,14 @@ function Memory(props) {
         digits++;
 
     const stack = [];
-    const lastFrame = props.memory.frames[props.memory.frames.length - 1];
-    const renderFrames = [...props.memory.frames, props.stackPointer - 1n]
-    for (let i = 0; i < props.memory.stack.length; i += 8) {
+    const lastFrame = frames[frames.length - 1];
+    const renderFrames = [...frames, stackPointer - 1n]
+    for (let i = 0; i < stackData.length; i += 8) {
         const dwordBytes = [];
         for (let j = i, k = false; j < i + 8; j++) {
             const address = MemoryStructure.MAX_ADDRESS - j;
             const addressText = address.toString(16).padStart(digits, '0').toUpperCase();
-            const value = j < props.memory.stack.length ? props.memory.stack[j] : 0n;
+            const value = j < stackData.length ? stackData[j] : 0n;
 
             let additionalStyles = '';
             if (renderFrames.includes(BigInt(address))) {
@@ -41,7 +46,7 @@ function Memory(props) {
                     additionalStyles = styles['frame-boundary'];
             }
             
-            if (props.stackPointer > address) {
+            if (stackPointer > address) {
                 additionalStyles += ` ${styles['unscoped']}`;
             } else if (lastFrame >= address) {
                 additionalStyles += ` ${styles['frame-data-primary']}`;
@@ -49,7 +54,7 @@ function Memory(props) {
                 additionalStyles += ` ${styles['frame-data']}`;
             }
 
-            if (props.stackPointer == address)
+            if (stackPointer == address)
                 additionalStyles += ` ${styles.sp}`;
 
             dwordBytes.unshift(
@@ -67,9 +72,9 @@ function Memory(props) {
         const addressText = address.toString(16).padStart(digits, '0').toUpperCase();
         stack.push(
             <tr key={`block${i}`} className={styles.block}>
-                <td className={`${styles.addr} ${(props.stackPointer >= address && props.stackPointer < address + 8) ? styles.sp : ''}`}>
+                <td className={`${styles.addr} ${(stackPointer >= address && stackPointer < address + 8) ? styles.sp : ''}`}>
                     <PopUp title={addressText} flipY={i < 16}>
-                        Value: {bigIntArrayToBigInt(props.memory.stack.slice(i, i + 8).reverse(), 8n).toString()}
+                        Value: {bigIntArrayToBigInt(stackData.slice(i, i + 8).reverse(), 8n).toString()}
                     </PopUp>
                     {addressText}
                 </td>
@@ -79,11 +84,11 @@ function Memory(props) {
     }
 
     const text = [];
-    for (let i = 0; i < props.memory.text.length; i += 8) {
+    for (let i = 0; i < textData.length; i += 8) {
         const dwordBytes = [];
         for (let j = i; j < i + 8; j++) {
             const addressText = (j).toString(16).padStart(digits, '0').toUpperCase();
-            const value = j < props.memory.text.length ? props.memory.text[j] : 0n;
+            const value = j < textData.length ? textData[j] : 0n;
             dwordBytes.push(
                 <td key={j} className={styles.value}>
                     <PopUp title={addressText} flipX={j - i > 1}>
@@ -100,7 +105,7 @@ function Memory(props) {
             <tr key={`block${i}`} className={styles.block}>
                 <td className={styles.addr}>
                     <PopUp title={addressText}>
-                        Value: {bigIntArrayToBigInt(props.memory.text.slice(i, i + 8), 8n).toString()}
+                        Value: {bigIntArrayToBigInt(textData.slice(i, i + 8), 8n).toString()}
                     </PopUp>
                     {addressText}
                 </td>

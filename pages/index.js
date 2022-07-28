@@ -1,10 +1,7 @@
 import Simulator from "@arch/simulator";
 import ErrorBoundary from "@components/errorBoundary";
-import { Provider} from "react-redux";
-import { applyMiddleware } from "redux";
-import thunkMiddleware from "redux-thunk";
-
-const store = createStore(() => {}, undefined, applyMiddleware(thunkMiddleware));
+import { store } from "@util/reduxSetup";
+import { Provider } from "react-redux";
 
 export default function Home() {
     return (

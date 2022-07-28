@@ -1,5 +1,6 @@
 import ByteArray from "@util/byteArray";
 import { nextMultiple } from "./formatUtils";
+import { merge, store } from "./reduxSetup";
 
 /**
  * Represents a program's virtual memory.
@@ -35,7 +36,12 @@ import { nextMultiple } from "./formatUtils";
 
         this.frames = [BigInt(MemoryStructure.MAX_ADDRESS)];
 
-        this.updateState();
+        // this.updateState();
+        store.dispatch(merge({
+            textData: this.text.data,
+            stackData: this.stack.data,
+            frames: this.frames
+        }));
     }
 
     /**
@@ -51,7 +57,8 @@ import { nextMultiple } from "./formatUtils";
      */
     pushFrame(address) {
         this.frames.push(address);
-        this.updateState();
+        // this.updateState();
+        store.dispatch(merge({ frames: this.frames }));
     }
 
     /**
@@ -67,7 +74,8 @@ import { nextMultiple } from "./formatUtils";
      */
     expandStack(newSize) {
         this.stack.expandTo(newSize);
-        this.updateState();
+        // this.updateState();
+        store.dispatch(merge({ stackData: this.stack.data }));
     }
 
     /**
@@ -90,12 +98,14 @@ import { nextMultiple } from "./formatUtils";
 
         if (address <= this.bssEndAddress) {
             this.text.setByte(address, byte);
+            store.dispatch(merge({ textData: this.text.data }));
         } else {
             this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
-            this.stack.setByte(MemoryStructure.MAX_ADDRESS - address, byte)
+            this.stack.setByte(MemoryStructure.MAX_ADDRESS - address, byte);
+            store.dispatch(merge({ stackData: this.stack.data }));
         }
 
-        this.updateState();
+        // this.updateState();
     }
     
     /**
@@ -119,12 +129,14 @@ import { nextMultiple } from "./formatUtils";
             if (address + 7 > this.bssEndAddress)
                 throw 'Warning: Attempted to write to an address in BSS that was too close to the stack boundary.\n\nTip:\nMake sure you allocate enough space to your variables.';
             this.text.setBytes(address, doubleWord, 8);
+            store.dispatch(merge({ textData: this.text.data }));
         } else {
             this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
-            this.stack.setBytes(MemoryStructure.MAX_ADDRESS - address, doubleWord, -8)
+            this.stack.setBytes(MemoryStructure.MAX_ADDRESS - address, doubleWord, -8);
+            store.dispatch(merge({ stackData: this.stack.data }));
         }
         
-        this.updateState();
+        // this.updateState();
     }
 
     /**
@@ -140,7 +152,7 @@ import { nextMultiple } from "./formatUtils";
             return this.text.getByte(address);
         } else {
             this.stack.expandTo(nextMultiple(MemoryStructure.MAX_ADDRESS - address + 1, 8) + 8);
-            return this.stack.getByte(MemoryStructure.MAX_ADDRESS - address)
+            return this.stack.getByte(MemoryStructure.MAX_ADDRESS - address);
         }
     }
 

@@ -24,6 +24,10 @@ td.addr {
     text-align: center;
 }
 
+td.addr:hover, td.value:hover {
+    color: var(--text-highlight);
+}
+
 td.addr:hover > div, td.value:hover > div {
     display: block;
 }

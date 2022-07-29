@@ -8,6 +8,10 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
+.value:hover {
+    color: var(--text-highlight);
+}
+
 .value:hover > div {
     display: block;
 }

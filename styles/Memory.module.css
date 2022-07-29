@@ -48,22 +48,22 @@ td.value:last-child {
     border-right: 1px solid var(--text-color);
 }
 
-td.value.frame-start-primary {
+.frame-start-primary {
     border-top: 1px solid var(--primary-frame) !important;
-    border-right: 1px solid var(--primary-frame) !important;
+    border-right: 1px solid var(--primary-frame);
 }
 
-td.value.frame-start {
+.frame-start {
     border-top: 1px solid var(--secondary-frame) !important;
-    border-right: 1px solid var(--secondary-frame) !important;
+    border-right: 1px solid var(--secondary-frame);
 }
 
 td.value.frame-start-primary ~ td.value {
-    border-bottom: 1px solid var(--primary-frame) !important;
+    border-bottom: 1px solid var(--primary-frame);
 }
 
 td.value.frame-start ~ td.value {
-    border-bottom: 1px solid var(--secondary-frame) !important;
+    border-bottom: 1px solid var(--secondary-frame);
 }
 
 td.value.frame-boundary-primary {
@@ -104,4 +104,16 @@ td.value.frame-data:last-child {
 
 td.addr:hover, td.value:hover {
     color: var(--text-highlight);
+}
+
+td.value.text {
+    background-color: var(--memory-bg-text);
+}
+
+td.value.data {
+    background-color: var(--memory-bg-data);
+}
+
+td.value.bss {
+    background-color: var(--memory-bg-bss);
 }

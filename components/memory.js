@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
  * React Component representing a virtual memory space for a process.
  */
 function Memory(props) {
+    const instructions = useSelector((state) => state.instructions);
     const programSize = useSelector((state) => state.programSize);
     const bssStartAddress = useSelector((state) => state.bssStartAddress);
     const bssEndAddress = useSelector((state) => state.bssEndAddress);
@@ -18,28 +19,19 @@ function Memory(props) {
     const frames = useSelector((state) => state.frames);
     const stackPointer = useSelector((state) => state.registers)[28];
 
-    const [popupState, setPopupState] = useState({ title: '', display: false, rect: {}, children: [], last: '' });
+    const [popupState, setPopupState] = useState({ title: '', display: false, rect: {}, children: [] });
 
-    let popUpID = 0;
-    const hover = (title, children) => {
-        const id = ++popUpID;
-        return (event) => {
-            setPopupState({
-                title: title,
-                display: true,
-                rect: event.target.getBoundingClientRect(),
-                children: children,
-                last: id
-            });
-        };
+    const hover = (title, children) => (event) => {
+        setPopupState({
+            title: title,
+            display: true,
+            rect: event.target.getBoundingClientRect(),
+            children: children
+        });
     };
 
-    const leave = () => {
-        const id = popUpID;
-        return (event) => {
-            if (id === popupState.last)
-                setPopupState({ ...popupState, display: false });
-        };
+    const leave = () => (event) => {
+        setPopupState({ ...popupState, display: false });
     };
 
     // Count hex digits in max address
@@ -112,12 +104,25 @@ function Memory(props) {
         for (let j = i; j < i + 8; j++) {
             const addressText = (j).toString(16).padStart(digits, '0').toUpperCase();
             const value = j < textData.length ? textData[j] : 0n;
+
+            let location = '';
+            if (j < programSize)
+                location = styles.text;
+            else if (j < bssStartAddress)
+                location = styles.data;
+            else if (j <= bssEndAddress)
+                location = styles.bss;
+
             dwordBytes.push(
-                <td key={j} className={styles.value}
+                <td key={j} className={`${styles.value} ${location}`}
                     onMouseOver={hover(addressText, <>
                         Decimal: {value.toString()}
                         <br />
                         Binary: {formatBinary(value, 8)}
+                        {j < programSize && <>
+                        <br />
+                        Instruction: {instructions[Math.floor(j / 4)]}
+                        </>}
                     </>)} onMouseLeave={leave()}>
                     {bigIntToHexString(value, 8)}
                 </td>

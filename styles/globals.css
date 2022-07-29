@@ -33,9 +33,12 @@ body {
     --text-color: #dedede;
     --text-highlight: #ffff00;
     --text-color-unscoped: #bebebe;
+    --sp-color: #f15a5a;
     --primary-frame: #4040cb;
     --secondary-frame: #6a6af1;
     --primary-frame-bg: #4040cb44;
     --secondary-frame-bg: #6a6af144;
-    --sp-color: #f15a5a;
+    --memory-bg-text: #6ac4f144;
+    --memory-bg-data: #6af1ec44;
+    --memory-bg-bss: #81f16a44;
 }

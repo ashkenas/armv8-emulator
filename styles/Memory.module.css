@@ -24,10 +24,6 @@ td.addr {
     text-align: center;
 }
 
-td.addr:hover, td.value:hover {
-    color: var(--text-highlight);
-}
-
 td.addr:hover > div, td.value:hover > div {
     display: block;
 }
@@ -104,4 +100,8 @@ td.value.frame-data:nth-child(2) {
 
 td.value.frame-data:last-child {
     border-right: 1px solid var(--secondary-frame);
+}
+
+td.addr:hover, td.value:hover {
+    color: var(--text-highlight);
 }

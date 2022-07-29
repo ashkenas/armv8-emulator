@@ -1,6 +1,5 @@
 div.popup {
-    display: none;
-    position: absolute;
+    position: fixed;
     bottom: calc(100%);
     z-index: 99;
     background-color: var(--bg-primary);

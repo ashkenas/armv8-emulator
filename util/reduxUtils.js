@@ -19,8 +19,9 @@ const initialState = {
         tooltip: 'No instruction loaded'
     }],
     lineNumber: null,
-    bssStartAddress: 0n,
-    bssEndAddress: 0n
+    programSize: 0,
+    bssStartAddress: 0,
+    bssEndAddress: 0
 };
 
 const rootReducer = (state = initialState, action) => {

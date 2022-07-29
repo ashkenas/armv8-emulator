@@ -23,6 +23,7 @@ export default class Simulator extends React.Component {
         store.dispatch(updateRegister(28, BigInt(MAX_ADDRESS + 1)));
         store.dispatch(updateRegister(29, BigInt(MAX_ADDRESS + 1)));
         store.dispatch(merge({
+            instructions: program.instructions.map((instruction) => instruction.lineText),
             encoding: program.instructions[program.currentInstruction].encodingParts,
             lineNumber: program.instructions[program.currentInstruction].lineNumber
         }));

@@ -18,14 +18,15 @@ export function initializeMemory(program) {
         setBytes(textData, address, value, length);
     }
     
-    const bssStartAddress = BigInt(program.programSize + program.initSize);
-    const bssEndAddress = bssStartAddress + BigInt(program.bssSize) - 1n;
+    const bssStartAddress = program.programSize + program.initSize;
+    const bssEndAddress = bssStartAddress + program.bssSize - 1;
 
     const stackData = expandTo([], 8);
 
     const frames = [BigInt(MAX_ADDRESS)];
 
     store.dispatch(merge({
+        programSize: program.programSize,
         bssStartAddress: bssStartAddress,
         bssEndAddress: bssEndAddress,
         textData: textData,

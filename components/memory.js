@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ScrollContent from "@components/scrollContent";
 import { MAX_ADDRESS } from "@util/memoryUtils";
 import { bigIntArrayToBigInt, bigIntToHexString, formatBinary } from '@util/formatUtils';
@@ -10,10 +10,37 @@ import { useSelector } from 'react-redux';
  * React Component representing a virtual memory space for a process.
  */
 function Memory(props) {
+    const programSize = useSelector((state) => state.programSize);
+    const bssStartAddress = useSelector((state) => state.bssStartAddress);
+    const bssEndAddress = useSelector((state) => state.bssEndAddress);
     const stackData = useSelector((state) => state.stackData);
     const textData = useSelector((state) => state.textData);
     const frames = useSelector((state) => state.frames);
     const stackPointer = useSelector((state) => state.registers)[28];
+
+    const [popupState, setPopupState] = useState({ title: '', display: false, rect: {}, children: [], last: '' });
+
+    let popUpID = 0;
+    const hover = (title, children) => {
+        const id = ++popUpID;
+        return (event) => {
+            setPopupState({
+                title: title,
+                display: true,
+                rect: event.target.getBoundingClientRect(),
+                children: children,
+                last: id
+            });
+        };
+    };
+
+    const leave = () => {
+        const id = popUpID;
+        return (event) => {
+            if (id === popupState.last)
+                setPopupState({ ...popupState, display: false });
+        };
+    };
 
     // Count hex digits in max address
     let digits = 0;
@@ -56,12 +83,11 @@ function Memory(props) {
                 additionalStyles += ` ${styles.sp}`;
 
             dwordBytes.unshift(
-                <td key={j} className={`${styles.value} ${additionalStyles}`}>
-                    <PopUp title={addressText} flipX={j - i < 6} flipY={i < 24}>
+                <td key={j} className={`${styles.value} ${additionalStyles}`} onMouseOver={hover(addressText, <>
                         Decimal: {value.toString()}
-                        <br />
+                            <br />
                         Binary: {formatBinary(value, 8)}
-                    </PopUp>
+                    </>)} onMouseLeave={leave()}>
                     {bigIntToHexString(value, 8)}
                 </td>
             );
@@ -70,10 +96,9 @@ function Memory(props) {
         const addressText = address.toString(16).padStart(digits, '0').toUpperCase();
         stack.push(
             <tr key={`block${i}`} className={styles.block}>
-                <td className={`${styles.addr} ${(stackPointer >= address && stackPointer < address + 8) ? styles.sp : ''}`}>
-                    <PopUp title={addressText} flipY={i < 16}>
-                        Value: {bigIntArrayToBigInt(stackData.slice(i, i + 8).reverse(), 8n).toString()}
-                    </PopUp>
+                <td className={`${styles.addr} ${(stackPointer >= address && stackPointer < address + 8) ? styles.sp : ''}`}
+                    onMouseOver={hover(addressText, <>Value: {bigIntArrayToBigInt(stackData.slice(i, i + 8).reverse(), 8n).toString()}</>)}
+                    onMouseLeave={leave()}>
                     {addressText}
                 </td>
                 {dwordBytes}
@@ -88,12 +113,12 @@ function Memory(props) {
             const addressText = (j).toString(16).padStart(digits, '0').toUpperCase();
             const value = j < textData.length ? textData[j] : 0n;
             dwordBytes.push(
-                <td key={j} className={styles.value}>
-                    <PopUp title={addressText} flipX={j - i > 1}>
+                <td key={j} className={styles.value}
+                    onMouseOver={hover(addressText, <>
                         Decimal: {value.toString()}
                         <br />
                         Binary: {formatBinary(value, 8)}
-                    </PopUp>
+                    </>)} onMouseLeave={leave()}>
                     {bigIntToHexString(value, 8)}
                 </td>
             );
@@ -101,10 +126,9 @@ function Memory(props) {
         const addressText = (i).toString(16).padStart(digits, '0');
         text.unshift(
             <tr key={`block${i}`} className={styles.block}>
-                <td className={styles.addr}>
-                    <PopUp title={addressText}>
-                        Value: {bigIntArrayToBigInt(textData.slice(i, i + 8), 8n).toString()}
-                    </PopUp>
+                <td className={styles.addr}
+                    onMouseOver={hover(addressText, <>Value: {bigIntArrayToBigInt(textData.slice(i, i + 8), 8n).toString()}</>)}
+                    onMouseLeave={leave()}>
                     {addressText}
                 </td>
                 {dwordBytes}
@@ -114,24 +138,29 @@ function Memory(props) {
 
 
     return (
-        <ScrollContent>
-            <table className={styles.memory}>
-                <thead>
-                <tr>
-                    <th className={styles.header}>Address</th>
-                    <th className={styles.header} colSpan={8}>Value</th>
-                </tr>
-                </thead>
-                <tbody>
-                {stack}
-                <tr className={styles.spacer}>
-                    <td>⋮</td>
-                    <td colSpan={8}>⋮</td>
-                </tr>
-                {text}
-                </tbody>
-            </table>
-        </ScrollContent>
+        <>
+            <PopUp title={popupState.title} display={popupState.display} rect={popupState.rect}>
+                {popupState.children}
+            </PopUp>
+            <ScrollContent>
+                <table className={styles.memory}>
+                    <thead>
+                    <tr>
+                        <th className={styles.header}>Address</th>
+                        <th className={styles.header} colSpan={8}>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {stack}
+                    <tr className={styles.spacer}>
+                        <td>⋮</td>
+                        <td colSpan={8}>⋮</td>
+                    </tr>
+                    {text}
+                    </tbody>
+                </table>
+            </ScrollContent>
+        </>
     );
 }
 

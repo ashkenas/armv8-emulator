@@ -1,7 +1,6 @@
 import React from 'react';
 import { bigIntToHexString } from '@util/formatUtils';
 import styles from '@styles/Register.module.css';
-import PopUp from './popUp';
 
 // setBit(bit, value) {
 //     if (value > 1 || value < 0)
@@ -21,15 +20,12 @@ import PopUp from './popUp';
 //     return (this.state.value >> BigInt(bit)) & 1n;
 // }
 
-export default function Register(props) {
+export default function Register({ registerName, value, onMouseOver, onMouseLeave }) {
     return (
         <div className={styles.register}>
-            {props.registerName}:
-            <span className={styles.value}>
-                <PopUp title={props.registerName}>
-                    {props.value.toString()}
-                </PopUp>
-                {bigIntToHexString(props.value < 0 ? (1n << 64n) + props.value : props.value, 64)}
+            {registerName}:
+            <span className={styles.value} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
+                {bigIntToHexString(value < 0 ? (1n << 64n) + value : value, 64)}
             </span>
         </div>
     );

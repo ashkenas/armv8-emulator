@@ -12,6 +12,7 @@ const initialState = {
     stackData: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
     frames: [],
     controlSignals: {},
+    newSignals: {},
     wires: {},
     encoding: [{
         type: '',
@@ -35,7 +36,7 @@ const rootReducer = (state = initialState, action) => {
                 controlSignals[signal] = action.payload[signal];
                 return controlSignals;
             }, {});
-            return { ...state, controlSignals: { ...state.controlSignals, ...newSignals }};
+            return { ...state, controlSignals: { ...state.controlSignals, ...newSignals }, newSignals: newSignals };
         case 'updateWires':
             return { ...state, wires: { ...state.wires, ...action.payload } };
         case 'updateRegister':

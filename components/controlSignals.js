@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 
 function ControlSignals(props) {
     const signals = useSelector((state) => state.controlSignals);
+    const highlight = useSelector((state) => state.newSignals);
 
     return (
         <ScrollContent>
@@ -17,7 +18,7 @@ function ControlSignals(props) {
                 </thead>
                 <tbody>
                     {Object.keys(signals).map((signal) =>
-                        <tr key={signal}>
+                        <tr key={signal} className={signal in highlight ? styles.highlight : ''}>
                             <td className={styles.signal}>
                                 {signal.toLowerCase() === signal ? signal.toUpperCase() : signal[0].toUpperCase() + signal.substring(1)}
                             </td>

@@ -25,7 +25,8 @@ export default class Simulator extends React.Component {
         store.dispatch(merge({
             instructions: program.instructions.map((instruction) => instruction.lineText),
             encoding: program.instructions[program.currentInstruction].encodingParts,
-            lineNumber: program.instructions[program.currentInstruction].lineNumber
+            lineNumber: program.instructions[program.currentInstruction].lineNumber,
+            lastRegister: -1
         }));
     }
 

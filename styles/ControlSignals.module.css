@@ -7,3 +7,7 @@ td.signal {
     padding-right: .5rem;
     text-align: right;
 }
+
+tr.highlight {
+    background-color: var(--memory-bg-instruction);
+}

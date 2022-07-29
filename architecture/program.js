@@ -1,5 +1,5 @@
 import { nextMultiple } from "@util/formatUtils";
-import { store, merge } from "@util/reduxSetup";
+import { store, merge, updateControlSignals, updateWires } from "@util/reduxUtils";
 
 /**
  * Represent an unencoded instruction.
@@ -132,13 +132,7 @@ export default class Program {
             const state = this.instructions[this.currentInstruction].tick(simulator);
 
             if (this.instructions[this.currentInstruction].cycle === 2) {
-                store.dispatch({
-                    type: 'updateControlSignals',
-                    payload: this.instructions[this.currentInstruction].controlSignals
-                });
-                // simulator.setState({
-                //     controlSignals: this.instructions[this.currentInstruction].controlSignals
-                // });
+                store.dispatch(updateControlSignals(this.instructions[this.currentInstruction].controlSignals));
             }
 
             if (state.flags.newPC !== undefined)
@@ -155,14 +149,9 @@ export default class Program {
                         lineNumber: this.instructions[this.currentInstruction]?.lineNumber
                     }));
                 }
-                // simulator.setState({
-                //     encoding: this.instructions[this.currentInstruction]?.encodingParts,
-                //     lineNumber: this.instructions[this.currentInstruction]?.lineNumber
-                // });
             }
 
-            store.dispatch({ type: 'updateWires', payload: state.flags });
-            // simulator.setState({ wires: Object.assign(simulator.state.wires, state) });
+            store.dispatch(updateWires(state.flags)); 
         } catch (e) {
             simulator.setState(() => {
                 throw `Line ${this.instructions[this.currentInstruction].lineNumber + 1}: ${this.instructions[this.currentInstruction].lineText}\n\n${e}`;

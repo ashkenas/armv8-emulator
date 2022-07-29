@@ -5,8 +5,6 @@ import { useSelector } from 'react-redux';
 
 function ControlSignals(props) {
     const signals = useSelector((state) => state.controlSignals);
-    if(!Object.keys(signals).length)
-        return <></>;
 
     return (
         <ScrollContent>

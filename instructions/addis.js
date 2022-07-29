@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { store, updateRegister } from "@util/reduxUtils";
 
 class ADDISInstruction extends Instruction {
     static mnemonic = 'adds';
@@ -23,7 +24,7 @@ class ADDISInstruction extends Instruction {
     }
 
     id(simulator) {
-        this.opn = simulator.registers.getRegister(this.rn);
+        this.opn = store.getState().registers[this.rn];
 
         return {
             readData1: this.opn
@@ -41,7 +42,7 @@ class ADDISInstruction extends Instruction {
     }
 
     wb(simulator) {
-        simulator.registers.setRegister(this.rd, this.result);
+        store.dispatch(updateRegister(this.rd, this.result));
 
         return {
             writeData: this.result

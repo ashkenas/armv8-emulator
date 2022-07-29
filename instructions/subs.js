@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { store, updateRegister } from "@util/reduxUtils";
 
 class SUBSInstruction extends Instruction {
     static mnemonic = 'subs';
@@ -23,8 +24,8 @@ class SUBSInstruction extends Instruction {
     }
 
     id(simulator) {
-        this.opn = simulator.registers.getRegister(this.rn);
-        this.opm = simulator.registers.getRegister(this.rm);
+        this.opn = store.getState().registers[this.rn];
+        this.opm = store.getState().registers[this.rm];
 
         return {
             readData1: this.opn,
@@ -43,7 +44,7 @@ class SUBSInstruction extends Instruction {
     }
 
     wb(simulator) {
-        simulator.registers.setRegister(this.rd, this.result);
+        store.dispatch(updateRegister(this.rd, this.result));
 
         return {
             writeData: this.result

@@ -5,15 +5,6 @@ import { useSelector } from 'react-redux';
 
 function Encoding(props) {
     const parts = useSelector((state) => state.encoding);
-    // if (!parts) {
-    //     return (
-    //         <div>
-    //             <span className={styles.encoding} data-label={"No instruction active"}>
-    //                 <BinaryNumber value={0} length={32}/>
-    //             </span>
-    //         </div>
-    //     );
-    // }
 
     return (
         <div>

@@ -8,41 +8,24 @@ import {
     Datapath,
     ControlSignals
 } from "@components/index"
-import {
-    MemoryStructure,
-    RegisterStructure,
-} from "@util/index"
 import styles from "@styles/Home.module.css";
+import { merge, store, updateRegister } from "@util/reduxUtils";
+import { initializeMemory, MAX_ADDRESS } from "@util/memoryUtils";
 
 export default class Simulator extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            lineNumber: 0,
-            registers: [],
-            memory: {
-                text: null,
-                stack: null,
-                frames: []
-            },
-            wires: {},
-            encoding: null,
-            controlSignals: null
-        }
     }
 
     load(program) {
         this.program = program;
-        this.memory = new MemoryStructure(program, this);
-        this.registers = new RegisterStructure(this);
-        this.setState({
-            lineNumber: this.program.instructions[this.program.currentInstruction].lineNumber,
-            wires: {},
-            controlSignals: null,
-            encoding: this.program.instructions[this.program.currentInstruction].encodingParts,
-            lineNumber: this.program.instructions[this.program.currentInstruction].lineNumber
-        });
+        initializeMemory(program);
+        store.dispatch(updateRegister(28, BigInt(MAX_ADDRESS + 1)));
+        store.dispatch(updateRegister(29, BigInt(MAX_ADDRESS + 1)));
+        store.dispatch(merge({
+            encoding: program.instructions[program.currentInstruction].encodingParts,
+            lineNumber: program.instructions[program.currentInstruction].lineNumber
+        }));
     }
 
     tick() {
@@ -64,7 +47,7 @@ export default class Simulator extends React.Component {
                 <div className={styles.column}>
                     <div className={`${styles.card} ${styles.expand}`}>
                         <h2>Code</h2>
-                        <Code simulator={this} lineNumber={this.state.lineNumber} />
+                        <Code simulator={this} />
                         {/* Demo buttons, will be removed later */}
                         <button className={styles.btest} onClick={() => { this.program?.tick(this); }}>Next Cycle</button>
                         <button className={styles.btest} onClick={() => { for(let i = 0; i < 5; i++)this.program?.tick(this); }}>Next 5 Cycles</button>
@@ -72,25 +55,25 @@ export default class Simulator extends React.Component {
 
                     <div className={styles.card}>
                         <h2>Encoding</h2>
-                        <Encoding parts={this.state.encoding} />
+                        <Encoding />
                     </div>
                 </div>
 
                 <div className={styles.column}>
                     <div className={styles.card}>
                         <h2>Registers</h2>
-                        <Registers values={this.state.registers} />
+                        <Registers />
                     </div>
 
                     <div className={styles.row}>
                         <div className={styles.card}>
                             <h2>Control Signals</h2>
-                            <ControlSignals signals={this.state.controlSignals} />
+                            <ControlSignals />
                         </div>
 
                         <div className={`${styles.card} ${styles.expand}`}>
                             <h2>Memory</h2>
-                            <Memory stackPointer={this.state.registers[28]} memory={this.state.memory} />
+                            <Memory />
                         </div>
                     </div>
                 </div>
@@ -98,7 +81,7 @@ export default class Simulator extends React.Component {
                 <div className={styles.column} style={{ flexGrow: 2 }}>
                     <div className={styles.card}>
                         <h2>Datapath</h2>
-                        <Datapath wires={this.state.wires} />
+                        <Datapath />
                     </div>
                 </div>
             </div>

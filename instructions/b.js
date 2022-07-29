@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { store } from "@util/reduxUtils";
 
 class BInstruction extends Instruction {
     static mnemonic = 'b';
@@ -21,7 +22,7 @@ class BInstruction extends Instruction {
     }
 
     id(simulator) {
-        this.opn = simulator.registers.getRegister(this.rt);
+        this.opn = store.getState().registers[this.rt];
 
         return {
             readData2: this.opn

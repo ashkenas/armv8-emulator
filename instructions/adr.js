@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { store, updateRegister } from "@util/reduxUtils";
 
 class ADRInstruction extends Instruction {
     static mnemonic = 'adr';
@@ -28,7 +29,7 @@ class ADRInstruction extends Instruction {
     }
 
     wb(simulator) {
-        simulator.registers.setRegister(this.rt, this.imm11 + BigInt(simulator.program.currentInstruction * 4));
+        store.dispatch(updateRegister(this.rt, this.imm11 + BigInt(simulator.program.currentInstruction * 4)));
 
         return {
             writeData: this.imm11 + BigInt(simulator.program.currentInstruction * 4)

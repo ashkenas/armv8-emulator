@@ -1,4 +1,5 @@
 import { Instruction } from "@inst/instruction";
+import { removeFrame, store } from "@util/reduxUtils";
 
 class RETInstruction extends Instruction {
     static mnemonic = 'ret';
@@ -19,7 +20,7 @@ class RETInstruction extends Instruction {
     }
 
     id(simulator) {
-        this.opn = simulator.registers.getRegister(this.rt);
+        this.opn = store.getState().registers[this.rt];
 
         return {
             readData2: this.opn
@@ -36,7 +37,7 @@ class RETInstruction extends Instruction {
     }
 
     mem(simulator) {
-        simulator.memory.popFrame();
+        store.dispatch(removeFrame());
 
         return {};
     }

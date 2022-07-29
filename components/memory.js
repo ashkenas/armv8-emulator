@@ -1,6 +1,6 @@
 import React from 'react';
 import ScrollContent from "@components/scrollContent";
-import MemoryStructure from "@util/memoryStructure";
+import { MAX_ADDRESS } from "@util/memoryUtils";
 import { bigIntArrayToBigInt, bigIntToHexString, formatBinary } from '@util/formatUtils';
 import styles from '@styles/Memory.module.css';
 import PopUp from './popUp';
@@ -14,12 +14,10 @@ function Memory(props) {
     const textData = useSelector((state) => state.textData);
     const frames = useSelector((state) => state.frames);
     const stackPointer = useSelector((state) => state.registers)[28];
-    // if (stackData === null)
-    //     return <></>;
 
     // Count hex digits in max address
     let digits = 0;
-    while ((BigInt(MemoryStructure.MAX_ADDRESS) >> BigInt(digits * 4)) > 0)
+    while ((BigInt(MAX_ADDRESS) >> BigInt(digits * 4)) > 0)
         digits++;
 
     const stack = [];
@@ -28,7 +26,7 @@ function Memory(props) {
     for (let i = 0; i < stackData.length; i += 8) {
         const dwordBytes = [];
         for (let j = i, k = false; j < i + 8; j++) {
-            const address = MemoryStructure.MAX_ADDRESS - j;
+            const address = MAX_ADDRESS - j;
             const addressText = address.toString(16).padStart(digits, '0').toUpperCase();
             const value = j < stackData.length ? stackData[j] : 0n;
 
@@ -68,7 +66,7 @@ function Memory(props) {
                 </td>
             );
         }
-        const address = MemoryStructure.MAX_ADDRESS - (i + 7);
+        const address = MAX_ADDRESS - (i + 7);
         const addressText = address.toString(16).padStart(digits, '0').toUpperCase();
         stack.push(
             <tr key={`block${i}`} className={styles.block}>

@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { addFrame, store, updateRegister } from "@util/reduxUtils";
 
 class BLInstruction extends Instruction {
     static mnemonic = 'bl';
@@ -21,7 +22,7 @@ class BLInstruction extends Instruction {
     }
 
     id(simulator) {
-        this.opn = simulator.registers.getRegister(this.rt);
+        this.opn = store.getState().registers[this.rt];
 
         return {
             readData2: this.opn
@@ -37,13 +38,13 @@ class BLInstruction extends Instruction {
     }
 
     mem(simulator) {
-        simulator.memory.pushFrame(simulator.registers.getRegister(28) - 1n);
+        store.dispatch(addFrame(store.getState().registers[28] - 1n));
 
         return {};
     }
 
     wb(simulator) {
-        simulator.registers.setRegister(this.rt, BigInt(this.nextPC));
+        store.dispatch(updateRegister(this.rt, BigInt(this.nextPC)));
 
         return {
             writeData: this.nextPC

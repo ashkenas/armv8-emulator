@@ -1,4 +1,6 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { readBytes } from "@util/memoryUtils";
+import { store, updateRegister } from "@util/reduxUtils";
 
 class LDURInstruction extends Instruction {
     static mnemonic = 'ldur';
@@ -23,7 +25,7 @@ class LDURInstruction extends Instruction {
     }
 
     id(simulator) {
-        this.opn = simulator.registers.getRegister(this.rn);
+        this.opn = store.getState().registers[this.rn];
 
         return {
             readData1: this.opn
@@ -33,14 +35,14 @@ class LDURInstruction extends Instruction {
     ex(simulator) {
         this.result = this.opn + this.imm11;
         
-        return {
+        return { 
             aluAction: 0b0010,
             aluResult: this.result
         };
     }
 
     mem(simulator) {
-        this.memValue = simulator.memory.readDoubleWord(Number(this.result));
+        this.memValue = readBytes(Number(this.result), 8);
 
         return {
             readDataM: this.memValue
@@ -48,7 +50,7 @@ class LDURInstruction extends Instruction {
     }
 
     wb(simulator) {
-        simulator.registers.setRegister(this.rt, this.memValue);
+        store.dispatch(updateRegister(this.rt, this.memValue));
 
         return {
             writeData: this.memValue

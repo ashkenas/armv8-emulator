@@ -1,4 +1,6 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { writeBytes } from "@util/memoryUtils";
+import { store } from "@util/reduxUtils";
 
 class STURInstruction extends Instruction {
     static mnemonic = 'stur';
@@ -23,8 +25,8 @@ class STURInstruction extends Instruction {
     }
 
     id(simulator) {
-        this.opn = simulator.registers.getRegister(this.rn);
-        this.data = simulator.registers.getRegister(this.rt);
+        this.opn = store.getState().registers[this.rn];
+        this.data = store.getState().registers[this.rt];
 
         return {
             readData1: this.opn,
@@ -42,7 +44,7 @@ class STURInstruction extends Instruction {
     }
 
     mem(simulator) {
-        simulator.memory.writeDoubleWord(Number(this.result), this.data);
+        writeBytes(Number(this.result), this.data, 8);
 
         return {};
     }

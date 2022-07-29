@@ -5,7 +5,7 @@ import styles from '@styles/Code.module.css';
 import "highlight.js/styles/base16/ashes.css";
 import Parse from '../architecture/parse';
 import ScrollContent from './scrollContent';
-import { store } from "@util/reduxSetup";
+import { store } from "@util/reduxUtils";
 import { useSelector } from 'react-redux';
 
 hljs.configure({ ignoreUnescapedHTML: true });

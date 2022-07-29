@@ -17,7 +17,7 @@ export function bigIntToHexString(data, bitLength) {
         hex.unshift('00');
 
     return hex.join(' ');
-}
+};
 
 /**
  * Converts an array of bigint's into a single
@@ -33,7 +33,7 @@ export function bigIntArrayToBigInt(data, elemSize = 64n) {
         result = (result << elemSize) + data[i];
 
     return result;
-}
+};
 
 /**
  * Returns the nearest multiple of `factor` to `value`
@@ -44,7 +44,7 @@ export function bigIntArrayToBigInt(data, elemSize = 64n) {
  */
 export function nextMultiple(value, factor) {
     return ((factor - (value % factor)) % factor) + value;
-}
+};
 
 /**
  * Converts a number to a binary string with digit grouping.
@@ -64,4 +64,4 @@ export function formatBinary(data, bitLength, groupSize = 4) {
         bin.unshift(''.padStart(groupSize, '0'));
 
     return bin.join(' ');
-}
+};

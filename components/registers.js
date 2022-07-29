@@ -13,8 +13,6 @@ export default function Registers(props) {
     for (let i = 0; i < 16; i++) {
         col1.push(<Register key={`register${i}`} registerName={registerLabels[i]} value={values[i]} />);
         col2.push(<Register key={`register${i + 16}`} registerName={registerLabels[i + 16]} value={values[i + 16]} />);
-        // col1.push(<Register key={`register${i}`} registerName={registerLabels[i]} value={props.values[i]} />);
-        // col2.push(<Register key={`register${i + 16}`} registerName={registerLabels[i + 16]} value={props.values[i + 16]} />);
     }
 
     return (

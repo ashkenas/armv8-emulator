@@ -15,8 +15,8 @@ th.header, tr.spacer > td {
 }
 
 tr.spacer > td:last-child {
-    border-top: 1px solid var(--text-color);
-    border-bottom: 1px solid var(--text-color);
+    border-left: 1px solid var(--text-color);
+    border-right: 1px solid var(--text-color);
 }
 
 td.addr {

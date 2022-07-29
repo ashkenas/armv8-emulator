@@ -7,6 +7,7 @@ import { MAX_ADDRESS } from "./memoryUtils";
 const initialState = {
     instructions: [],
     registers: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
+    lastRegister: -1,
     textData: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
     stackData: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
     frames: [],

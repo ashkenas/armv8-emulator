@@ -47,7 +47,6 @@ export default class Simulator extends React.Component {
 
                 <div className={styles.column}>
                     <div className={`${styles.card} ${styles.expand}`}>
-                        <h2>Code</h2>
                         <Code simulator={this} />
                         {/* Demo buttons, will be removed later */}
                         <button className={styles.btest} onClick={() => { this.program?.tick(this); }}>Next Cycle</button>
@@ -62,18 +61,15 @@ export default class Simulator extends React.Component {
 
                 <div className={styles.column}>
                     <div className={styles.card}>
-                        <h2>Registers</h2>
                         <Registers />
                     </div>
 
                     <div className={styles.row}>
                         <div className={styles.card}>
-                            <h2>Control Signals</h2>
                             <ControlSignals />
                         </div>
 
                         <div className={`${styles.card} ${styles.expand}`}>
-                            <h2>Memory</h2>
                             <Memory />
                         </div>
                     </div>
@@ -81,7 +77,6 @@ export default class Simulator extends React.Component {
 
                 <div className={styles.column} style={{ flexGrow: 2 }}>
                     <div className={styles.card}>
-                        <h2>Datapath</h2>
                         <Datapath />
                     </div>
                 </div>

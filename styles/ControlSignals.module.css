@@ -1,7 +1,9 @@
 th.header:first-child {
+    padding-right: .5rem;
     text-align: right;
 }
 
 td.signal {
+    padding-right: .5rem;
     text-align: right;
 }

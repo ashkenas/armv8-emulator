@@ -101,7 +101,7 @@ export class Instruction {
                 type: 'register',
                 value: this.rt,
                 length: 5,
-                tooltip: 'Rr'
+                tooltip: 'Rt'
             });
         } else {
             this.encodingParts.push({

@@ -20,9 +20,9 @@ import styles from '@styles/Register.module.css';
 //     return (this.state.value >> BigInt(bit)) & 1n;
 // }
 
-export default function Register({ registerName, value, onMouseOver, onMouseLeave }) {
+export default function Register({ registerName, value, highlight, onMouseOver, onMouseLeave }) {
     return (
-        <div className={styles.register}>
+        <div className={`${styles.register} ${highlight ? styles.highlight : ''}`}>
             {registerName}:
             <span className={styles.value} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
                 {bigIntToHexString(value < 0 ? (1n << 64n) + value : value, 64)}

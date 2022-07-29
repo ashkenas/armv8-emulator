@@ -6,6 +6,7 @@ import PopUp from './popUp';
 
 export default function Registers(props) {
     const values = useSelector((state) => state.registers);
+    const lastUpdate = useSelector((state) => state.lastRegister);
     const [popupState, setPopupState] = useState({ title: '', value: 0n, display: false, rect: {}, last: '' });
 
     const hover = (name, value) => (event) => {
@@ -29,9 +30,9 @@ export default function Registers(props) {
 
     const col1 = [], col2 = [];
     for (let i = 0; i < 16; i++) {
-        col1.push(<Register key={`register${i}`} registerName={registerLabels[i]} value={values[i]}
+        col1.push(<Register key={`register${i}`} registerName={registerLabels[i]} value={values[i]} highlight={lastUpdate === i}
                     onMouseOver={hover(registerLabels[i],  values[i])} onMouseLeave={leave(registerLabels[i])} />);
-        col2.push(<Register key={`register${i + 16}`} registerName={registerLabels[i + 16]} value={values[i + 16]}
+        col2.push(<Register key={`register${i + 16}`} registerName={registerLabels[i + 16]} value={values[i + 16]} highlight={lastUpdate === i + 16}
                     onMouseOver={hover(registerLabels[i + 16],  values[i + 16])} onMouseLeave={leave(registerLabels[i + 16])} />);
     }
 

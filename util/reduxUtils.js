@@ -44,7 +44,7 @@ const rootReducer = (state = initialState, action) => {
 
             const newValues = [...state.registers];
             newValues[action.payload.register] = action.payload.value;
-            const newState = { ...state, registers: newValues };
+            const newState = { ...state, lastRegister: action.payload.register, registers: newValues };
 
             if (action.payload.register === 28)
                 newState.stackData = expandTo(state.stackData, nextMultiple(MAX_ADDRESS - Number(action.payload.value) + 1, 8) + 8);

@@ -2,6 +2,10 @@
     text-align: right;
 }
 
+.highlight {
+    background-color: var(--memory-bg-instruction);
+}
+
 .value {
     position: relative;
     left: 0;

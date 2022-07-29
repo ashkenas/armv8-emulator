@@ -117,3 +117,12 @@ td.value.data {
 td.value.bss {
     background-color: var(--memory-bg-bss);
 }
+
+td.value.instruction {
+    background-color: var(--memory-bg-instruction);
+}
+
+table.popup > tr > td:first-child {
+    padding-right: .5rem;
+    text-align: right;
+}

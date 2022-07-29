@@ -19,19 +19,20 @@ function Memory(props) {
     const frames = useSelector((state) => state.frames);
     const stackPointer = useSelector((state) => state.registers)[28];
 
-    const [popupState, setPopupState] = useState({ title: '', display: false, rect: {}, children: [] });
+    const [popupState, setPopupState] = useState({ title: '', display: false, rect: {}, children: [], instruction: null });
 
-    const hover = (title, children) => (event) => {
+    const hover = (title, children, instruction = null) => (event) => {
         setPopupState({
             title: title,
             display: true,
             rect: event.target.getBoundingClientRect(),
-            children: children
+            children: children,
+            instruction: instruction
         });
     };
 
     const leave = () => (event) => {
-        setPopupState({ ...popupState, display: false });
+        setPopupState({ ...popupState, display: false, instruction: null });
     };
 
     // Count hex digits in max address
@@ -75,11 +76,16 @@ function Memory(props) {
                 additionalStyles += ` ${styles.sp}`;
 
             dwordBytes.unshift(
-                <td key={j} className={`${styles.value} ${additionalStyles}`} onMouseOver={hover(addressText, <>
-                        Decimal: {value.toString()}
-                            <br />
-                        Binary: {formatBinary(value, 8)}
-                    </>)} onMouseLeave={leave()}>
+                <td key={j} className={`${styles.value} ${additionalStyles}`} onMouseOver={hover(addressText, <table>
+                        <tr>
+                            <td>Binary</td>
+                            <td>{formatBinary(value, 8)}</td>
+                        </tr>
+                        <tr>
+                            <td>Decimal</td>
+                            <td>{value.toString()}</td>
+                        </tr>
+                    </table>)} onMouseLeave={leave()}>
                     {bigIntToHexString(value, 8)}
                 </td>
             );
@@ -112,18 +118,27 @@ function Memory(props) {
                 location = styles.data;
             else if (j <= bssEndAddress)
                 location = styles.bss;
+            if (Math.floor(j / 4) === popupState.instruction)
+                location = styles.instruction;
 
             dwordBytes.push(
                 <td key={j} className={`${styles.value} ${location}`}
-                    onMouseOver={hover(addressText, <>
-                        Decimal: {value.toString()}
-                        <br />
-                        Binary: {formatBinary(value, 8)}
+                    onMouseOver={hover(addressText, <table className={styles.popup}>
+                        <tr>
+                            <td>Binary</td>
+                            <td>{formatBinary(value, 8)}</td>
+                        </tr>
+                        <tr>
+                            <td>Decimal</td>
+                            <td>{value.toString()}</td>
+                        </tr>
                         {j < programSize && <>
-                        <br />
-                        Instruction: {instructions[Math.floor(j / 4)]}
+                        <tr>
+                            <td>Instruction</td>
+                            <td>{instructions[Math.floor(j / 4)]}</td>
+                        </tr>
                         </>}
-                    </>)} onMouseLeave={leave()}>
+                    </table>, j < programSize && Math.floor(j / 4))} onMouseLeave={leave()}>
                     {bigIntToHexString(value, 8)}
                 </td>
             );

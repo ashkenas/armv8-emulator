@@ -1,6 +1,7 @@
-import { Instruction, ArgumentType } from "@inst/instruction";
+import { ArgumentType } from "@inst/instruction";
+import SUBISInstruction from "./subis";
 
-class CMPIInstruction extends Instruction {
+class CMPIInstruction extends SUBISInstruction {
     static mnemonic = 'cmp';
     static syntax = [ArgumentType.Register, ArgumentType.Immediate];
     static restrictions = [null, 11];

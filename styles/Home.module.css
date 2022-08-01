@@ -13,8 +13,6 @@
 .row {
     display: flex;
     flex-direction: row;
-    width: 100%;
-    flex: 1;
 }
 
 .grid {
@@ -35,11 +33,16 @@
     background-color: var(--bg-secondary);
 }
 
+.card.fix {
+    flex-direction: row;
+    height: max-content;
+}
+
 .card:only-child {
     height: 100%;
 }
 
-.card.expand {
+.expand {
     flex-grow: 1;
 }
 

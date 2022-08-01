@@ -18,7 +18,7 @@ export class Instruction {
         'memRead',
         'memToReg',
         'linkReg',
-        'regWrite',
+        'regWrite'
     ];
 
     constructor(opcode) {
@@ -33,7 +33,7 @@ export class Instruction {
             type: 'opcode',
             value: this.opcode,
             length: 11,
-            tooltip: 'Op-code'
+            tooltip: 'Op-Code'
         });
 
         if (this.rm !== undefined) {
@@ -42,7 +42,7 @@ export class Instruction {
                 type: 'register',
                 value: this.rm,
                 length: 5,
-                tooltip: 'Rm'
+                tooltip: `Rm (X${this.rm})`
             });
         } else if (this.imm11 === undefined) {
             this.encodingParts.push({
@@ -76,7 +76,7 @@ export class Instruction {
                 type: 'register',
                 value: this.rn,
                 length: 5,
-                tooltip: 'Rn'
+                tooltip: `Rn (X${this.rn})`
             });
         } else {
             this.encodingParts.push({
@@ -93,7 +93,7 @@ export class Instruction {
                 type: 'register',
                 value: this.rd,
                 length: 5,
-                tooltip: 'Rd'
+                tooltip: `Rd (X${this.rd})`
             });
         } else if (this.rt !== undefined) {
             this.encoding += BigInt(this.rt);
@@ -101,7 +101,7 @@ export class Instruction {
                 type: 'register',
                 value: this.rt,
                 length: 5,
-                tooltip: 'Rt'
+                tooltip: `Rt (X${this.rt})`
             });
         } else {
             this.encodingParts.push({

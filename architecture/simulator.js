@@ -61,22 +61,22 @@ export default class Simulator extends React.Component {
                 </div>
 
                 <div className={styles.column}>
-                    <div className={styles.card}>
-                        <Registers />
-                    </div>
-
                     <div className={styles.row}>
+                        <div className={`${styles.card} ${styles.fix}`}>
+                            <Registers />
+                        </div>
+
                         <div className={styles.card}>
                             <ControlSignals />
                         </div>
+                    </div>
 
-                        <div className={`${styles.card} ${styles.expand}`}>
-                            <Memory />
-                        </div>
+                    <div className={`${styles.card} ${styles.expand}`}>
+                        <Memory />
                     </div>
                 </div>
 
-                <div className={styles.column} style={{ flexGrow: 2 }}>
+                <div className={`${styles.column} ${styles.expand}`}>
                     <div className={styles.card}>
                         <Datapath />
                     </div>

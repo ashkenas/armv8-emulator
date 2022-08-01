@@ -76,16 +76,10 @@ function Memory(props) {
                 additionalStyles += ` ${styles.sp}`;
 
             dwordBytes.unshift(
-                <td key={j} className={`${styles.value} ${additionalStyles}`} onMouseOver={hover(addressText, <table>
-                        <tr>
-                            <td>Binary</td>
-                            <td>{formatBinary(value, 8)}</td>
-                        </tr>
-                        <tr>
-                            <td>Decimal</td>
-                            <td>{value.toString()}</td>
-                        </tr>
-                    </table>)} onMouseLeave={leave()}>
+                <td key={j} className={`${styles.value} ${additionalStyles}`} onMouseOver={hover(addressText, <>
+                    <div>{value.toString()}<sub>D</sub></div>
+                    <div>{formatBinary(value, 8)}<sub>B</sub></div>
+                    </>)} onMouseLeave={leave()}>
                     {bigIntToHexString(value, 8)}
                 </td>
             );
@@ -123,22 +117,11 @@ function Memory(props) {
 
             dwordBytes.push(
                 <td key={j} className={`${styles.value} ${location}`}
-                    onMouseOver={hover(addressText, <table className={styles.popup}>
-                        <tr>
-                            <td>Binary</td>
-                            <td>{formatBinary(value, 8)}</td>
-                        </tr>
-                        <tr>
-                            <td>Decimal</td>
-                            <td>{value.toString()}</td>
-                        </tr>
-                        {j < programSize && <>
-                        <tr>
-                            <td>Instruction</td>
-                            <td>{instructions[Math.floor(j / 4)]}</td>
-                        </tr>
-                        </>}
-                    </table>, j < programSize && Math.floor(j / 4))} onMouseLeave={leave()}>
+                    onMouseOver={hover(addressText, <>
+                        <div>{value.toString()}<sub>D</sub></div>
+                        <div>{formatBinary(value, 8)}<sub>B</sub></div>
+                        {j < programSize && <div>{instructions[Math.floor(j / 4)]}</div>}
+                    </>, j < programSize && Math.floor(j / 4))} onMouseLeave={leave()}>
                     {bigIntToHexString(value, 8)}
                 </td>
             );
@@ -163,11 +146,11 @@ function Memory(props) {
                 {popupState.children}
             </PopUp>
             <ScrollContent>
-                <table className={styles.memory}>
+                <table>
                     <thead>
                     <tr>
-                        <th className={styles.header}>Address</th>
-                        <th className={styles.header} colSpan={8}>Value</th>
+                        <th>Address</th>
+                        <th colSpan={8}>Value</th>
                     </tr>
                     </thead>
                     <tbody>

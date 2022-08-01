@@ -1,7 +1,3 @@
-table.memory {
-    border-collapse: collapse;
-}
-
 tr.block {
     font-family: 'Courier New', Courier, monospace;
 }
@@ -10,7 +6,7 @@ td.sp {
     color: var(--sp-color);
 }
 
-th.header, tr.spacer > td {
+tr.spacer > td {
     text-align: center;
 }
 
@@ -30,6 +26,7 @@ td.addr:hover > div, td.value:hover > div {
 
 td.value {
     position: relative;
+    text-align: center;
 }
 
 tr.block:first-child td.value {

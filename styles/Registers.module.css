@@ -1,12 +1,17 @@
-.row {
-    display: flex;
+.highlight {
+    background-color: var(--memory-bg-instruction);
 }
 
-.column {
-    display: flex;
-    flex-direction: column;
+.value {
+    position: relative;
+    left: 0;
+    font-family: 'Courier New', Courier, monospace;
 }
 
-.column:first-child {
-    margin-right: 1rem;
+.value:hover {
+    color: var(--text-highlight);
+}
+
+.value:hover > div {
+    display: block;
 }

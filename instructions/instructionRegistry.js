@@ -29,7 +29,7 @@ import {
     CMPIInstruction
 } from '@inst/index';
 
-class InstructionRegistry {
+export default class InstructionRegistry {
     static registry = {};
 
     /** Used by instruction types to self-register */
@@ -65,9 +65,9 @@ class InstructionRegistry {
         else
             return null;
     }
-}
+};
 
-const instructionConstructors = [
+export const instructionTypes = [
     ANDInstruction,
     ANDSInstruction,
     ORRInstruction,
@@ -97,7 +97,5 @@ const instructionConstructors = [
     CMPIInstruction
 ];
 
-for (const instructionConstructor of instructionConstructors)
-    InstructionRegistry.register(instructionConstructor.mnemonic, instructionConstructor.syntax, instructionConstructor);
-
-export default InstructionRegistry;
+for (const instructionType of instructionTypes)
+    InstructionRegistry.register(instructionType.mnemonic, instructionType.syntax, instructionType);

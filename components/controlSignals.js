@@ -10,12 +10,6 @@ function ControlSignals(props) {
     return (
         <ScrollContent>
             <table>
-                <thead>
-                    <tr>
-                        <th className={styles.header}>Signal</th>
-                        <th className={styles.header}></th>
-                    </tr>
-                </thead>
                 <tbody>
                     {Object.keys(signals).map((signal) =>
                         <tr key={signal} className={signal in highlight ? styles.highlight : ''}>

@@ -1,3 +1,4 @@
+import { Instruction } from "@inst/instruction";
 import { applyMiddleware, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import { expandTo, setBytes } from "./byteArray";
@@ -11,7 +12,7 @@ const initialState = {
     textData: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
     stackData: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
     frames: [],
-    controlSignals: {},
+    controlSignals: {...Instruction._controlSignalNames.reduce((signals, signal) => (signals[signal] = 0, signals), {})},
     newSignals: {},
     wires: {},
     encoding: [{

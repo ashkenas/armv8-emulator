@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
-import Register from '@components/register';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '@styles/Registers.module.css';
 import { useSelector } from 'react-redux';
 import PopUp from './popUp';
+import ScrollContent from './scrollContent';
+import { bigIntToHexString } from '@util/formatUtils';
 
 export default function Registers(props) {
     const values = useSelector((state) => state.registers);
     const lastUpdate = useSelector((state) => state.lastRegister);
     const [popupState, setPopupState] = useState({ title: '', value: 0n, display: false, rect: {}, last: '' });
+    const [height, setHeight] = useState(0);
+    const regRef = useRef(null);
+
+    useEffect(() => {
+        setHeight(regRef.current.clientHeight);
+    }, []);
 
     const hover = (name, value) => (event) => {
         setPopupState({
@@ -28,12 +35,16 @@ export default function Registers(props) {
     for (let i = 27; i >= 0; i--)
         registerLabels.unshift(`X${i}`);
 
-    const col1 = [], col2 = [];
-    for (let i = 0; i < 16; i++) {
-        col1.push(<Register key={`register${i}`} registerName={registerLabels[i]} value={values[i]} highlight={lastUpdate === i}
-                    onMouseOver={hover(registerLabels[i],  values[i])} onMouseLeave={leave(registerLabels[i])} />);
-        col2.push(<Register key={`register${i + 16}`} registerName={registerLabels[i + 16]} value={values[i + 16]} highlight={lastUpdate === i + 16}
-                    onMouseOver={hover(registerLabels[i + 16],  values[i + 16])} onMouseLeave={leave(registerLabels[i + 16])} />);
+    const regs = [];
+    for (let i = 0; i < 32; i++) {
+        regs.push(
+            <tr key={`register${i}`} ref={i === 0 ? regRef : undefined} className={lastUpdate === i ? styles.highlight : ''}>
+                <td>{registerLabels[i]}</td>
+                <td className={styles.value} onMouseOver={hover(registerLabels[i],  values[i])} onMouseLeave={leave(registerLabels[i])}>
+                    {bigIntToHexString(values[i] < 0 ? (1n << 64n) + values[i] : values[i], 64)}
+                </td>
+            </tr>
+        );
     }
 
     return (
@@ -41,14 +52,13 @@ export default function Registers(props) {
             <PopUp title={popupState.title} display={popupState.display} rect={popupState.rect}>
                 {popupState.value.toString()}
             </PopUp>
-            <div className={styles.row}>
-                <div className={styles.column}>
-                    {col1}
-                </div>
-                <div className={styles.column}>
-                    {col2}
-                </div>
-            </div>
+            <ScrollContent height={`${height * 8}px`}>
+                <table>
+                    <tbody>
+                        {regs}
+                    </tbody>
+                </table>
+            </ScrollContent>
         </>
     );
 }

@@ -14,25 +14,25 @@ class ADRInstruction extends Instruction {
         this.setControlSignals(0, 1, 0b01, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
-    if(simulator) {
+    if() {
         return {
             aluImm: this.imm11,
             readReg2: this.rt
         };
     }
     
-    ex(simulator) {
+    ex() {
         return {
             aluAction: 0b0111,
             aluResult: this.imm11
         };
     }
 
-    wb(simulator) {
-        store.dispatch(updateRegister(this.rt, this.imm11 + BigInt(simulator.program.currentInstruction * 4)));
+    wb(program) {
+        store.dispatch(updateRegister(this.rt, this.imm11 + BigInt(program.currentInstruction * 4)));
 
         return {
-            writeData: this.imm11 + BigInt(simulator.program.currentInstruction * 4)
+            writeData: this.imm11 + BigInt(program.currentInstruction * 4)
         };
     }
 }

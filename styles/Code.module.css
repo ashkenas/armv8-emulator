@@ -1,12 +1,18 @@
-.code-container > code {
+.code-container {
     position: relative;
+}
+
+.code-container > code {
+    position: absolute;
+    left: 0;
+    right: 0;
 }
 
 .highlighter {
     position: absolute;
     left: 0;
     padding-left: inherit;
-    width: 100%;
+    min-width: 100%;
     background-color: #ffff0033;
 }
 

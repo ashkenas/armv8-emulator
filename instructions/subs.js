@@ -15,7 +15,7 @@ class SUBSInstruction extends Instruction {
         this.setControlSignals(1, 0, 0b11, 0, 0, 0, 0, 0, 0, 0, 1);
     }
 
-    if(simulator) {
+    if() {
         return {
             readReg1: this.rn,
             readReg2: this.rm,
@@ -23,7 +23,7 @@ class SUBSInstruction extends Instruction {
         };
     }
 
-    id(simulator) {
+    id() {
         this.opn = store.getState().registers[this.rn];
         this.opm = store.getState().registers[this.rm];
 
@@ -33,9 +33,9 @@ class SUBSInstruction extends Instruction {
         };
     }
 
-    ex(simulator) {
+    ex() {
         this.result = this.opn - this.opm;
-        simulator.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
+        // simulator.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
         
         return {
             aluAction: 0b1011,
@@ -43,7 +43,7 @@ class SUBSInstruction extends Instruction {
         };
     }
 
-    wb(simulator) {
+    wb() {
         store.dispatch(updateRegister(this.rd, this.result));
 
         return {

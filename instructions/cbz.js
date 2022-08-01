@@ -14,14 +14,14 @@ class CBZInstruction extends Instruction {
         this.setControlSignals(0, 0, 0b01, 1, 0, 0, 0, 0, 0, 0, 0);
     }
 
-    if(simulator) {
+    if() {
         return {
             aluImm: this.imm11,
             readReg2: this.rt
         };
     }
 
-    id(simulator) {
+    id() {
         this.opn = store.getState().registers[this.rt];
 
         return {
@@ -29,11 +29,11 @@ class CBZInstruction extends Instruction {
         };
     }
     
-    ex(simulator) {
+    ex(program) {
         return {
             aluAction: 0b0111,
             aluResult: this.opn,
-            branchPC: Number(this.imm11) + (simulator.program.currentInstruction * 4)
+            branchPC: Number(this.imm11) + (program.currentInstruction * 4)
         };
     }
 }

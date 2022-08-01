@@ -5,7 +5,46 @@ import { expandTo, setBytes } from "./byteArray";
 import { nextMultiple } from "./formatUtils";
 import { MAX_ADDRESS } from "./memoryUtils";
 
+const demoProgram = `.text
+.global _start
+rec_add:
+    sub X1, X0, X19
+    cbz X1, rec_add_base //this comment sure will cause problems
+    ldur X1, [X0, #0]
+    add X0, X0, #8
+    sub X28, X28, #16
+    stur X1, [X28, #8]
+    stur X30, [X28, #0]
+    bl rec_add
+    b rec_add_end
+rec_add_base:
+    mov X0, #0
+    ret
+rec_add_end:
+    ldur X30, [X28, #0]
+    ldur X1, [X28, #8]
+    add X28, X28, #16
+    add X0, X0, X1
+    ret
+_start:
+    adr X0, array
+    adr X19, end
+    bl rec_add
+    adr x1, out
+    stur x0, [x1, #0]
+    svc #0
+.data
+array:
+    .dword 8, 4, 3
+end:
+    .dword 0
+.bss
+out:
+    .space 8
+.end`;
+
 const initialState = {
+    text: demoProgram,
     instructions: [],
     registers: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
     lastRegister: -1,
@@ -66,6 +105,8 @@ const rootReducer = (state = initialState, action) => {
                 setBytes(newStackData, MAX_ADDRESS - action.payload.address, action.payload.value, -action.payload.size);
                 return { ...state, stackData: newStackData };
             }
+        case 'updateText':
+            return { ...state, text: action.payload };
         default:
             return state;
     }
@@ -100,3 +141,7 @@ export function removeFrame() {
 export function updateBytes(address, value, size) {
     return { type: 'updateBytes', payload: { address: address, value: value, size: size } };
 };
+
+export function updateText(text) {
+    return { type: 'updateText', payload: text };
+}

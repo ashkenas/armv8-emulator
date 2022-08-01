@@ -121,19 +121,19 @@ export class Instruction {
         }
     }
 
-    tick(simulator) {
+    tick(program) {
         let flags = {};
 
         switch(this.cycle++) {
             case 0:
-                flags = this.if ? this.if(simulator) : {};
+                flags = this.if ? this.if(program) : {};
 
-                this.nextPC = (simulator.program.currentInstruction * 4) + 4;
+                this.nextPC = (program.currentInstruction * 4) + 4;
                 flags.nextPC = this.nextPC;
 
                 break;
             case 1:
-                flags = this.id ? this.id(simulator) : {};
+                flags = this.id ? this.id(program) : {};
 
                 if (flags.readData2)
                     this.readData2 = flags.readData2;
@@ -142,7 +142,7 @@ export class Instruction {
 
                 break;
             case 2:
-                flags = this.ex ? this.ex(simulator) : {};
+                flags = this.ex ? this.ex(program) : {};
 
                 flags.aluInputB = this.controlSignals.aluSrc ? this.imm11 : this.readData2;
 
@@ -156,10 +156,10 @@ export class Instruction {
                 
                 break;
             case 3:
-                flags = this.mem ? this.mem(simulator) : {};
+                flags = this.mem ? this.mem(program) : {};
                 break;
             case 4:
-                flags = this.wb ? this.wb(simulator) : {};
+                flags = this.wb ? this.wb(program) : {};
                 break;
             default:
                 throw 'Instruction execution complete, no more cycles to tick.';

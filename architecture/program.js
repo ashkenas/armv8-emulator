@@ -121,15 +121,14 @@ export default class Program {
 
     /**
      * Run one cycle of the current instruction.
-     * @param {Simulator} simulator The simulator to run the instruction on.
      * @returns {boolean} If the program has concluded.
      */
-    tick(simulator) {
+    tick() {
         if (this.exit || this.currentInstruction >= this.instructions.length)
             return true;
 
-        try {
-            const state = this.instructions[this.currentInstruction].tick(simulator);
+        // try {
+            const state = this.instructions[this.currentInstruction].tick(this);
 
             if (this.instructions[this.currentInstruction].cycle === 2) {
                 store.dispatch(updateControlSignals(this.instructions[this.currentInstruction].controlSignals));
@@ -152,11 +151,11 @@ export default class Program {
             }
 
             store.dispatch(updateWires(state.flags)); 
-        } catch (e) {
-            simulator.setState(() => {
-                throw `Line ${this.instructions[this.currentInstruction].lineNumber + 1}: ${this.instructions[this.currentInstruction].lineText}\n\n${e}`;
-            });
-        }
+        // } catch (e) {
+        //     simulator.setState(() => {
+        //         throw `Line ${this.instructions[this.currentInstruction].lineNumber + 1}: ${this.instructions[this.currentInstruction].lineText}\n\n${e}`;
+        //     });
+        // }
 
         return false;
     }

@@ -39,7 +39,7 @@ export default function Registers(props) {
     for (let i = 0; i < 32; i++) {
         regs.push(
             <tr key={`register${i}`} ref={i === 0 ? regRef : undefined} className={lastUpdate === i ? styles.highlight : ''}>
-                <td>{registerLabels[i]}</td>
+                <td className={styles.name}>{registerLabels[i]}</td>
                 <td className={styles.value} onMouseOver={hover(registerLabels[i],  values[i])} onMouseLeave={leave(registerLabels[i])}>
                     {bigIntToHexString(values[i] < 0 ? (1n << 64n) + values[i] : values[i], 64)}
                 </td>

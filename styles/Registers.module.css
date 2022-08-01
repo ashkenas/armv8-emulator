@@ -2,9 +2,12 @@
     background-color: var(--memory-bg-instruction);
 }
 
-.value {
-    position: relative;
-    left: 0;
+.name {
+    text-align: right;
+    font-weight: bold;
+}
+
+.name, .value {
     font-family: 'Courier New', Courier, monospace;
 }
 

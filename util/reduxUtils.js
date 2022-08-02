@@ -74,7 +74,7 @@ const rootReducer = (state = initialState, action) => {
         case 'merge':
             return { ...state, ...action.payload };
         case 'updateControlSignals':
-            const newSignalNames = Object.keys(action.payload).filter((signal) => action.payload[signal] !== null);
+            const newSignalNames = Object.keys(action.payload).filter((signal) => action.payload[signal] !== state.controlSignals[signal]);
             const newSignals = newSignalNames.reduce((controlSignals, signal) => {
                 controlSignals[signal] = action.payload[signal];
                 return controlSignals;

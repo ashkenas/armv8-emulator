@@ -3,7 +3,12 @@ th.header:first-child {
     text-align: right;
 }
 
+td.signal, td.signal + td {
+    font-family: 'Courier New', Courier, monospace;
+}
+
 td.signal {
+    font-weight: bold;
     padding-right: .5rem;
     text-align: right;
 }

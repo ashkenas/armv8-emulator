@@ -89,9 +89,7 @@ export default function Simulator(props) {
                     setRun(false);
                 } else {
                     setRun(setInterval(() => {
-                        console.log('test');
                         if (program.tick()) {
-                            console.log('test2');
                             clearTimeout(run);
                             setRun(false);
                         }

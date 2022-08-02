@@ -4,7 +4,7 @@ th.header:first-child {
 }
 
 td.signal, td.signal + td {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--monospace);
 }
 
 td.signal {

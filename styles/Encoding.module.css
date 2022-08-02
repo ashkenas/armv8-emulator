@@ -1,5 +1,5 @@
 span.encoding {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--monospace);
     position: relative;
     font-size: 1.2rem;
 }

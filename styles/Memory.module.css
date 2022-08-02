@@ -1,5 +1,5 @@
 tr.block {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--monospace);
 }
 
 td.sp {

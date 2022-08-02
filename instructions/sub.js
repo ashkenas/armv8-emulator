@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { twoC } from "@util/formatUtils";
 import { store, updateRegister } from "@util/reduxUtils";
 
 class SUBInstruction extends Instruction {
@@ -34,7 +35,7 @@ class SUBInstruction extends Instruction {
     }
 
     ex(simulator) {
-        this.result = this.opn - this.opm;
+        this.result = twoC(this.opn - this.opm);
         
         return {
             aluAction: 0b0011,

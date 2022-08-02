@@ -4,6 +4,17 @@ export class ArgumentType {
 
     static Register = 0b1;
     static Immediate = 0b0;
+
+    static toString(argType) {
+        switch(argType) {
+            case ArgumentType.Register:
+                return 'Register';
+            case ArgumentType.Immediate:
+                return 'Immediate';
+            default:
+                return 'Unknown';
+        }
+    }
 }
 
 export class Instruction {

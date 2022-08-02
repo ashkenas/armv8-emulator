@@ -1,7 +1,7 @@
 import Program from "@arch/program";
 import { ArgumentType } from "@inst/instruction";
 import InstructionRegistry from "@inst/instructionRegistry";
-import { bigIntArrayToBigInt } from "@util/formatUtils";
+import { bigIntArrayToBigInt, twoC } from "@util/formatUtils";
 
 export default class Parse {
     constructor(text) {
@@ -61,6 +61,8 @@ export default class Parse {
                 if (!line.includes('.') && !line.includes(':')) {
                     let instr_arr = this.parseInstruction(line);
                     const instrType = this.matchParsedInstruction(instr_arr);
+                    if (instrType === undefined)
+                        throw `Invalid instruction type: ${instr_arr[0]} ${instr_arr.slice(1).map(this.getArgumentType).map(ArgumentType.toString).join(', ')}`;
                     let decode = this.decodeParsedInstruction(instr_arr);
                     this.program.addInstruction(instrType, decode, i, line);
                 }
@@ -110,8 +112,9 @@ export default class Parse {
             this.program.addLabel(data_line.split(':')[0]);
 
         let [fm, type, data] = (/(\.[a-z]*)\s*(.*)/i).exec(data_line);
-        data = data.split(',').map((val) => BigInt(val.trim()));
-        let initLen = this.getByteSizeofInitializer(type) * data.length;  // ".double"
+        const valLength = this.getByteSizeofInitializer(type);
+        data = data.split(',').map((val) => twoC(BigInt(val.trim()), BigInt(valLength) * 8n));
+        const initLen = valLength * data.length;  // ".double"
         this.program.addInitializedData(bigIntArrayToBigInt(data), initLen);   
     }
 
@@ -196,7 +199,7 @@ export default class Parse {
                     args.push(29);
                     break;
                 case "sp":
-                    args.push(38);
+                    args.push(28);
                     break;
                 default:
                     if (param[0].toLowerCase() === 'x') {
@@ -212,7 +215,7 @@ export default class Parse {
                             throw `Argument ${i} (${param}):\nInvalid immediate '${arg}'.`;
                         else if (arg < -(2 ** 10) || arg > (2 ** 10) - 1)
                             throw `Argument ${i} (${param}):\nImmediate must be in range [-2^10, 2^10 - 1].`
-                        args.push(BigInt(arg));
+                        args.push(twoC(BigInt(arg), 11n));
                     } else {
                         args.push(param)
                     }

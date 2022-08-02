@@ -5,6 +5,8 @@ import { expandTo, setBytes } from "./byteArray";
 import { nextMultiple } from "./formatUtils";
 import { MAX_ADDRESS } from "./memoryUtils";
 
+const regMask = (1n << 64n) - 1n;
+
 const demoProgram = `.text
 .global _start
 rec_add:
@@ -85,7 +87,7 @@ const rootReducer = (state = initialState, action) => {
                 return state;
 
             const newValues = [...state.registers];
-            newValues[action.payload.register] = action.payload.value;
+            newValues[action.payload.register] = action.payload.value & regMask;
             const newState = { ...state, lastRegister: action.payload.register, registers: newValues };
 
             if (action.payload.register === 28)

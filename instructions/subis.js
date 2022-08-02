@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { signExtend, twoC } from "@util/formatUtils";
 import { store, updateRegister, updateStatus } from "@util/reduxUtils";
 
 class SUBISInstruction extends Instruction {
@@ -32,7 +33,7 @@ class SUBISInstruction extends Instruction {
     }
 
     ex() {
-        this.result = this.opn - this.imm11;
+        this.result = twoC(this.opn - signExtend(this.imm11, 11n));
         store.dispatch(updateStatus(this.result === 0n ? 0b0100n : 0n));
         
         return {

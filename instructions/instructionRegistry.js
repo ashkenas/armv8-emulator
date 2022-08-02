@@ -63,7 +63,7 @@ export default class InstructionRegistry {
         if(mnemonic in this.registry)
             return this.registry[mnemonic][serialSyntax];
         else
-            return null;
+            return undefined;
     }
 };
 

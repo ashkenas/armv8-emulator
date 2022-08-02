@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { signExtend } from "@util/formatUtils";
 import { store, updateRegister } from "@util/reduxUtils";
 
 class ORRIInstruction extends Instruction {
@@ -32,7 +33,7 @@ class ORRIInstruction extends Instruction {
     }
 
     ex(simulator) {
-        this.result = this.imm11 | this.opn;
+        this.result = this.opn | signExtend(this.imm11, 11n);
         
         return {
             aluAction: 0b0001,

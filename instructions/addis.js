@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { signExtend } from "@util/formatUtils";
 import { store, updateRegister, updateStatus } from "@util/reduxUtils";
 
 class ADDISInstruction extends Instruction {
@@ -32,7 +33,7 @@ class ADDISInstruction extends Instruction {
     }
 
     ex() {
-        this.result = this.imm11 + this.opn;
+        this.result = this.opn + signExtend(this.imm11, 11n);
         store.dispatch(updateStatus(this.result === 0n ? 0b0100n : 0n));
         
         return {

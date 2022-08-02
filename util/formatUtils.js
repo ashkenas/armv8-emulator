@@ -51,6 +51,7 @@ export function nextMultiple(value, factor) {
  * @param {bigint} data Data to convert to binary
  * @param {number} bitLength Number of total binary digits
  * @param {number} groupSize Size of digit groups
+ * @returns {string}
  */
 export function formatBinary(data, bitLength, groupSize = 4) {
     if (typeof data !== 'bigint')
@@ -65,3 +66,28 @@ export function formatBinary(data, bitLength, groupSize = 4) {
 
     return bin.join(' ');
 };
+
+/**
+ * Computes the 2's complement of a number if it's negative.
+ * @param {bigint} data Data to complement
+ * @param {bigint} length Bit length of data
+ * @returns {bigint}
+ */
+export function twoC(data, length = 64n) {
+    if (data < 0)
+        data = (1n << length) + data;
+    return data;
+}
+
+/**
+ * Sign-extend a number.
+ * @param {bigint} data Data to sign-extend
+ * @param {bigint} from Original bit length of data
+ * @param {bigint} to New bit length of data
+ * @returns {bigint}
+ */
+export function signExtend(data, from, to = 64n) {
+    if ((data >> (from - 1n)) & 1n)
+        data += (1n << to) - (1n << from);
+    return data;
+}

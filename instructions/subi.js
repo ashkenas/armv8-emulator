@@ -1,4 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
+import { signExtend, twoC } from "@util/formatUtils";
 import { store, updateRegister } from "@util/reduxUtils";
 
 class SUBIInstruction extends Instruction {
@@ -32,7 +33,7 @@ class SUBIInstruction extends Instruction {
     }
 
     ex(simulator) {
-        this.result = this.opn - this.imm11;
+        this.result = twoC(this.opn - signExtend(this.imm11, 11n));
         
         return {
             aluAction: 0b0011,

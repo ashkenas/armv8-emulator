@@ -11,7 +11,15 @@ export default function Registers(props) {
     const lastUpdate = useSelector((state) => state.lastRegister);
     const [popupState, setPopupState] = useState({ title: '', value: 0n, display: false, rect: {}, last: '' });
     const [height, setHeight] = useState(0);
+    const [scroll, setScroll] = useState(0);
     const regRef = useRef(null);
+    const updateRef = useRef(null);
+
+    useEffect(() => {
+        const element = (lastUpdate === 0 ? regRef : updateRef).current;
+        if (element)
+            setScroll(element.offsetTop);
+    }, [lastUpdate]);
 
     useEffect(() => {
         setHeight(regRef.current.clientHeight);
@@ -39,7 +47,7 @@ export default function Registers(props) {
     const regs = [];
     for (let i = 0; i < 32; i++) {
         regs.push(
-            <tr key={`register${i}`} ref={i === 0 ? regRef : undefined} className={lastUpdate === i ? styles.highlight : ''}>
+            <tr key={`register${i}`} ref={i === 0 ? regRef : (i === lastUpdate ? updateRef : undefined)} className={lastUpdate === i ? styles.highlight : ''}>
                 <td className={styles.name}>{registerLabels[i]}</td>
                 <td className={styles.value} onMouseOver={hover(registerLabels[i],  values[i])} onMouseLeave={leave(registerLabels[i])}>
                     {bigIntToHexString(values[i] < 0 ? (1n << 64n) + values[i] : values[i], 64)}
@@ -61,7 +69,7 @@ export default function Registers(props) {
             <PopUp title={popupState.title} display={popupState.display} rect={popupState.rect}>
                 {popupState.value.toString()}
             </PopUp>
-            <ScrollContent height={`${height * 8}px`}>
+            <ScrollContent height={`${height * 8}px`} scrollTop={scroll}>
                 <table>
                     <tbody>
                         {regs}

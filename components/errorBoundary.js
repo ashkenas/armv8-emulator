@@ -24,7 +24,7 @@ export default class ErrorBoundary extends React.Component {
                 <div className={styles.modal}>
                     <h2 className={styles.title}>{this.props.title}</h2>
                     <div className={styles.body}>
-                        <pre>{this.state.error}</pre>
+                        <pre>{this.state.error.toString()}</pre>
                     </div>
                 </div>
             </div>

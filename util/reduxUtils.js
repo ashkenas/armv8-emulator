@@ -112,6 +112,8 @@ const rootReducer = (state = initialState, action) => {
             return { ...state, text: action.payload };
         case 'updateStatus':
             return { ...state, cpsr: action.payload << 28n };
+        case 'reset':
+            return { ...initialState };
         default:
             return state;
     }
@@ -153,4 +155,8 @@ export function updateText(text) {
 
 export function updateStatus(cpsr) {
     return { type: 'updateStatus', payload: cpsr };
+}
+
+export function reset() {
+    return { type: 'reset' };
 }

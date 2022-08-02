@@ -9,39 +9,103 @@ import {
     ControlSignals
 } from "@components/index"
 import styles from "@styles/Home.module.css";
-import { merge, store, updateRegister } from "@util/reduxUtils";
+import { merge, reset, updateRegister } from "@util/reduxUtils";
 import { initializeMemory, MAX_ADDRESS } from "@util/memoryUtils";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Parse from "./parse";
 
 export default function Simulator(props) {
     const text = useSelector((state) => state.text);
-    const [error, setError] = useState(false);
+    const dispatch = useDispatch();
+    const [program, setProgram] = useState(null);
+    const [run, setRun] = useState(false);
+    const [parsingError, setParsingError] = useState(false);
+    const [runtimeError, setRuntimeError] = useState(false);
+    const [restart, setRestart] = useState(0);
 
-    let program = null;
+    if (runtimeError)
+        throw runtimeError;
 
     useEffect(() => {
-        try {
-            const p = new Parse(text);
-            program = p.program;
-            setError(false);
-        } catch (e) {
-            setError(e);
-        }
-
         if (!program)
             return;
 
+        dispatch(reset());
         initializeMemory(program);
-        store.dispatch(updateRegister(28, BigInt(MAX_ADDRESS + 1)));
-        store.dispatch(updateRegister(29, BigInt(MAX_ADDRESS + 1)));
-        store.dispatch(merge({
+        dispatch(updateRegister(28, BigInt(MAX_ADDRESS + 1)));
+        dispatch(updateRegister(29, BigInt(MAX_ADDRESS + 1)));
+        dispatch(merge({
             instructions: program.instructions.map((instruction) => instruction.lineText),
             encoding: program.instructions[program.currentInstruction].encodingParts,
             lineNumber: program.instructions[program.currentInstruction].lineNumber,
             lastRegister: -1
         }));
-    }, [text]);
+    }, [program]);
+
+    useEffect(() => {
+        try {
+            const p = new Parse(text);
+            setProgram(p.program);
+            setParsingError(false);
+        } catch (e) {
+            setParsingError(e);
+        }
+    }, [text, restart]);
+
+    const syncError = (func) => (...args) => {
+        try {
+            func(...args);
+        } catch (e) {
+            setRuntimeError(e);
+        }
+    };
+
+    const buttons = [
+        {
+            text: 'Next Cycle',
+            effect: syncError(() => {
+                program.tick();
+            })
+        },
+        {
+            text: 'Next Instruction',
+            effect: syncError(() => {
+                if (!program.tick())
+                    while(program.instructions[program.currentInstruction]?.cycle)
+                        program.tick();
+            })
+        },
+        {
+            text: 'Restart',
+            effect: syncError(() => {
+                setRestart(++restart);
+            })
+        },
+        {
+            text: run ? 'Pause' : 'Play',
+            effect: syncError(() => {
+                if (run) {
+                    clearInterval(run);
+                    setRun(false);
+                } else {
+                    setRun(setInterval(() => {
+                        console.log('test');
+                        if (program.tick()) {
+                            console.log('test2');
+                            clearTimeout(run);
+                            setRun(false);
+                        }
+                    }, 100));
+                }
+            })
+        },
+        {
+            text: 'Run to End',
+            effect: syncError(() => {
+                while(!program.tick());
+            })
+        }
+    ];
 
     return (
         <div className={styles.container}>
@@ -52,10 +116,8 @@ export default function Simulator(props) {
 
             <div className={styles.column}>
                 <div className={`${styles.card} ${styles.expand}`}>
-                    <Code error={error} />
-                    {/* Demo buttons, will be removed later */}
-                    <button className={styles.btest} onClick={() => { program?.tick(); }}>Next Cycle</button>
-                    <button className={styles.btest} onClick={() => { program?.tick(); while(program.instructions[program.currentInstruction]?.cycle) program?.tick(); }}>Next Instruction</button>
+                    <Code error={parsingError} />
+                    {buttons.map(({ text, effect }) => <button key={text} className={styles.button} onClick={effect}>{text}</button>)}
                 </div>
 
                 <div className={styles.card}>

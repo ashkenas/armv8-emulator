@@ -36,16 +36,6 @@ export default function Code({ error }) {
             hljs.highlightElement(codeRef.current);
     }, [text, lineNumber]);
 
-    const code = (
-        <ScrollContent>
-            <pre className={styles['code-container']}>
-                <code ref={codeRef} className="language-armasm">
-                    {text}
-                </code>
-            </pre>
-        </ScrollContent>
-    );
-
     return (
         <>
             <input type="file" onChange={(e) => {
@@ -56,8 +46,12 @@ export default function Code({ error }) {
                     dispatch(updateText(newText.replaceAll(/\r/g, '')));
                 });
             }} />
-            {!error && code}
-            {!!error && <pre className={styles.error}>Parsing error occurred.<br/><br/>{error.toString()}</pre>}
+            <ScrollContent>
+                <pre className={styles['code-container']}>
+                    {!error && <code ref={codeRef} className="language-armasm">{text}</code>}
+                    {!!error && <pre className={styles.error}>Parsing error occurred.<br/><br/>{error.toString()}</pre>}
+                </pre>
+            </ScrollContent>
         </>
     );
 }

@@ -3,10 +3,11 @@ import styles from '@styles/Registers.module.css';
 import { useSelector } from 'react-redux';
 import PopUp from './popUp';
 import ScrollContent from './scrollContent';
-import { bigIntToHexString } from '@util/formatUtils';
+import { bigIntToHexString, formatBinary } from '@util/formatUtils';
 
 export default function Registers(props) {
     const values = useSelector((state) => state.registers);
+    const cpsr = useSelector((state) => state.cpsr);
     const lastUpdate = useSelector((state) => state.lastRegister);
     const [popupState, setPopupState] = useState({ title: '', value: 0n, display: false, rect: {}, last: '' });
     const [height, setHeight] = useState(0);
@@ -14,7 +15,7 @@ export default function Registers(props) {
 
     useEffect(() => {
         setHeight(regRef.current.clientHeight);
-    }, []);
+    }, [regRef?.current?.clientHeight]);
 
     const hover = (name, value) => (event) => {
         setPopupState({
@@ -46,6 +47,14 @@ export default function Registers(props) {
             </tr>
         );
     }
+    regs.push(
+        <tr key={'cpsr'}>
+            <td className={styles.name}>CPSR</td>
+            <td className={styles.value} onMouseOver={hover('CPSR',  `Z: ${cpsr >> 30n & 1n}`)} onMouseLeave={leave('CPSR')}>
+                {formatBinary(cpsr >> 28n, 4)}...
+            </td>
+        </tr>
+    );
 
     return (
         <>

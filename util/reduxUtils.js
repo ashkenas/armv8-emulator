@@ -47,6 +47,7 @@ const initialState = {
     text: demoProgram,
     instructions: [],
     registers: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
+    cpsr: 0n,
     lastRegister: -1,
     textData: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
     stackData: [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n],
@@ -81,7 +82,7 @@ const rootReducer = (state = initialState, action) => {
             return { ...state, wires: { ...state.wires, ...action.payload } };
         case 'updateRegister':
             if (action.payload.register === 31)
-                return;
+                return state;
 
             const newValues = [...state.registers];
             newValues[action.payload.register] = action.payload.value;
@@ -107,6 +108,8 @@ const rootReducer = (state = initialState, action) => {
             }
         case 'updateText':
             return { ...state, text: action.payload };
+        case 'updateStatus':
+            return { ...state, cpsr: action.payload << 28n };
         default:
             return state;
     }
@@ -135,7 +138,7 @@ export function addFrame(address) {
 };
 
 export function removeFrame() {
-    return { type: 'removeFrame' }
+    return { type: 'removeFrame' };
 };
 
 export function updateBytes(address, value, size) {
@@ -144,4 +147,8 @@ export function updateBytes(address, value, size) {
 
 export function updateText(text) {
     return { type: 'updateText', payload: text };
+}
+
+export function updateStatus(cpsr) {
+    return { type: 'updateStatus', payload: cpsr };
 }

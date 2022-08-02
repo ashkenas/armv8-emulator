@@ -1,5 +1,5 @@
 import { Instruction, ArgumentType } from "@inst/instruction";
-import { store, updateRegister } from "@util/reduxUtils";
+import { store, updateRegister, updateStatus } from "@util/reduxUtils";
 
 class ANDSInstruction extends Instruction {
     static mnemonic = 'ands';
@@ -35,7 +35,7 @@ class ANDSInstruction extends Instruction {
 
     ex() {
         this.result = this.opn & this.opm;
-        // simulator.registers.flags.setBit(0, this.result === 0n ? 1 : 0);
+        store.dispatch(updateStatus(this.result === 0n ? 0b0100n : 0n));
         
         return {
             aluAction: 0b1000,

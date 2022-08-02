@@ -170,16 +170,10 @@ export default class Parse {
      * @returns {ArgumentType} Type of the argument
      */
     getArgumentType(arg){
-        if (arg.length >= 2 && arg.length <= 3 && arg[0].toUpperCase() === 'X'){
-            let reg_num = arg.substring(1);
-            if ((+reg_num >= 0 && +reg_num <= 31) || reg_num === "ZR"){
-                return ArgumentType.Register;
-            }
-            throw `Invalid register: ${arg}`;
-        }
-        else {
-            return ArgumentType.Immediate;
-        }
+        if ((/^(?:x[0-9]+|sp|fp|lr|xzr)$/i).test(arg))
+            return ArgumentType.Register;
+
+        return ArgumentType.Immediate;
     }
 
     /**

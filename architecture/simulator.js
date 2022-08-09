@@ -13,12 +13,15 @@ import { merge, reset, updateRegister } from "@util/reduxUtils";
 import { initializeMemory, MAX_ADDRESS } from "@util/memoryUtils";
 import { useDispatch, useSelector } from "react-redux";
 import Parse from "./parse";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlay, faRotateLeft, faForward, faForwardFast, faStepForward, faPause } from "@fortawesome/free-solid-svg-icons";
 
 export default function Simulator(props) {
     const text = useSelector((state) => state.text);
     const dispatch = useDispatch();
     const [program, setProgram] = useState(null);
     const [run, setRun] = useState(false);
+    const [fastForward, setFastFoward] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [runtimeError, setRuntimeError] = useState(false);
     const [restart, setRestart] = useState(0);
@@ -62,45 +65,55 @@ export default function Simulator(props) {
 
     const buttons = [
         {
-            text: 'Next Cycle',
-            effect: syncError(() => {
-                program.tick();
-            })
-        },
-        {
-            text: 'Next Instruction',
-            effect: syncError(() => {
-                if (!program.tick())
-                    while(program.instructions[program.currentInstruction]?.cycle)
-                        program.tick();
-            })
-        },
-        {
-            text: 'Restart',
-            effect: syncError(() => {
-                setRestart(++restart);
-            })
-        },
-        {
-            text: run ? 'Pause' : 'Play',
-            effect: syncError(() => {
+            text: <FontAwesomeIcon icon={faPause} />,
+            effect : syncError(() => {
                 if (run) {
                     clearInterval(run);
                     setRun(false);
-                } else {
-                    setRun(setInterval(() => {
-                        if (program.tick()) {
-                            clearTimeout(run);
-                            setRun(false);
-                        }
-                    }, 100));
+                    setFastFoward(false);
                 }
             })
         },
         {
-            text: 'Run to End',
+            text: (fastForward === true || run === false) ? <FontAwesomeIcon icon={faPlay} /> : <FontAwesomeIcon icon={faForward} />,
+            effect: syncError(() => {
+                if (run) {
+                    clearInterval(run);
+                    setFastFoward(!fastForward);
+                }
+
+                setRun(setInterval(() => {
+                    if (program.tick()) {
+                        clearTimeout(run);
+                        setRun(false);
+                    }
+                }, 100 / ((run && !fastForward) ? 2 : 1)));
+            })
+        },
+        {
+            text: <FontAwesomeIcon icon={faStepForward} />,
+            effect: syncError(() => {
+                program.tick();
+            })
+        },
+        // {
+        //     text: 'Next Instruction',
+        //     effect: syncError(() => {
+        //         if (!program.tick())
+        //             while(program.instructions[program.currentInstruction]?.cycle)
+        //                 program.tick();
+        //     })
+        // },
+        {
+            text: <FontAwesomeIcon icon={faForwardFast} />,
             effect: syncError(() => {
                 while(!program.tick());
+            })
+        },
+        {
+            text: <FontAwesomeIcon icon={faRotateLeft} />,
+            effect: syncError(() => {
+                setRestart(++restart);
             })
         }
     ];
@@ -115,7 +128,9 @@ export default function Simulator(props) {
             <div className={styles.column}>
                 <div className={`${styles.card} ${styles.expand}`}>
                     <Code error={parsingError} />
-                    {buttons.map(({ text, effect }) => <button key={text} className={styles.button} onClick={effect}>{text}</button>)}
+                    <div className={styles.row}>
+                        {buttons.map(({ text, effect }) => <button key={text} className={styles.button} onClick={effect}>{text}</button>)}
+                    </div>
                 </div>
 
                 <div className={styles.card}>

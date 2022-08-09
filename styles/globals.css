@@ -24,6 +24,8 @@ sub {
 }
 
 #__next {
+    display: flex;
+    flex-direction: column;
     height: 100%;
 }
 
@@ -37,11 +39,13 @@ sub {
 *:after,
 *:before {
     box-sizing: inherit;
+    transition: background-color .25s 0s;
 }
 
 :root {
     --bg-primary: #252526;
     --bg-secondary: #333333;
+    --bg-navbar: #39393c;
     --text-color: #dedede;
     --text-highlight: #ffff00;
     --text-color-unscoped: #bebebe;

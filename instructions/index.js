@@ -26,4 +26,4 @@ export { default as SVCInstruction } from './svc';
 export { default as CMPInstruction } from './cmp';
 export { default as CMPIInstruction } from './cmpi';
 export { default as InstructionRegistry } from './instructionRegistry';
-export { default as Instruction } from './instruction';
+export { Instruction } from './instruction';

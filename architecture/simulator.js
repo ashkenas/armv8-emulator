@@ -14,7 +14,8 @@ import { initializeMemory, MAX_ADDRESS } from "@util/memoryUtils";
 import { useDispatch, useSelector } from "react-redux";
 import Parse from "./parse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faRotateLeft, faForward, faForwardFast, faStepForward, faPause } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faRotateLeft, faForward, faForwardFast, faStepForward, faPause, faLightbulb } from "@fortawesome/free-solid-svg-icons";
+import { themeDark, themeLight } from "@util/themes";
 
 export default function Simulator(props) {
     const text = useSelector((state) => state.text);
@@ -25,6 +26,7 @@ export default function Simulator(props) {
     const [parsingError, setParsingError] = useState(false);
     const [runtimeError, setRuntimeError] = useState(false);
     const [restart, setRestart] = useState(0);
+    const [lightMode, setLightMode] = useState(false);
 
     if (runtimeError)
         throw runtimeError;
@@ -54,6 +56,12 @@ export default function Simulator(props) {
             setParsingError(e);
         }
     }, [text, restart]);
+
+    useEffect(() => {
+        const theme = (lightMode ? themeLight : themeDark);
+        for (const cssVar in theme)
+            document.documentElement.style.setProperty(cssVar, theme[cssVar]);
+    }, [lightMode])
 
     const syncError = (func) => (...args) => {
         try {
@@ -119,47 +127,55 @@ export default function Simulator(props) {
     ];
 
     return (
-        <div className={styles.container}>
+        <>
             <Head>
                 <title>ARMv8 Emulator</title>
                 <meta name="description" content="Emulates ARMv8 Programs" />
             </Head>
 
-            <div className={styles.column}>
-                <div className={`${styles.card} ${styles.expand}`}>
-                    <Code error={parsingError} />
-                    <div className={styles.row}>
-                        {buttons.map(({ text, effect }) => <button key={text} className={styles.button} onClick={effect}>{text}</button>)}
-                    </div>
-                </div>
-
-                <div className={styles.card}>
-                    <h2>Encoding</h2>
-                    <Encoding />
+            <div className={styles.navbar}>
+                <div onClick={() => setLightMode(!lightMode)}>
+                    <FontAwesomeIcon icon={faLightbulb} size={"lg"} />
                 </div>
             </div>
 
-            <div className={styles.column}>
-                <div className={styles.row}>
-                    <div className={`${styles.card} ${styles.fix}`}>
-                        <Registers />
+            <div className={styles.container}>
+                <div className={styles.column}>
+                    <div className={`${styles.card} ${styles.expand}`}>
+                        <Code error={parsingError} theme={lightMode ? 'light' : 'dark'} />
+                        <div className={styles.row}>
+                            {buttons.map(({ text, effect }, i) => <button key={i} className={styles.button} onClick={effect}>{text}</button>)}
+                        </div>
                     </div>
 
                     <div className={styles.card}>
-                        <ControlSignals />
+                        <h2>Encoding</h2>
+                        <Encoding />
                     </div>
                 </div>
 
-                <div className={`${styles.card} ${styles.expand}`}>
-                    <Memory />
-                </div>
-            </div>
+                <div className={styles.column}>
+                    <div className={styles.row}>
+                        <div className={`${styles.card} ${styles.fix}`}>
+                            <Registers />
+                        </div>
 
-            <div className={`${styles.column} ${styles.expand}`}>
-                <div className={styles.card}>
-                    <Datapath />
+                        <div className={styles.card}>
+                            <ControlSignals />
+                        </div>
+                    </div>
+
+                    <div className={`${styles.card} ${styles.expand}`}>
+                        <Memory />
+                    </div>
+                </div>
+
+                <div className={`${styles.column} ${styles.expand}`}>
+                    <div className={styles.card}>
+                        <Datapath />
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };

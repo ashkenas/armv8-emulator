@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import hljs from 'highlight.js/lib/core';
 import armasm from '@util/langdecl';
 import styles from '@styles/Code.module.css';
-import "highlight.js/styles/base16/ashes.css";
-import Parse from '../architecture/parse';
 import ScrollContent from './scrollContent';
 import { store, updateText } from "@util/reduxUtils";
 import { useDispatch, useSelector } from 'react-redux';
+import "highlight.js/styles/base16/ashes.css";
 
 hljs.configure({ ignoreUnescapedHTML: true });
 hljs.addPlugin({

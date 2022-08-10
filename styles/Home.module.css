@@ -60,3 +60,19 @@ div.navbar {
 div.navbar > div {
     cursor: pointer;
 }
+
+button.button {
+    background-color: var(--btn-bg);
+    border: none;
+    border-radius: .25rem;
+    margin-right: .25rem;
+    padding: .25rem;
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+    box-shadow: 0 3px 0 var(--btn-shadow);
+    color: var(--text-color);
+}
+
+button.button:active {
+    box-shadow: 0 0 0 var(--btn-shadow);
+    transform: translateY(3px);
+}

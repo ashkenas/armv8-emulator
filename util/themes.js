@@ -13,7 +13,9 @@ export const themeLight = {
     '--memory-bg-text': '#6ac4f144',
     '--memory-bg-data': '#6af1ec44',
     '--memory-bg-bss': '#81f16a44',
-    '--memory-bg-instruction': '#eff16a44'
+    '--memory-bg-instruction': '#eff16a44',
+    '--btn-bg': '#dfdfdf',
+    '--btn-shadow': '#d3cccc'
 };
 
 export const themeDark = {
@@ -31,5 +33,7 @@ export const themeDark = {
     '--memory-bg-text': '#6ac4f144',
     '--memory-bg-data': '#6af1ec44',
     '--memory-bg-bss': '#81f16a44',
-    '--memory-bg-instruction': '#eff16a44'
+    '--memory-bg-instruction': '#eff16a44',
+    '--btn-bg': '#484848',
+    '--btn-shadow': '#585858'
 };

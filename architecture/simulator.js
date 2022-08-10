@@ -13,8 +13,6 @@ import { merge, reset, updateRegister } from "@util/reduxUtils";
 import { initializeMemory, MAX_ADDRESS } from "@util/memoryUtils";
 import { useDispatch, useSelector } from "react-redux";
 import Parse from "./parse";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faRotateLeft, faForward, faForwardFast, faStepForward, faPause, faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import { themeDark, themeLight } from "@util/themes";
 
 export default function Simulator(props) {
@@ -51,6 +49,7 @@ export default function Simulator(props) {
         try {
             const p = new Parse(text);
             setProgram(p.program);
+            console.log('please work i would love if you did')
             setParsingError(false);
         } catch (e) {
             setParsingError(e);
@@ -73,7 +72,8 @@ export default function Simulator(props) {
 
     const buttons = [
         {
-            text: <FontAwesomeIcon icon={faPause} />,
+            text: <span className="material-symbols-outlined">pause</span>,
+            title: 'Pause Execution',
             effect : syncError(() => {
                 if (run) {
                     clearInterval(run);
@@ -83,7 +83,8 @@ export default function Simulator(props) {
             })
         },
         {
-            text: (fastForward === true || run === false) ? <FontAwesomeIcon icon={faPlay} /> : <FontAwesomeIcon icon={faForward} />,
+            text: <span className="material-symbols-outlined">auto_mode</span>,
+            title: (fastForward === true || run === false) ? 'Start Execution' : 'Speed Up',
             effect: syncError(() => {
                 if (run) {
                     clearInterval(run);
@@ -99,28 +100,37 @@ export default function Simulator(props) {
             })
         },
         {
-            text: <FontAwesomeIcon icon={faStepForward} />,
+            text: <span className="material-symbols-outlined">keyboard_arrow_right</span>,
+            title: 'Execute Next Stage',
             effect: syncError(() => {
                 program.tick();
             })
         },
-        // {
-        //     text: 'Next Instruction',
-        //     effect: syncError(() => {
-        //         if (!program.tick())
-        //             while(program.instructions[program.currentInstruction]?.cycle)
-        //                 program.tick();
-        //     })
-        // },
         {
-            text: <FontAwesomeIcon icon={faForwardFast} />,
+            text: <span className="material-symbols-outlined">keyboard_double_arrow_right</span>,
+            title: 'Execute Next Instruction',
+            effect: syncError(() => {
+                if (!program.tick())
+                    while(program.instructions[program.currentInstruction]?.cycle)
+                        program.tick();
+            })
+        },
+        {
+            text: <span className="material-symbols-outlined">last_page</span>,
+            title: 'Execute All',
             effect: syncError(() => {
                 while(!program.tick());
             })
         },
         {
-            text: <FontAwesomeIcon icon={faRotateLeft} />,
+            text: <span className="material-symbols-outlined">replay</span>,
+            title: 'Restart',
             effect: syncError(() => {
+                if (run) {
+                    clearInterval(run);
+                    setRun(false);
+                    setFastFoward(false);
+                }
                 setRestart(++restart);
             })
         }
@@ -131,11 +141,12 @@ export default function Simulator(props) {
             <Head>
                 <title>ARMv8 Emulator</title>
                 <meta name="description" content="Emulates ARMv8 Programs" />
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
             </Head>
 
             <div className={styles.navbar}>
                 <div onClick={() => setLightMode(!lightMode)}>
-                    <FontAwesomeIcon icon={faLightbulb} size={"lg"} />
+                    <span className="material-symbols-outlined">{lightMode ? 'dark' : 'light'}_mode</span>
                 </div>
             </div>
 
@@ -144,7 +155,9 @@ export default function Simulator(props) {
                     <div className={`${styles.card} ${styles.expand}`}>
                         <Code error={parsingError} theme={lightMode ? 'light' : 'dark'} />
                         <div className={styles.row}>
-                            {buttons.map(({ text, effect }, i) => <button key={i} className={styles.button} onClick={effect}>{text}</button>)}
+                            {buttons.map(({ text, title, effect }, i) =>
+                                <button key={i} className={styles.button} onClick={effect} title={title}>{text}</button>
+                            )}
                         </div>
                     </div>
 

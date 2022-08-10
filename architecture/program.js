@@ -127,29 +127,33 @@ export default class Program {
         if (this.exit || this.currentInstruction >= this.instructions.length)
             return true;
 
-        const state = this.instructions[this.currentInstruction].tick(this);
+        try {
+            const state = this.instructions[this.currentInstruction].tick(this);
 
-        if (this.instructions[this.currentInstruction].cycle === 2) {
-            store.dispatch(updateControlSignals(this.instructions[this.currentInstruction].controlSignals));
-        }
-
-        if (state.flags.newPC !== undefined)
-            this.nextInstruction = state.flags.newPC / 4;
-
-        if (state.flags.exit)
-            this.exit = true;
-
-        if (state.instructionComplete) {
-            this.currentInstruction = this.nextInstruction;
-            if (this.currentInstruction < this.instructions.length) {
-                store.dispatch(merge({
-                    encoding: this.instructions[this.currentInstruction]?.encodingParts,
-                    lineNumber: this.instructions[this.currentInstruction]?.lineNumber
-                }));
+            if (this.instructions[this.currentInstruction].cycle === 2) {
+                store.dispatch(updateControlSignals(this.instructions[this.currentInstruction].controlSignals));
             }
-        }
 
-        store.dispatch(updateWires(state.flags));
+            if (state.flags.newPC !== undefined)
+                this.nextInstruction = state.flags.newPC / 4;
+
+            if (state.flags.exit)
+                this.exit = true;
+
+            if (state.instructionComplete) {
+                this.currentInstruction = this.nextInstruction;
+                if (this.currentInstruction < this.instructions.length) {
+                    store.dispatch(merge({
+                        encoding: this.instructions[this.currentInstruction]?.encodingParts,
+                        lineNumber: this.instructions[this.currentInstruction]?.lineNumber
+                    }));
+                }
+            }
+
+            store.dispatch(updateWires(state.flags));
+        } catch (e) {
+            throw `Line ${this.instructions[this.currentInstruction].lineNumber + 1}: ${this.instructions[this.currentInstruction].lineText}\n\n${e}`;
+        }
 
         return false;
     }

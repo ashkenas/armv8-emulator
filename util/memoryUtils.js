@@ -21,7 +21,7 @@ export function initializeMemory(program) {
     const bssStartAddress = program.programSize + program.initSize;
     const bssEndAddress = bssStartAddress + program.bssSize - 1;
 
-    const stackData = expandTo([], 8);
+    const stackData = expandTo([], 40);
 
     const frames = [BigInt(MAX_ADDRESS)];
 

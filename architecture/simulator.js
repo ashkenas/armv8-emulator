@@ -49,7 +49,6 @@ export default function Simulator(props) {
         try {
             const p = new Parse(text);
             setProgram(p.program);
-            console.log('please work i would love if you did')
             setParsingError(false);
         } catch (e) {
             setParsingError(e);
@@ -141,7 +140,6 @@ export default function Simulator(props) {
             <Head>
                 <title>ARMv8 Emulator</title>
                 <meta name="description" content="Emulates ARMv8 Programs" />
-                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
             </Head>
 
             <div className={styles.navbar}>

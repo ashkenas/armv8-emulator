@@ -16,7 +16,7 @@ hljs.addPlugin({
             let i = 0; // Internally maintain line number as function state
             return (m, g) => {
                 if (i++ === lineNumber)
-                    return `<span class="${styles.highlighter}">${g}</span>`;
+                    return `<div class="${styles.highlighter}"></div>${g}`;
                 return g;
             };
         })());
@@ -33,23 +33,39 @@ export default function Code({ error }) {
     useEffect(() => {
         if(!error && codeRef && codeRef.current)
             hljs.highlightElement(codeRef.current);
-    }, [text, lineNumber]);
+    }, [text, lineNumber, error]);
+
+    const processFile = (file) => {
+        file.text().then((newText) => {
+            dispatch(updateText(newText.replaceAll(/\r/g, '')));
+        });
+    };
 
     return (
         <>
-            <input type="file" onChange={(e) => {
+            <label className={styles.label} htmlFor="file" onDragOver={(event) => event.preventDefault()} onDrop={(event) => {
+                event.preventDefault();
+
+                if (event.dataTransfer.items && event.dataTransfer.items.length) {
+                    if (event.dataTransfer.items[0].kind === 'file') {
+                        processFile(event.dataTransfer.items[0].getAsFile());
+                    } else {
+                        dispatch(updateText(event.dataTransfer.items[0].getAsString().replaceAll(/\r/g, '')));
+                    }
+                } else if (event.dataTransfer.files.length) {
+                    processFile(event.dataTransfer.files[0]);
+                }
+            }} >Upload File</label>
+            <input className={styles.file} id="file" type="file" onChange={(e) => {
                 if (!e.target.files.length)
                     return;
                 
-                e.target.files[0].text().then((newText) => {
-                    dispatch(updateText(newText.replaceAll(/\r/g, '')));
-                });
+                processFile(e.target.files[0]);
+                e.target.value = '';
             }} />
             <ScrollContent>
-                <pre className={styles['code-container']}>
-                    {!error && <code ref={codeRef} className="language-armasm">{text}</code>}
-                    {!!error && <pre className={styles.error}>Parsing error occurred.<br/><br/>{error.toString()}</pre>}
-                </pre>
+                {!error && <code ref={codeRef} className={`${styles.code} language-armasm`}>{text}</code>}
+                {!!error && <pre className={styles.error}>Parsing error occurred.<br/><br/>{error.toString()}</pre>}
             </ScrollContent>
         </>
     );

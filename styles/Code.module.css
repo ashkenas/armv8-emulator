@@ -1,20 +1,22 @@
-.code-container {
-    position: relative;
-}
-
-.code-container > code {
+.code {
     position: absolute;
+    white-space: pre;
     left: 0;
     right: 0;
+    width: max-content;
     font-family: var(--monospace);
+    min-width: 100%;
 }
 
 .highlighter {
     position: absolute;
     left: 0;
-    padding-left: inherit;
-    min-width: 100%;
+    right: 0;
     background-color: #ffff0033;
+}
+
+.highlighter::after {
+    content: " ";
 }
 
 .error {
@@ -22,4 +24,31 @@
     left: 0;
     right: 0;
     white-space: break-spaces;
+}
+
+label.label {
+    position: relative;
+    text-align: center;
+    padding: .5rem;
+    border: 2px dashed var(--text-color);
+    border-radius: .5rem;
+    margin-bottom: .5rem;
+}
+
+label.label::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: .5rem;
+    background-color: var(--text-color);
+    opacity: .1;
+    transition: opacity .25s;
+}
+
+label.label:hover::after {
+    opacity: .2;
+}
+
+input.file {
+    display: none;
 }

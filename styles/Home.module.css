@@ -70,6 +70,7 @@ button.button {
     transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
     box-shadow: 0 3px 0 var(--btn-shadow);
     color: var(--text-color);
+    margin-top: .5rem;
 }
 
 button.button:active {

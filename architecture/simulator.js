@@ -90,12 +90,12 @@ export default function Simulator(props) {
                     setFastFoward(!fastForward);
                 }
 
-                setRun(setInterval(() => {
-                    if (program.tick()) {
-                        clearTimeout(run);
+                setRun(setInterval(syncError(() => {
+                    if (!program.tick()) {
+                        clearInterval(run);
                         setRun(false);
                     }
-                }, 100 / ((run && !fastForward) ? 2 : 1)));
+                }), 100 / ((run && !fastForward) ? 2 : 1)));
             })
         },
         {

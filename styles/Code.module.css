@@ -6,6 +6,7 @@
     width: max-content;
     font-family: var(--monospace);
     min-width: 100%;
+    z-index: 1;
 }
 
 .highlighter {
@@ -13,10 +14,12 @@
     left: 0;
     right: 0;
     background-color: #ffff0033;
+    z-index: -1;
 }
 
 .highlighter::after {
     content: " ";
+    z-index: inherit;
 }
 
 .error {

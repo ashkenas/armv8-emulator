@@ -47,8 +47,7 @@ export default function Simulator(props) {
 
     useEffect(() => {
         try {
-            const p = new Parse(text);
-            setProgram(p.program);
+            setProgram(Parse(text));
             setParsingError(false);
         } catch (e) {
             setParsingError(e);

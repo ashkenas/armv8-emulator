@@ -1,3 +1,5 @@
+import { faGlassCheers } from "@fortawesome/free-solid-svg-icons";
+
 export class ArgumentType {
     /* Maximum binary digits present in an ArgumentType value */
     static typeLength = 1;
@@ -122,6 +124,8 @@ export class Instruction {
                 tooltip: 'Insignificant'
             });
         }
+
+        this.encoding = Number(this.encoding);
     }
 
     setControlSignals(...signals) {
@@ -139,8 +143,14 @@ export class Instruction {
             case 0:
                 flags = this.if ? this.if(program) : {};
 
-                this.nextPC = (program.currentInstruction * 4) + 4;
+                flags.pc = program.currentInstruction * 4;
+                this.nextPC = (flags.pc) + 4;
                 flags.nextPC = this.nextPC;
+                flags.encoding = this.encoding;
+                flags.opcode = this.opcode;
+                flags.rm = (flags.encoding >> 16) & 0b11111;
+                flags.rt = flags.encoding & 0b11111;
+                flags.rd = flags.encoding & 0b11111;
 
                 break;
             case 1:
@@ -158,12 +168,15 @@ export class Instruction {
                 flags.aluInputB = this.controlSignals.aluSrc ? this.imm11 : this.readData2;
 
                 if (flags.aluAction)
-                    flags.z = flags.aluResult == 0;
+                    flags.z = flags.aluResult == 0 ? 1 : 0;
+
+                flags.cbrZ = this.controlSignals.cbr & flags.z;
+                flags.br = this.controlSignals.ubr || flags.cbrZ;
 
                 if (this.controlSignals.pbr)
                     flags.newPC = Number(this.aluResult);
                 else
-                    flags.newPC = (this.controlSignals.ubr || (this.controlSignals.cbr && flags.z)) ? flags.branchPC : this.nextPC;
+                    flags.newPC = flags.br ? flags.branchPC : this.nextPC;
                 
                 break;
             case 3:

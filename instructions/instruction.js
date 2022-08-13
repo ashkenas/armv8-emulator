@@ -1,4 +1,4 @@
-import { faGlassCheers } from "@fortawesome/free-solid-svg-icons";
+import { store } from "@util/reduxUtils";
 
 export class ArgumentType {
     /* Maximum binary digits present in an ArgumentType value */
@@ -151,13 +151,15 @@ export class Instruction {
                 flags.rm = (flags.encoding >> 16) & 0b11111;
                 flags.rt = flags.encoding & 0b11111;
                 flags.rd = flags.encoding & 0b11111;
+                flags.readReg2 = undefined;
 
                 break;
             case 1:
                 flags = this.id ? this.id(program) : {};
 
-                if (flags.readData2)
-                    this.readData2 = flags.readData2;
+                flags.readReg2 = this.controlSignals.reg2Loc ? (flags.encoding >> 16) & 0b11111 : flags.encoding & 0b11111;
+                this.readData2 = store.getState().registers[flags.readReg2];
+                flags.readData2 = this.readData2;
 
                 Object.assign(flags, this.controlSignals);
 
@@ -172,6 +174,7 @@ export class Instruction {
 
                 flags.cbrZ = this.controlSignals.cbr & flags.z;
                 flags.br = this.controlSignals.ubr || flags.cbrZ;
+                flags.branchPC = (program.currentInstruction * 4) + ((this.imm11 && Number(this.imm11)) || ((this.encoding >> 10) & 0b11111111111));
 
                 if (this.controlSignals.pbr)
                     flags.newPC = Number(this.aluResult);

@@ -1,65 +1,84 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "@styles/Datapath.module.css";
 import ScrollContent from "./scrollContent";
 import { useSelector } from "react-redux";
+import PopUp from "./popUp";
+import SeqDatapath from "@util/seqdatapath.svg";
 
 const nameMap = {
     "ALU": "ALU",
     "MUX": "MUX",
-    "readReg2": "ReadReg2",
+    "ReadReg2": "readReg2",
     "Instr": "Instr",
-    "readData1": "RegData1",
-    "readData2": "RegData2",
+    "RegData1": "readData1",
+    "RegData2": "readData2",
     "inputB": "inputB",
     "opcode": "opcode",
     "Rd": "Rd",
-    "imm": "imm",
+    "imm": "aluImm",
     "Rt": "Rt",
     "Rm": "Rm",
-    "readReg1": "Rn",
-    "aluResult": "ALUout",
+    "Rn": "readReg1",
+    "ALUout": "aluResult",
     "Adder": "Adder",
-    "pc": "PC",
-    "aluOp": "ALUop",
-    "regWrite": "RegWrite",
-    "aluSrc": "ALUsrc",
-    "memRead": "MemRead",
-    "memWrite": "MemWrite",
-    "aluAction": "action",
+    "PC": "pc",
+    "ALUop": "aluOp",
+    "RegWrite": "regWrite",
+    "ALUsrc": "aluSrc",
+    "MemRead": "memRead",
+    "MemWrite": "memWrite",
+    "action": "aluAction",
     "ANDGate": "ANDGate",
     "ORGate": "ORGate",
-    "memToReg": "MemToReg",
-    "linkReg": "LinkReg",
-    "ubr": "UBr",
-    "cbr": "CBr",
-    "z": "Zflag",
+    "MemToReg": "memToReg",
+    "LinkReg": "linkReg",
+    "UBr": "ubr",
+    "CBr": "cbr",
+    "Zflag": "z",
     "CBR_Z": "CBR_Z",
     "PC_imm": "PC_imm",
-    "pbr": "PBr",
-    "branchPc": "Br",
+    "PBr": "pbr",
+    "Br": "branchPc",
     "nextPC": "nextPC",
     "ReadDataM": "ReadDataM",
-    "writeData": "RegDataW",
+    "RegDataW": "writeData",
     "fourbytes": "fourbytes",
-    "newPC": "realPC",
-    "reg2Loc": "Reg2Loc"
+    "realPC": "newPC",
+    "Reg2Loc": "reg2Loc"
 };
 
 function Datapath() {
     const ref = useRef(null);
     const values = useSelector((state) => state.wires);
+    const newWires = useSelector((state) => state.newWires);
+    const [hoverWire, setHoverWire] = useState(false);
+    const [rect, setRect] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
         if (!(ref && ref.current))
             return;
 
-        const root = ref.current.getSVGDocument();
-    }, [ref, ref.current]);
+        const root = ref.current;
+        for (const path in nameMap) {
+            const components = root.querySelectorAll(`[id="${path}"], [id^="${path}-"]`);
+            for (const wireSegment of components) {
+                if (newWires.includes(nameMap[path]))
+                    wireSegment.style.stroke = '#FF0000';
+                else
+                    wireSegment.style.stroke = '';
+            }
+        }
+    }, [ref, ref.current, newWires]);
 
     return (
-        <ScrollContent>
-            <object ref={ref} className={styles.datapath} type="image/svg+xml" data="/svg/seqdatapath.svg" />
-        </ScrollContent>
+        <>
+            <PopUp title={hoverWire} display={hoverWire} rect>
+                {values[hoverWire]}
+            </PopUp>
+            <ScrollContent>
+                <SeqDatapath ref={ref} className={styles.datapath} data-wires={values} />
+            </ScrollContent>
+        </>
     );
 }
 

@@ -57,6 +57,7 @@ const initialState = {
     controlSignals: {...Instruction._controlSignalNames.reduce((signals, signal) => (signals[signal] = 0, signals), {})},
     newSignals: {},
     wires: {},
+    newWires: [],
     encoding: [{
         type: '',
         value: 0,
@@ -81,7 +82,12 @@ const rootReducer = (state = initialState, action) => {
             }, {});
             return { ...state, controlSignals: { ...state.controlSignals, ...newSignals }, newSignals: newSignals };
         case 'updateWires':
-            return { ...state, wires: { ...state.wires, ...action.payload } };
+            const newWireNames = Object.keys(action.payload).filter((wire) => action.payload[wire] !== state.wires[wire]);
+            const newWires = newWireNames.reduce((wires, wire) => {
+                wires[wire] = action.payload[wire];
+                return wires;
+            }, {});
+            return { ...state, wires: { ...state.wires, ...newWires }, newWires: newWireNames };
         case 'updateRegister':
             if (action.payload.register === 31)
                 return state;

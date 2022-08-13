@@ -10,8 +10,9 @@ export default class ErrorBoundary extends React.Component {
     static getDerivedStateFromError(error) {
         return { error: error };
     }
-
+    
     componentDidCatch(error, errorInfo) {
+        console.error(errorInfo);
         this.setState({ error: error, errorInfo: errorInfo });
     }
 

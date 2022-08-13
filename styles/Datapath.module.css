@@ -1,4 +1,4 @@
-object.datapath {
-    display: flex;
-    flex: 1 1 auto;
+svg.datapath {
+    width: 100%;
+    overflow: visible;
 }

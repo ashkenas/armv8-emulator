@@ -90,7 +90,7 @@ export default function Simulator(props) {
                 }
 
                 setRun(setInterval(syncError(() => {
-                    if (!program.tick()) {
+                    if (program.tick()) {
                         clearInterval(run);
                         setRun(false);
                     }

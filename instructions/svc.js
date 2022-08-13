@@ -3,7 +3,7 @@ import { ArgumentType, Instruction } from "@inst/instruction";
 class SVCInstruction extends Instruction {
     static mnemonic = 'svc';
     static syntax = [ArgumentType.Immediate];
-    static restrictions = [0];
+    static restrictions = [1];
     
     constructor(imm11) {
         super(0b11010100000);

@@ -30,7 +30,7 @@ export default function Parse(text) {
                 if (instrType === undefined)
                     throw `Invalid instruction type: ${instructionArray[0]} ${instructionArray.slice(1).map(getArgumentType).map(ArgumentType.toString).join(', ')}`;
 
-                const decode = decodeParsedInstruction(instructionArray);
+                const decode = decodeParsedInstruction(instrType, instructionArray.slice(1));
                 program.addInstruction(instrType, decode, i, line);
             } else if (section === "data") {
                 if (line.includes(':'))
@@ -119,44 +119,54 @@ function getArgumentType(arg){
 
 /**
  * Decode arguments into numeric forms where possible.
- * @param {string[]} instr Instruction array [type, ...args]
+ * @param {Instruction} instrType Instruction type class
+ * @param {string[]} instrArgs Instruction arguments as strings
  * @returns {any[]} Decoded arguments
  */
-function decodeParsedInstruction(instr){
+function decodeParsedInstruction(instrType, instrArgs) {
     const args = [];
-    for(let i = 1; i < instr.length; i++) {
-        const param = instr[i];
-        switch(param.toLowerCase()) {
-            case "xzr":
-                args.push(31);
-                break;
-            case "lr":
-                args.push(30);
-                break;
-            case "fp":
-                args.push(29);
-                break;
-            case "sp":
-                args.push(28);
-                break;
-            default:
-                if (param[0].toLowerCase() === 'x') {
+    for(let i = 0; i < instrArgs.length; i++) {
+        const param = instrArgs[i];
+        if (instrType.syntax[i] === ArgumentType.Register) {
+            switch(param.toLowerCase()) {
+                case "xzr":
+                    args.push(31);
+                    break;
+                case "lr":
+                    args.push(30);
+                    break;
+                case "fp":
+                    args.push(29);
+                    break;
+                case "sp":
+                    args.push(28);
+                    break;
+                default:
                     const arg = +param.substring(1);
                     if (isNaN(arg))
-                        throw `Argument ${i} (${param}):\nInvalid register number '${arg}'.`;
+                        throw `Argument ${i + 1} (${param}):\nInvalid register number '${arg}'.`;
                     else if (arg < 0 || arg > 31)
-                        throw `Argument ${i} (${param}):\nRegister number must be in range [0, 31].`
+                        throw `Argument ${i + 1} (${param}):\nRegister number must be in range [0, 31].`
                     args.push(arg);
-                } else if (param[0] === '#') {
-                    const arg = +param.substring(1);
-                    if (isNaN(arg))
-                        throw `Argument ${i} (${param}):\nInvalid immediate '${arg}'.`;
-                    else if (arg < -(2 ** 10) || arg > (2 ** 10) - 1)
-                        throw `Argument ${i} (${param}):\nImmediate must be in range [-2^10, 2^10 - 1].`
-                    args.push(twoC(BigInt(arg), 11n));
+            }
+        } else {
+            if ((/^#?-?[0-9]+$/).test(param)) {
+                const arg = param[0] === '#' ? +param.substring(1) : +param;
+                if (isNaN(arg)) {
+                    throw `Argument ${i + 1} (${param}):\nInvalid immediate '${arg}'.`;
                 } else {
-                    args.push(param);
+                    const bitLength = (instrType.restrictions[i] - 1);
+                    if (bitLength === 0) {
+                        if (arg !== 0)
+                            throw `Argument ${i + 1} (${param}):\nImmediate for this instruction must be 0.`;
+                    } else if (arg < -(2 ** bitLength) || arg > (2 ** bitLength) - 1) {
+                        throw `Argument ${i + 1} (${param}):\nImmediate must be in range [-2^${bitLength}, 2^${bitLength} - 1].`
+                    }
                 }
+                args.push(twoC(BigInt(arg), 11n));
+            } else {
+                args.push(param);
+            }
         }
     }
     return args;

@@ -82,7 +82,7 @@ const rootReducer = (state = initialState, action) => {
             }, {});
             return { ...state, controlSignals: { ...state.controlSignals, ...newSignals }, newSignals: newSignals };
         case 'updateWires':
-            const newWireNames = Object.keys(action.payload).filter((wire) => action.payload[wire] !== state.wires[wire]);
+            const newWireNames = Object.keys(action.payload).filter((wire) => action.payload[wire] != (state.wires[wire] || 0));
             const newWires = newWireNames.reduce((wires, wire) => {
                 wires[wire] = action.payload[wire];
                 return wires;

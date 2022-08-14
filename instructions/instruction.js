@@ -151,7 +151,9 @@ export class Instruction {
                 flags.rm = (flags.encoding >> 16) & 0b11111;
                 flags.rt = flags.encoding & 0b11111;
                 flags.rd = flags.encoding & 0b11111;
+                flags.aluImm = flags.aluImm || ((this.encoding >> 10) & 0b1111111111) + (-128 * ((this.encoding >> 20) & 1));
                 flags.readReg2 = undefined;
+                flags.lineText = this.lineText;
 
                 break;
             case 1:

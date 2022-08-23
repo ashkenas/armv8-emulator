@@ -21,23 +21,22 @@ const baseToLetter = (base) => {
 const nameMap = {
     "ReadReg2": {
         internalName: "readReg2",
-        base: 2,
-        length: 5
+        base: 10
     },
     "Instr": {
         internalName: "lineText"
     },
     "RegData1": {
         internalName: "readData1",
-        base: 10
+        base: [10, 16]
     },
     "RegData2": {
         internalName: "readData2",
-        base: 10
+        base: [10, 16]
     },
     "inputB": {
         internalName: "aluInputB",
-        base: 10
+        base: [10, 16]
     },
     "opcode": {
         internalName: "opcode",
@@ -46,35 +45,32 @@ const nameMap = {
     },
     "Rd": {
         internalName: "rd",
-        base: 2,
-        length: 5
+        base: 10
     },
     "imm": {
         internalName: "aluImm",
-        base: 10
+        base: [10, 16]
     },
     "Rt": {
         internalName: "rt",
-        base: 2,
-        length: 5
+        base: 10
     },
     "Rm": {
         internalName: "rm",
-        base: 2,
-        length: 5
+        base: 10
     },
     "Rn": {
         internalName: "readReg1",
-        base: 2,
-        length: 5
+        base: 10
     },
     "ALUout": {
         internalName: "aluResult",
-        base: 10
+        base: [10, 16]
     },
     "PC": {
         internalName: "pc",
-        base: 16
+        base: 16,
+        length: 8
     },
     "ALUop": {
         internalName: "aluOp",
@@ -128,7 +124,8 @@ const nameMap = {
     },
     "PC_imm": {
         internalName: "branchPC",
-        base: 16
+        base: 16,
+        length: 8
     },
     "PBr": {
         internalName: "pbr",
@@ -140,7 +137,8 @@ const nameMap = {
     },
     "nextPC": {
         internalName: "nextPC",
-        base: 16
+        base: 16,
+        length: 8
     },
     "ReadDataM": {
         internalName: "readDataM",
@@ -152,7 +150,8 @@ const nameMap = {
     },
     "realPC": {
         internalName: "newPC",
-        base: 16
+        base: 16,
+        length: 8
     },
     "Reg2Loc": {
         internalName: "reg2Loc",
@@ -172,7 +171,7 @@ function Datapath() {
             return;
 
         for (const path in nameMap) {
-            const components = ref.current.querySelectorAll(`[id="${path}"], [id^="${path}-"]`);
+            const components = ref.current.querySelectorAll(`[id="${path}"], [id="text_${path}"], [id^="${path}-"]`);
             for (const wireSegment of components) {
                 if (newWires.includes(nameMap[path].internalName)) {
                     wireSegment.style.stroke = '#FF0000';
@@ -184,7 +183,8 @@ function Datapath() {
                 }
 
                 wireSegment.onmouseover = (event) => {
-                    setHoverWire(event.target.id.split('-')[0]);
+                    const id = event.target.id ? event.target.id : event.target.parentElement.id;
+                    setHoverWire(id.replace('text_', '').split('-')[0]);
                     setRect({ left: event.clientX, top: event.clientY });
                 };
 
@@ -195,11 +195,23 @@ function Datapath() {
         }
     }, [ref, ref.current, newWires]);
 
+    const makeValue = (base) => (
+        <div>
+            {(values[nameMap[hoverWire].internalName] || 0).toString(base).padStart(nameMap[hoverWire].length || 0, '0')}
+            <sub>{hoverWire && baseToLetter(base)}</sub>
+        </div>
+    );
+
+    let popupBody;
+    if (hoverWire && typeof nameMap[hoverWire].base !== "object")
+        popupBody = makeValue(nameMap[hoverWire].base);
+    else if (hoverWire)
+        popupBody = nameMap[hoverWire].base.map((base) => makeValue(base));
+
     return (
         <>
             <PopUp title={hoverWire} display={hoverWire} rect={rect}>
-                {hoverWire && (values[nameMap[hoverWire].internalName] || 0).toString(nameMap[hoverWire].base).padStart(nameMap[hoverWire].length || 0, '0')}
-                <sub>{hoverWire && baseToLetter(nameMap[hoverWire].base)}</sub>
+                {popupBody}
             </PopUp>
             <ScrollContent>
                 <SeqDatapath ref={ref} className={styles.datapath} />

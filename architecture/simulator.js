@@ -14,6 +14,7 @@ import { initializeMemory, MAX_ADDRESS } from "@util/memoryUtils";
 import { useDispatch, useSelector } from "react-redux";
 import Parse from "./parse";
 import { themeDark, themeLight } from "@util/themes";
+import ErrorBoundary from "@components/errorBoundary";
 
 export default function Simulator(props) {
     const text = useSelector((state) => state.text);
@@ -23,11 +24,12 @@ export default function Simulator(props) {
     const [fastForward, setFastFoward] = useState(false);
     const [parsingError, setParsingError] = useState(false);
     const [runtimeError, setRuntimeError] = useState(false);
+    const [inspectMode, setInspectMode] = useState(false);
     const [restart, setRestart] = useState(0);
     const [lightMode, setLightMode] = useState(false);
 
-    if (runtimeError)
-        throw runtimeError;
+    // if (runtimeError)
+    //     throw runtimeError;
 
     useEffect(() => {
         if (!program)
@@ -68,10 +70,27 @@ export default function Simulator(props) {
         }
     };
 
+    const restartFunc = syncError(() => {
+        if (run) {
+            clearInterval(run);
+            setRun(false);
+            setFastFoward(false);
+        }
+        setRestart(restart + 1);
+        setRuntimeError(false);
+        setInspectMode(false);
+    });
+
+    const inspectFunc = () => {
+        setInspectMode(true);
+        setRuntimeError(false);
+    };
+
     const buttons = [
         {
             text: <span className="material-symbols-outlined">pause</span>,
             title: 'Pause Execution',
+            disabled: inspectMode,
             effect : syncError(() => {
                 if (run) {
                     clearInterval(run);
@@ -83,6 +102,7 @@ export default function Simulator(props) {
         {
             text: <span className="material-symbols-outlined">auto_mode</span>,
             title: (fastForward === true || run === false) ? 'Start Execution' : 'Speed Up',
+            disabled: inspectMode,
             effect: syncError(() => {
                 if (run) {
                     clearInterval(run);
@@ -100,6 +120,7 @@ export default function Simulator(props) {
         {
             text: <span className="material-symbols-outlined">keyboard_arrow_right</span>,
             title: 'Execute Next Stage',
+            disabled: inspectMode,
             effect: syncError(() => {
                 program.tick();
             })
@@ -107,6 +128,7 @@ export default function Simulator(props) {
         {
             text: <span className="material-symbols-outlined">keyboard_double_arrow_right</span>,
             title: 'Execute Next Instruction',
+            disabled: inspectMode,
             effect: syncError(() => {
                 if (!program.tick())
                     while(program.instructions[program.currentInstruction]?.cycle)
@@ -116,6 +138,7 @@ export default function Simulator(props) {
         {
             text: <span className="material-symbols-outlined">last_page</span>,
             title: 'Execute All',
+            disabled: inspectMode,
             effect: syncError(() => {
                 while(!program.tick());
             })
@@ -123,19 +146,13 @@ export default function Simulator(props) {
         {
             text: <span className="material-symbols-outlined">replay</span>,
             title: 'Restart',
-            effect: syncError(() => {
-                if (run) {
-                    clearInterval(run);
-                    setRun(false);
-                    setFastFoward(false);
-                }
-                setRestart(++restart);
-            })
+            disabled: false,
+            effect: restartFunc
         }
     ];
 
     return (
-        <>
+        <ErrorBoundary title={"Runtime Error"} error={runtimeError} restart={restartFunc} inspect={inspectFunc}>
             <Head>
                 <title>ARMv8 Emulator</title>
                 <meta name="description" content="Emulates ARMv8 Programs" />
@@ -152,8 +169,8 @@ export default function Simulator(props) {
                     <div className={`${styles.card} ${styles.expand}`}>
                         <Code error={parsingError} theme={lightMode ? 'light' : 'dark'} />
                         <div className={styles.row}>
-                            {buttons.map(({ text, title, effect }, i) =>
-                                <button key={i} className={styles.button} onClick={effect} title={title}>{text}</button>
+                            {buttons.map(({ text, title, disabled, effect }, i) =>
+                                <button key={i} className={styles.button} onClick={effect} title={title} disabled={disabled}>{text}</button>
                             )}
                         </div>
                     </div>
@@ -186,6 +203,6 @@ export default function Simulator(props) {
                     </div>
                 </div>
             </div>
-        </>
+        </ErrorBoundary>
     );
 };

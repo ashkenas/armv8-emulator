@@ -34,3 +34,16 @@ div.body {
     padding: 0 1rem;
     color: black;
 }
+
+button.button {
+    color: white;
+    background-color: #f14747;
+    border: none;
+    border-radius: .25rem;
+    padding: .5rem;
+    margin: 0 1rem 1rem 0;
+}
+
+button.button:hover {
+    background-color: #ca3d3d;
+}

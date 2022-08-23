@@ -73,7 +73,11 @@ button.button {
     margin-top: .5rem;
 }
 
-button.button:active {
+button.button:not(:disabled):active {
     box-shadow: 0 0 0 var(--btn-shadow);
     transform: translateY(3px);
+}
+
+button.button:disabled {
+    background-color: var(--bg-primary);
 }

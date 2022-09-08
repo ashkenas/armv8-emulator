@@ -69,7 +69,7 @@ export default class Program {
      * @param {number} bytes 
      */
     alignInitializedData(bytes) {
-        this.addInitializedData('', 0n, nextMultiple(this.initSize, bytes) - this.initSize);
+        this.addInitializedData(0n, nextMultiple(this.initSize, bytes) - this.initSize);
     }
 
     /**
@@ -78,7 +78,7 @@ export default class Program {
      * @param {number} bytes 
      */
     alignUninitializedData(bytes) {
-        this.addUninitializedData('', 0n, nextMultiple(this.bssSize + this.initSize, bytes) - (this.bssSize + this.initSize));
+        this.addUninitializedData(0n, nextMultiple(this.bssSize + this.initSize, bytes) - (this.bssSize + this.initSize));
     }
 
     /**

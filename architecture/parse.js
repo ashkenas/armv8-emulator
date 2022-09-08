@@ -37,17 +37,42 @@ export default function Parse(text) {
                     program.addLabel(line.split(':')[0]);
             
                 let [, type, data] = (/(\.[a-z]*)\s*(.*)/i).exec(line);
-                const valLength = getByteSizeofInitializer(type);
-                data = data.split(',').map((val) => twoC(BigInt(val.trim()), BigInt(valLength) * 8n));
-                const initLen = valLength * data.length;
-                program.addInitializedData(bigIntArrayToBigInt(data), initLen);  
+                if (type === '.balign') {
+                    program.alignInitializedData(+data);
+                } else {
+                    const valLength = getByteSizeofInitializer(type);
+                    data = data.split(',').map((val) => twoC(BigInt(val.trim()), BigInt(valLength) * 8n));
+                    const initLen = valLength * data.length;
+                    program.addInitializedData(bigIntArrayToBigInt(data), initLen);  
+                }
             } else if (section === "bss") {
                 if (line.includes(':'))
                     program.addLabel(line.split(':')[0]);
             
-                const [, type, size] = (/(\.[a-z]*)\s*(-?[0-9]*)/i).exec(line);
-                const initLen = getByteSizeofInitializer(type) * (size && !isNaN(+size) ? +size : 1);
-                program.addUninitializedData(initLen);
+                const [, type, count, size] = (/(\.[a-z]*)\s*(-?[0-9]*)(?:,\s*([0-9]*))?(?:,\s*([0-9]*))?/i).exec(line);
+
+                const pCount = +count;
+                if (isNaN(pCount) || (!isNaN(pCount) && Math.floor(pCount) !== pCount))
+                    throw 'Arguments to bss directives must be integers.';
+
+                if (type === '.balign') {
+                    program.alignUninitializedData(pCount);
+                } else if (type === '.space' || type === '.skip' || type === '.zero') {
+                    program.addUninitializedData(pCount);
+                } else if (type === '.fill') {
+                    if (size !== undefined) {
+                        let pSize = +size;
+                        if (isNaN(pSize) || (!isNaN(pSize) && Math.floor(pSize) !== pSize))
+                            throw 'Arguments to bss directives must be integers.';
+
+                        if (pSize > 8)
+                            pSize = 8;
+
+                        program.addUninitializedData(pCount * pSize);
+                    } else {
+                        program.addUninitializedData(pCount);
+                    }
+                }
             } else {
                 throw `Unknown syntax/command.`;
             }
@@ -186,5 +211,7 @@ function getByteSizeofInitializer(init) {
         case ".byte":
         case ".space":
             return 1;
+        default:
+            throw `Unknown data initializer '${init}'.`;
     }
 }

@@ -48,8 +48,8 @@ export default function Parse(text) {
             } else if (section === "bss") {
                 if (line.includes(':'))
                     program.addLabel(line.split(':')[0]);
-            
-                const [, type, count, size] = (/(\.[a-z]*)\s*(-?[0-9]*)(?:,\s*([0-9]*))?(?:,\s*([0-9]*))?/i).exec(line);
+
+                const [, type, count, size] = (/(\.[a-z]*)\s*(-?.*)\s*(?:,\s*(.*))?/i).exec(line);
 
                 const pCount = +count;
                 if (isNaN(pCount) || (!isNaN(pCount) && Math.floor(pCount) !== pCount))
@@ -72,6 +72,8 @@ export default function Parse(text) {
                     } else {
                         program.addUninitializedData(pCount);
                     }
+                } else {
+                    throw 'Invalid bss directive.';
                 }
             } else {
                 throw `Unknown syntax/command.`;

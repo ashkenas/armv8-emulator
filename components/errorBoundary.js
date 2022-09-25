@@ -1,8 +1,13 @@
-import styles from '@styles/ErrorBoundary.module.css';
+import styles from "@styles/ErrorBoundary.module.css";
 
-export default function ErrorBoundary({ error, title, restart, inspect, children }) {
-    if (!error)
-        return children;
+export default function ErrorBoundary({
+    error,
+    title,
+    restart,
+    inspect,
+    children,
+}) {
+    if (!error) return children;
 
     return (
         <>
@@ -11,8 +16,12 @@ export default function ErrorBoundary({ error, title, restart, inspect, children
                     <h2 className={styles.title}>{title}</h2>
                     <div className={styles.body}>
                         <pre>{error.toString()}</pre>
-                        <button class={styles.button} onClick={restart}>Restart</button>
-                        <button class={styles.button} onClick={inspect}>Inspect</button>
+                        <button className={styles.button} onClick={restart}>
+                            Restart
+                        </button>
+                        <button className={styles.button} onClick={inspect}>
+                            Inspect
+                        </button>
                     </div>
                 </div>
             </div>

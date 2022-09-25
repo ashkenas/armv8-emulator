@@ -5,6 +5,7 @@
 .name {
     text-align: right;
     font-weight: bold;
+    padding-right: .5rem;
 }
 
 .name, .value {
@@ -17,4 +18,9 @@
 
 .value:hover > div {
     display: block;
+}
+
+.height-test {
+    visibility: hidden;
+    position: absolute;
 }

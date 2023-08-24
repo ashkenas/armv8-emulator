@@ -1,5 +1,7 @@
-# ARM-LIVE - a really dope ARM visualizer
-Live version: https://arm-live-sit.vercel.app
+# ARM-LIVE
+A stripped down ARMv8 (see LEGv8) emulator and visualizer. Support inspecting the full contents of memory (text, bss, stack), register values, and physical wiring signals on a simplified CPU datapath.
+
+Also supports more helpful error messages (not just "segmentation fault" with no further help).
 
 ## Building and running [development only]
 ### First time setup

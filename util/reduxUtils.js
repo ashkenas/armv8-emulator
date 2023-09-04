@@ -19,7 +19,7 @@ rec_add:
     str X30, [X28, #0]
     bl rec_add
     b rec_add_end
-rec_add_base:]
+rec_add_base:
     mov X0, #0
     ret
 rec_add_end:

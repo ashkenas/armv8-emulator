@@ -3,7 +3,7 @@ import { writeBytes } from "@util/memoryUtils";
 import { store } from "@util/reduxUtils";
 
 class STURInstruction extends Instruction {
-    static mnemonic = 'stur';
+    static mnemonic = 'str';
     static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Immediate];
     static restrictions = [null, null, 11];
     

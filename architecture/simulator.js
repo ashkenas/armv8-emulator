@@ -26,7 +26,7 @@ export default function Simulator(props) {
     const [runtimeError, setRuntimeError] = useState(false);
     const [inspectMode, setInspectMode] = useState(false);
     const [restart, setRestart] = useState(0);
-    const [lightMode, setLightMode] = useState(false);
+    const [lightMode, setLightMode] = useState(true);
 
     // if (runtimeError)
     //     throw runtimeError;
@@ -160,7 +160,8 @@ export default function Simulator(props) {
 
             <div className={styles.navbar}>
                 <div onClick={() => setLightMode(!lightMode)}>
-                    <span className="material-symbols-outlined">{lightMode ? 'dark' : 'light'}_mode</span>
+                    {lightMode ? 'Dark Mode' : 'Light Mode'}
+                    {/* <span className="material-symbols-outlined">{lightMode ? 'dark' : 'light'}_mode</span> */}
                 </div>
             </div>
 

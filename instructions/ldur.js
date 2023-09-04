@@ -3,7 +3,7 @@ import { readBytes } from "@util/memoryUtils";
 import { store, updateRegister } from "@util/reduxUtils";
 
 class LDURInstruction extends Instruction {
-    static mnemonic = 'ldur';
+    static mnemonic = 'ldr';
     static syntax = [ArgumentType.Register, ArgumentType.Register, ArgumentType.Immediate];
     static restrictions = [null, null, 11];
     
